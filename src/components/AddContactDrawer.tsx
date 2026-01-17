@@ -26,7 +26,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
       >
         <div className="px-8 py-6 border-b border-slate-100/50 bg-white/40 backdrop-blur-md z-10 flex items-center justify-between sticky top-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
               <Icon icon="solar:user-plus-linear" width="20" />
             </div>
             <div>
@@ -61,7 +61,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                     </label>
                     <input
                       type="text"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="e.g. Let"
                     />
                   </div>
@@ -71,7 +71,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                     </label>
                     <input
                       type="text"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="e.g. Cruz"
                     />
                   </div>
@@ -87,7 +87,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                     </div>
                     <input
                       type="email"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 pl-10 pr-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 pl-10 pr-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="vcc.letcruz@myyahoo.com"
                     />
                   </div>
@@ -97,7 +97,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Phone Number
                   </label>
-                  <div className="flex rounded-xl shadow-sm border border-slate-200 bg-white/80 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
+                  <div className="flex rounded-xl shadow-sm border border-slate-200 bg-white/80 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
                     <div className="relative flex items-center border-r border-slate-200 px-3">
                       <span className="text-xs font-medium text-slate-500">
                         +63
@@ -126,7 +126,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   </label>
                   <input
                     type="text"
-                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                     placeholder="e.g. Sales Manager"
                   />
                 </div>
@@ -134,8 +134,8 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Company
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
+                  <div className="relative group">
+                    <select className="block w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm">
                       <option value="" disabled selected>
                         Select company...
                       </option>
@@ -143,8 +143,11 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                       <option>Acme Corp.</option>
                       <option>Global Industries</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                      <Icon icon="solar:buildings-2-linear" width="18" />
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                      <Icon icon="lucide:chevron-down" width="16" />
                     </div>
                   </div>
                 </div>
@@ -175,7 +178,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   </div>
                   <button
                     type="button"
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2 py-1 rounded-lg border border-indigo-100 transition-colors"
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 transition-colors"
                   >
                     Change
                   </button>
@@ -184,15 +187,18 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Lifecycle Stage
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
+                  <div className="relative group">
+                    <select className="block w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm">
                       <option>Lead</option>
                       <option>Marketing Qualified Lead</option>
                       <option>Sales Qualified Lead</option>
                       <option>Customer</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                      <Icon icon="solar:graph-up-linear" width="18" />
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                      <Icon icon="lucide:chevron-down" width="16" />
                     </div>
                   </div>
                 </div>
@@ -204,7 +210,7 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
         </div>
 
         <div className="px-8 py-5 border-t border-slate-100/50 bg-white/80 backdrop-blur-xl flex items-center gap-3 absolute bottom-0 w-full z-20">
-          <button className="flex-1 rounded-xl bg-gradient-to-b from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 border-t border-white/20 text-white px-4 py-2.5 text-sm font-semibold tracking-wide shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+          <button className="flex-1 rounded-xl bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 border-t border-white/20 text-white px-4 py-2.5 text-sm font-semibold tracking-wide shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
             <Icon icon="solar:check-circle-linear" width="18" />
             Create Contact
           </button>

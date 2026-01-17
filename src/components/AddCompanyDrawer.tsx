@@ -1,12 +1,40 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
 
 interface AddCompanyDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const industries = [
+  { id: 'tech', name: 'Technology', icon: 'solar:laptop-linear' },
+  { id: 'software', name: 'Software', icon: 'solar:code-circle-linear' },
+  { id: 'finance', name: 'Finance', icon: 'solar:wallet-money-linear' },
+  { id: 'healthcare', name: 'Healthcare', icon: 'solar:health-linear' },
+  { id: 'manufacturing', name: 'Manufacturing', icon: 'solar:settings-linear' },
+  { id: 'retail', name: 'Retail', icon: 'solar:shop-linear' },
+  { id: 'education', name: 'Education', icon: 'solar:book-linear' },
+  { id: 'aerospace', name: 'Aerospace', icon: 'solar:rocket-linear' },
+  { id: 'realestate', name: 'Real Estate', icon: 'solar:home-linear' },
+  { id: 'other', name: 'Other', icon: 'solar:help-linear' },
+];
+
 export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerProps) {
+  const [industryDropdownOpen, setIndustryDropdownOpen] = useState(false);
+  const [industrySearchQuery, setIndustrySearchQuery] = useState('');
+  const [selectedIndustry, setSelectedIndustry] = useState('');
+
   if (!isOpen) return null;
+
+  const filteredIndustries = industries.filter((industry) =>
+    industry.name.toLowerCase().includes(industrySearchQuery.toLowerCase())
+  );
+
+  const handleIndustrySelect = (id: string) => {
+    setSelectedIndustry(id);
+    setIndustryDropdownOpen(false);
+    setIndustrySearchQuery('');
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex justify-end" role="dialog" aria-modal="true">
@@ -26,7 +54,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
       >
         <div className="px-8 py-6 border-b border-slate-100/50 bg-white/40 backdrop-blur-md z-10 flex items-center justify-between sticky top-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
               <Icon icon="solar:buildings-2-linear" width="20" />
             </div>
             <div>
@@ -60,7 +88,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   </label>
                   <input
                     type="text"
-                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                     placeholder="e.g. Acme Inc."
                   />
                 </div>
@@ -69,7 +97,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Phone Number
                   </label>
-                  <div className="flex rounded-xl shadow-sm border border-slate-200 bg-white/80 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
+                  <div className="flex rounded-xl shadow-sm border border-slate-200 bg-white/80 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
                     <div className="relative flex items-center border-r border-slate-200 px-3">
                       <span className="text-xs font-medium text-slate-500">
                         +63
@@ -88,8 +116,8 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Type
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
+                  <div className="relative group">
+                    <select className="block w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm">
                       <option value="" disabled selected>
                         Select Type
                       </option>
@@ -99,8 +127,11 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                       <option>Vendor</option>
                       <option>Competitor</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                      <Icon icon="solar:buildings-2-linear" width="18" />
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                      <Icon icon="lucide:chevron-down" width="16" />
                     </div>
                   </div>
                 </div>
@@ -120,7 +151,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                     </label>
                     <input
                       type="text"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="e.g. New York"
                     />
                   </div>
@@ -130,7 +161,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                     </label>
                     <input
                       type="text"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="e.g. NY"
                     />
                   </div>
@@ -140,7 +171,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                     </label>
                     <input
                       type="text"
-                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                      className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                       placeholder="e.g. 10001"
                     />
                   </div>
@@ -152,7 +183,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   </label>
                   <input
                     type="url"
-                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                     placeholder="e.g. www.company.com or company.com"
                   />
                 </div>
@@ -170,24 +201,67 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                     Industry
                   </label>
                   <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option value="" disabled selected>
-                        Select an industry
-                      </option>
-                      <option>Technology</option>
-                      <option>Software</option>
-                      <option>Finance</option>
-                      <option>Healthcare</option>
-                      <option>Manufacturing</option>
-                      <option>Retail</option>
-                      <option>Education</option>
-                      <option>Aerospace</option>
-                      <option>Real Estate</option>
-                      <option>Other</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
+                    <button
+                      type="button"
+                      onClick={() => setIndustryDropdownOpen(!industryDropdownOpen)}
+                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 pl-10 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm hover:shadow-md hover:border-slate-300 text-left flex items-center justify-between"
+                    >
+                      <span>
+                        {selectedIndustry
+                          ? industries.find((i) => i.id === selectedIndustry)?.name
+                          : 'Select an industry'}
+                      </span>
+                      <Icon
+                        icon="lucide:chevron-down"
+                        width="16"
+                        className={`text-slate-400 transition-transform ${industryDropdownOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                      <Icon icon="solar:case-linear" width="18" />
                     </div>
+
+                    {industryDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-900/10 z-50 overflow-hidden max-h-72">
+                        <div className="p-3 border-b border-slate-100">
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Icon icon="solar:magnifer-linear" width="16" className="text-slate-400" />
+                            </div>
+                            <input
+                              type="text"
+                              value={industrySearchQuery}
+                              onChange={(e) => setIndustrySearchQuery(e.target.value)}
+                              placeholder="Search industries..."
+                              className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white transition-all"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                        </div>
+                        <div className="max-h-60 overflow-y-auto">
+                          {filteredIndustries.map((industry) => (
+                            <button
+                              key={industry.id}
+                              type="button"
+                              onClick={() => handleIndustrySelect(industry.id)}
+                              className={`w-full flex items-center justify-between p-3 hover:bg-slate-50 transition-all text-left border-b border-slate-100 last:border-0 ${
+                                selectedIndustry === industry.id ? 'bg-blue-50/50' : ''
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                                  <Icon icon={industry.icon} width="18" />
+                                </div>
+                                <p className="text-sm font-semibold text-slate-900">{industry.name}</p>
+                              </div>
+                              {selectedIndustry === industry.id && (
+                                <Icon icon="solar:check-circle-bold" className="text-blue-600" width="20" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -197,7 +271,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   </label>
                   <textarea
                     rows={4}
-                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 resize-none"
+                    className="block w-full rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400 resize-none"
                     placeholder="e.g. Brief description about the company..."
                   />
                 </div>
@@ -218,7 +292,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                 </div>
                 <input
                   type="text"
-                  className="block w-full pl-10 pr-3 py-2 rounded-xl border-slate-200 bg-white/80 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                  className="block w-full pl-10 pr-3 py-2 rounded-xl border-slate-200 bg-white/80 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
                   placeholder="Select contacts to associate"
                 />
               </div>
@@ -229,7 +303,7 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
         </div>
 
         <div className="px-8 py-5 border-t border-slate-100/50 bg-white/80 backdrop-blur-xl flex items-center gap-3 absolute bottom-0 w-full z-20">
-          <button className="flex-1 rounded-xl bg-gradient-to-b from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 border-t border-white/20 text-white px-4 py-2.5 text-sm font-semibold tracking-wide shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+          <button className="flex-1 rounded-xl bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 border-t border-white/20 text-white px-4 py-2.5 text-sm font-semibold tracking-wide shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
             <Icon icon="solar:check-circle-linear" width="18" />
             Create Company
           </button>
