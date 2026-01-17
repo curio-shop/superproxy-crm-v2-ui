@@ -1,0 +1,698 @@
+import { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import SimpleHeader from './components/SimpleHeader';
+import StatsCard from './components/StatsCard';
+import ChartCard from './components/ChartCard';
+import TeamActivity from './components/TeamActivity';
+import Contacts, { ContactDetail } from './components/Contacts';
+import Companies, { Company } from './components/Companies';
+import Products, { Product } from './components/Products';
+import Quotations from './components/Quotations';
+import Invoices from './components/Invoices';
+import Presentations from './components/Presentations';
+import Workspace, { Workspace as WorkspaceType } from './components/Workspace';
+import AccountProfile from './components/AccountProfile';
+import CallHistory, { CallHistoryRecord } from './components/CallHistory';
+import CallDetailsDrawer from './components/CallDetailsDrawer';
+import AddContactDrawer from './components/AddContactDrawer';
+import AddCompanyDrawer from './components/AddCompanyDrawer';
+import AddProductDrawer from './components/AddProductDrawer';
+import ViewContactDrawer from './components/ViewContactDrawer';
+import ViewCompanyDrawer from './components/ViewCompanyDrawer';
+import ViewProductDrawer from './components/ViewProductDrawer';
+import CreateQuote from './components/CreateQuote';
+import CreateInvoice from './components/CreateInvoice';
+import QuoteView from './components/QuoteView';
+import NewEmail from './components/NewEmail';
+import EmailHistoryDrawer from './components/EmailHistoryDrawer';
+import Celebration from './components/Celebration';
+import TreasureBurst from './components/TreasureBurst';
+import PaperFly from './components/PaperFly';
+import ColdCallModal from './components/ColdCallModal';
+import PaymentReminderModal from './components/PaymentReminderModal';
+import QuoteFollowUpModal from './components/QuoteFollowUpModal';
+import MinimizedCallsBar from './components/MinimizedCallsBar';
+import TemplateBuilder from './components/TemplateBuilder';
+import AIChat from './components/AIChat';
+import DeleteConfirmationModal from './components/DeleteConfirmationModal';
+import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
+import { ToastProvider, useToast } from './components/ToastContainer';
+import { supabase } from './lib/supabase';
+
+function AppContent() {
+  const { focusedCallId, getFocusedCall } = useCallManager();
+  const { showToast } = useToast();
+  const [activePage, setActivePage] = useState('home');
+  const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
+  const [isCompanyDrawerOpen, setIsCompanyDrawerOpen] = useState(false);
+  const [isProductDrawerOpen, setIsProductDrawerOpen] = useState(false);
+  const [isInvoiceDrawerOpen, setIsInvoiceDrawerOpen] = useState(false);
+  const [isCreatingQuote, setIsCreatingQuote] = useState(false);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [isViewingQuote, setIsViewingQuote] = useState(false);
+  const [isColdCallModalOpen, setIsColdCallModalOpen] = useState(false);
+  const [isPaymentReminderModalOpen, setIsPaymentReminderModalOpen] = useState(false);
+  const [isQuoteFollowUpModalOpen, setIsQuoteFollowUpModalOpen] = useState(false);
+  const [showRecordModal, setShowRecordModal] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [selectedQuotation, setSelectedQuotation] = useState<Quotation | null>(null);
+  const [selectedEmailContact, setSelectedEmailContact] = useState<{ name: string; email?: string } | null>(null);
+  const [selectedCall, setSelectedCall] = useState<CallHistoryRecord | null>(null);
+  const [preSelectedQuote, setPreSelectedQuote] = useState<Quotation | null>(null);
+  const [preSelectedInvoice, setPreSelectedInvoice] = useState<Invoice | null>(null);
+  const [emailOriginPage, setEmailOriginPage] = useState<'contacts' | 'quotations' | 'invoices'>('contacts');
+  const [preSelectedQuoteForInvoice, setPreSelectedQuoteForInvoice] = useState<Quotation | null>(null);
+  const [selectedQuoteForAI, setSelectedQuoteForAI] = useState<Quotation | null>(null);
+  const [selectedInvoiceForAI, setSelectedInvoiceForAI] = useState<Invoice | null>(null);
+  const [aiChatOriginPage, setAiChatOriginPage] = useState<'quotations' | 'invoices'>('quotations');
+  const [isViewContactDrawerOpen, setIsViewContactDrawerOpen] = useState(false);
+  const [isViewCompanyDrawerOpen, setIsViewCompanyDrawerOpen] = useState(false);
+  const [isViewProductDrawerOpen, setIsViewProductDrawerOpen] = useState(false);
+  const [isTemplateBuilderOpen, setIsTemplateBuilderOpen] = useState(false);
+  const [templateBuilderType, setTemplateBuilderType] = useState<'quotation' | 'invoice'>('quotation');
+  const [selectedViewContact, setSelectedViewContact] = useState<ContactDetail | null>(null);
+  const [selectedViewCompany, setSelectedViewCompany] = useState<Company | null>(null);
+  const [selectedViewProduct, setSelectedViewProduct] = useState<Product | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteModalEntity, setDeleteModalEntity] = useState<{ type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation'; id: string; name: string } | null>(null);
+  const [isDeletingEntity, setIsDeletingEntity] = useState(false);
+
+  // Debug logging for selectedEmailContact changes
+  useEffect(() => {
+    console.log('[App] selectedEmailContact changed:', selectedEmailContact);
+  }, [selectedEmailContact]);
+  const [isCallDetailsDrawerOpen, setIsCallDetailsDrawerOpen] = useState(false);
+  const [isEmailHistoryDrawerOpen, setIsEmailHistoryDrawerOpen] = useState(false);
+
+  // Debug logging for email history drawer state changes
+  useEffect(() => {
+    console.log('[App] isEmailHistoryDrawerOpen changed:', isEmailHistoryDrawerOpen);
+    if (isEmailHistoryDrawerOpen) {
+      console.log('[App] Drawer opening with selectedEmailContact:', selectedEmailContact);
+    }
+  }, [isEmailHistoryDrawerOpen]);
+  const [workspaceHandlers, setWorkspaceHandlers] = useState<{
+    onCreateWorkspace?: () => void;
+    onJoinWorkspace?: () => void;
+  }>({});
+  const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [celebrationPosition, setCelebrationPosition] = useState({ x: 0, y: 0 });
+  const [shimmerBurstTrigger, setShimmerBurstTrigger] = useState(0);
+  const [shimmerBurstPosition, setShimmerBurstPosition] = useState({ x: 0, y: 0 });
+  const [paperFlyTrigger, setPaperFlyTrigger] = useState(0);
+  const [paperFlyPosition, setPaperFlyPosition] = useState({ x: 0, y: 0 });
+  const [isTeamView, setIsTeamView] = useState(false);
+  const homeFilterPreference = isTeamView ? 'team' : 'personal';
+
+  const handleDealWonClick = (x: number, y: number) => {
+    setCelebrationPosition({ x, y });
+    setCelebrationTrigger(prev => prev + 1);
+  };
+
+  const handlePaymentsClick = (x: number, y: number) => {
+    setShimmerBurstPosition({ x, y });
+    setShimmerBurstTrigger(prev => prev + 1);
+  };
+
+  const handleQuotationsClick = (x: number, y: number) => {
+    setPaperFlyPosition({ x, y });
+    setPaperFlyTrigger(prev => prev + 1);
+  };
+
+  const [currentWorkspace, setCurrentWorkspace] = useState<WorkspaceType | null>(null);
+
+  useEffect(() => {
+    if (focusedCallId) {
+      const focusedCall = getFocusedCall();
+      if (focusedCall && !focusedCall.isMinimized) {
+        setSelectedContact(focusedCall.contact);
+
+        if (focusedCall.callType === 'paymentReminder') {
+          setSelectedInvoice(focusedCall.invoiceData || null);
+          setIsPaymentReminderModalOpen(true);
+          setIsColdCallModalOpen(false);
+          setIsQuoteFollowUpModalOpen(false);
+        } else if (focusedCall.callType === 'quoteFollowUp') {
+          setSelectedQuotation(focusedCall.quotationData || null);
+          setIsQuoteFollowUpModalOpen(true);
+          setIsColdCallModalOpen(false);
+          setIsPaymentReminderModalOpen(false);
+        } else {
+          setIsColdCallModalOpen(true);
+          setIsPaymentReminderModalOpen(false);
+          setIsQuoteFollowUpModalOpen(false);
+        }
+      }
+    }
+  }, [focusedCallId, getFocusedCall]);
+
+  if (isViewingQuote) {
+    return <QuoteView onBackToQuotes={() => {
+      setIsViewingQuote(false);
+      setActivePage('quotations');
+    }} />;
+  }
+
+  if (isCreatingQuote) {
+    return <CreateQuote
+      onBack={() => setIsCreatingQuote(false)}
+      onPublish={() => {
+        setIsCreatingQuote(false);
+        setIsViewingQuote(true);
+      }}
+    />;
+  }
+
+  if (isCreatingInvoice) {
+    return <CreateInvoice
+      onBack={() => {
+        setIsCreatingInvoice(false);
+        setPreSelectedQuoteForInvoice(null);
+      }}
+      onPublish={() => {
+        setIsCreatingInvoice(false);
+        setPreSelectedQuoteForInvoice(null);
+        setActivePage('invoices');
+      }}
+      preSelectedQuote={preSelectedQuoteForInvoice}
+    />;
+  }
+
+  const handleCreateNew = (type: 'contact' | 'company' | 'product' | 'quote' | 'invoice') => {
+    switch (type) {
+      case 'contact':
+        setIsContactDrawerOpen(true);
+        break;
+      case 'company':
+        setIsCompanyDrawerOpen(true);
+        break;
+      case 'product':
+        setIsProductDrawerOpen(true);
+        break;
+      case 'quote':
+        setIsCreatingQuote(true);
+        break;
+      case 'invoice':
+        setIsCreatingInvoice(true);
+        break;
+    }
+  };
+
+  const handleViewCall = (call: CallHistoryRecord) => {
+    setSelectedCall(call);
+    setIsCallDetailsDrawerOpen(true);
+  };
+
+  const handleOpenDeleteModal = (type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation', id: string, name: string) => {
+    setDeleteModalEntity({ type, id, name });
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    if (!isDeletingEntity) {
+      setIsDeleteModalOpen(false);
+      setDeleteModalEntity(null);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModalEntity) return;
+
+    setIsDeletingEntity(true);
+
+    try {
+      const { type, id, name } = deleteModalEntity;
+
+      let error = null;
+
+      switch (type) {
+        case 'contact':
+          const { error: contactError } = await supabase
+            .from('contacts')
+            .delete()
+            .eq('id', id);
+          error = contactError;
+          break;
+
+        case 'company':
+          const { error: companyError } = await supabase
+            .from('companies')
+            .delete()
+            .eq('id', id);
+          error = companyError;
+          break;
+
+        case 'product':
+          const { error: productError } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', id);
+          error = productError;
+          break;
+
+        case 'quotation':
+          console.log('Delete quotation:', id);
+          break;
+
+        case 'invoice':
+          console.log('Delete invoice:', id);
+          break;
+
+        case 'presentation':
+          console.log('Delete presentation:', id);
+          break;
+      }
+
+      if (error) {
+        throw error;
+      }
+
+      setIsDeleteModalOpen(false);
+      setDeleteModalEntity(null);
+
+      const entityLabel = type.charAt(0).toUpperCase() + type.slice(1);
+      showToast(`${entityLabel} removed successfully`, 'success');
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting entity:', error);
+      showToast('Failed to delete. Please try again.', 'error');
+    } finally {
+      setIsDeletingEntity(false);
+    }
+  };
+
+  return (
+    <div className="h-screen text-slate-600 antialiased selection:bg-indigo-100 selection:text-indigo-700 overflow-hidden">
+        <div className="fixed inset-0 -z-10 h-full w-full bg-[#f8fafc]">
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-100/60 blur-[100px] mix-blend-multiply"></div>
+          <div className="absolute top-[10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-sky-100/60 blur-[100px] mix-blend-multiply"></div>
+          <div className="absolute -bottom-20 left-[20%] w-[40%] h-[40%] rounded-full bg-pink-100/60 blur-[100px] mix-blend-multiply"></div>
+        </div>
+        <div className="flex gap-3 h-screen pt-3 pr-3 pb-3 pl-3 gap-x-3 gap-y-3">
+          <Sidebar activePage={activePage} onPageChange={setActivePage} currentWorkspace={currentWorkspace} onCreateNew={handleCreateNew} />
+
+        <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden relative z-30">
+          {activePage === 'account' ? (
+            <SimpleHeader
+              title="Account Settings"
+              subtitle="Manage your profile, security, and preferences."
+            />
+          ) : activePage === 'invoices' ? (
+            <SimpleHeader
+              title="Invoices"
+              subtitle="Track payments, manage billing, and monitor invoice status."
+              showCreateButton={true}
+              onOpenDrawer={() => setIsCreatingInvoice(true)}
+            />
+          ) : activePage === 'call-history' ? (
+            <SimpleHeader
+              title="Call History"
+              subtitle="Review past calls, transcripts, and insights."
+              onBack={() => setActivePage('contacts')}
+            />
+          ) : activePage === 'presentations' ? (
+            <SimpleHeader
+              title="Presentations"
+              subtitle="Record and share video presentations for your quotes and invoices."
+              customButton={{
+                label: 'Record New',
+                icon: 'solar:videocamera-record-bold',
+                onClick: () => setShowRecordModal(true)
+              }}
+            />
+          ) : activePage === 'new-email' ? null : activePage === 'ai-chat' ? null : (
+            <Header
+              activePage={activePage}
+              onOpenDrawer={() => {
+                if (activePage === 'contacts') {
+                  setIsContactDrawerOpen(true);
+                } else if (activePage === 'companies') {
+                  setIsCompanyDrawerOpen(true);
+                } else if (activePage === 'products') {
+                  setIsProductDrawerOpen(true);
+                } else if (activePage === 'quotations') {
+                  setIsCreatingQuote(true);
+                }
+              }}
+              onCreateWorkspace={workspaceHandlers.onCreateWorkspace}
+              onJoinWorkspace={workspaceHandlers.onJoinWorkspace}
+              isTeamView={isTeamView}
+              onToggleView={setIsTeamView}
+            />
+          )}
+
+          {activePage === 'home' ? (
+            <div className="flex-1 overflow-y-auto md:p-8 custom-scrollbar pt-6 pr-6 pb-6 pl-6 space-y-8">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 xl:col-span-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <StatsCard
+                    title="Total Quotations"
+                    value="$3,810,710"
+                    subtitle={
+                      <>
+                        <span className="text-slate-900 font-semibold">24 quotes</span> sent this month
+                      </>
+                    }
+                    icon="solar:document-text-linear"
+                    iconColor="text-slate-400 group-hover:text-blue-500"
+                    titleColor="text-blue-600"
+                  />
+                  <StatsCard
+                    title="Deals Won"
+                    value="12"
+                    subtitle={
+                      <>
+                        Total amount: <span className="text-slate-900 font-semibold">$2,100,450</span>
+                      </>
+                    }
+                    icon="solar:cup-star-linear"
+                    iconColor="text-slate-400 group-hover:text-rose-500"
+                    titleColor="text-rose-600"
+                    onIconClick={handleDealWonClick}
+                  />
+                  <StatsCard
+                    title="Total Revenue"
+                    value="$3,415,820"
+                    subtitle={
+                      <>
+                        <span className="text-slate-900 font-semibold">6 unpaid invoices</span>
+                      </>
+                    }
+                    icon="solar:wallet-money-linear"
+                    iconColor="text-slate-400 group-hover:text-amber-500"
+                    titleColor="text-amber-600"
+                  />
+                  <StatsCard
+                    title="Total Payments"
+                    value="$1,728,950"
+                    subtitle={
+                      <>
+                        <span className="text-slate-900 font-semibold">12 invoices</span> collected
+                      </>
+                    }
+                    icon="solar:cash-out-linear"
+                    iconColor="text-slate-400 group-hover:text-emerald-500"
+                    titleColor="text-emerald-600"
+                    onIconClick={handlePaymentsClick}
+                    iconAnimation="shine"
+                  />
+                </div>
+
+                <ChartCard />
+              </div>
+
+              <div className="col-span-12 xl:col-span-4">
+                <TeamActivity
+                  onViewFullActivity={() => {
+                    setActivePage('workspace');
+                    setTimeout(() => {
+                      document.getElementById('workspace-activity')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                />
+              </div>
+            </div>
+            </div>
+          ) : activePage === 'contacts' ? (
+            <Contacts
+              isTeamView={isTeamView}
+              homeFilterPreference={homeFilterPreference}
+              onColdCallClick={(contact) => {
+                setSelectedContact(contact);
+                setIsColdCallModalOpen(true);
+              }}
+              onViewHistory={() => setActivePage('call-history')}
+              onSendEmail={(contact) => {
+                console.log('[App] Setting selectedEmailContact:', contact.name, 'email:', contact.email);
+                setSelectedEmailContact({ name: contact.name, email: contact.email });
+                setEmailOriginPage('contacts');
+                setActivePage('new-email');
+              }}
+              onViewContact={(contact) => {
+                setSelectedViewContact(contact);
+                setIsViewContactDrawerOpen(true);
+              }}
+              onDeleteContact={(contact) => {
+                handleOpenDeleteModal('contact', contact.id, contact.name);
+              }}
+            />
+          ) : activePage === 'new-email' && selectedEmailContact ? (
+            <NewEmail
+              onBack={() => {
+                setActivePage(emailOriginPage);
+                setSelectedEmailContact(null);
+                setPreSelectedQuote(null);
+                setPreSelectedInvoice(null);
+              }}
+              contactName={selectedEmailContact.name}
+              contactEmail={selectedEmailContact.email}
+              preSelectedQuote={preSelectedQuote}
+              preSelectedInvoice={preSelectedInvoice}
+              onOpenEmailHistory={() => {
+                console.log('[App] Opening email history drawer. selectedEmailContact:', selectedEmailContact);
+                setIsEmailHistoryDrawerOpen(true);
+              }}
+            />
+          ) : activePage === 'companies' ? (
+            <Companies
+              isTeamView={isTeamView}
+              homeFilterPreference={homeFilterPreference}
+              onViewCompany={(company) => {
+                setSelectedViewCompany(company);
+                setIsViewCompanyDrawerOpen(true);
+              }}
+              onDeleteCompany={(company) => {
+                handleOpenDeleteModal('company', company.id, company.name);
+              }}
+            />
+          ) : activePage === 'products' ? (
+            <Products
+              isTeamView={isTeamView}
+              homeFilterPreference={homeFilterPreference}
+              onViewProduct={(product) => {
+                setSelectedViewProduct(product);
+                setIsViewProductDrawerOpen(true);
+              }}
+              onDeleteProduct={(product) => {
+                handleOpenDeleteModal('product', product.id, product.name);
+              }}
+            />
+          ) : activePage === 'quotations' ? (
+            <Quotations
+              isTeamView={isTeamView}
+              homeFilterPreference={homeFilterPreference}
+              onViewQuote={() => {
+                setIsViewingQuote(true);
+              }}
+              onQuoteFollowUpClick={(quotation, contact) => {
+                setSelectedQuotation(quotation);
+                setSelectedContact(contact);
+                setIsQuoteFollowUpModalOpen(true);
+              }}
+              onEmailQuoteClick={(quotation) => {
+                setPreSelectedQuote(quotation);
+                setPreSelectedInvoice(null);
+                setSelectedEmailContact({ name: quotation.client.name, email: undefined });
+                setEmailOriginPage('quotations');
+                setActivePage('new-email');
+              }}
+              onCreateInvoiceClick={(quotation) => {
+                setPreSelectedQuoteForInvoice(quotation);
+                setIsCreatingInvoice(true);
+              }}
+              onAskAIClick={(quotation) => {
+                setSelectedQuoteForAI(quotation);
+                setSelectedInvoiceForAI(null);
+                setAiChatOriginPage('quotations');
+                setActivePage('ai-chat');
+              }}
+              onOpenTemplateBuilder={() => {
+                setTemplateBuilderType('quotation');
+                setIsTemplateBuilderOpen(true);
+              }}
+              onDeleteQuotation={(quotation) => {
+                handleOpenDeleteModal('quotation', quotation.id, quotation.number);
+              }}
+            />
+          ) : activePage === 'invoices' ? (
+            <Invoices
+              isTeamView={isTeamView}
+              homeFilterPreference={homeFilterPreference}
+              onPaymentReminderClick={(invoice, contact) => {
+                setSelectedInvoice(invoice);
+                setSelectedContact(contact);
+                setIsPaymentReminderModalOpen(true);
+              }}
+              onEmailInvoiceClick={(invoice) => {
+                setPreSelectedInvoice(invoice);
+                setPreSelectedQuote(null);
+                setSelectedEmailContact({ name: invoice.client.name, email: undefined });
+                setEmailOriginPage('invoices');
+                setActivePage('new-email');
+              }}
+              onAskAIClick={(invoice) => {
+                setSelectedInvoiceForAI(invoice);
+                setSelectedQuoteForAI(null);
+                setAiChatOriginPage('invoices');
+                setActivePage('ai-chat');
+              }}
+              onOpenTemplateBuilder={() => {
+                setTemplateBuilderType('invoice');
+                setIsTemplateBuilderOpen(true);
+              }}
+              onDeleteInvoice={(invoice) => {
+                handleOpenDeleteModal('invoice', invoice.id, invoice.number);
+              }}
+            />
+          ) : activePage === 'presentations' ? (
+            <Presentations
+              showRecordModal={showRecordModal}
+              onCloseRecordModal={() => setShowRecordModal(false)}
+              onDeletePresentation={(presentation) => {
+                handleOpenDeleteModal('presentation', presentation.id, presentation.title);
+              }}
+            />
+          ) : activePage === 'workspace' ? (
+            <Workspace onRegisterHandlers={setWorkspaceHandlers} onWorkspaceChange={setCurrentWorkspace} />
+          ) : activePage === 'account' ? (
+            <AccountProfile />
+          ) : activePage === 'call-history' ? (
+            <CallHistory onBack={() => setActivePage('contacts')} onViewCall={handleViewCall} />
+          ) : activePage === 'ai-chat' ? (
+            <AIChat
+              onBack={() => {
+                setActivePage(aiChatOriginPage);
+                setSelectedQuoteForAI(null);
+                setSelectedInvoiceForAI(null);
+              }}
+              quotation={selectedQuoteForAI}
+              invoice={selectedInvoiceForAI}
+              originPage={aiChatOriginPage}
+            />
+          ) : null}
+        </main>
+      </div>
+
+      <AddContactDrawer isOpen={isContactDrawerOpen} onClose={() => setIsContactDrawerOpen(false)} />
+      <AddCompanyDrawer isOpen={isCompanyDrawerOpen} onClose={() => setIsCompanyDrawerOpen(false)} />
+      <AddProductDrawer isOpen={isProductDrawerOpen} onClose={() => setIsProductDrawerOpen(false)} />
+      <ViewContactDrawer
+        isOpen={isViewContactDrawerOpen}
+        onClose={() => {
+          setIsViewContactDrawerOpen(false);
+          setSelectedViewContact(null);
+        }}
+        contact={selectedViewContact}
+      />
+      <ViewCompanyDrawer
+        isOpen={isViewCompanyDrawerOpen}
+        onClose={() => {
+          setIsViewCompanyDrawerOpen(false);
+          setSelectedViewCompany(null);
+        }}
+        company={selectedViewCompany}
+      />
+      <ViewProductDrawer
+        isOpen={isViewProductDrawerOpen}
+        onClose={() => {
+          setIsViewProductDrawerOpen(false);
+          setSelectedViewProduct(null);
+        }}
+        product={selectedViewProduct}
+      />
+      <EmailHistoryDrawer
+        isOpen={isEmailHistoryDrawerOpen}
+        onClose={() => setIsEmailHistoryDrawerOpen(false)}
+        onComposeEmail={(recipient) => {
+          setSelectedEmailContact({ name: recipient.name, email: recipient.email });
+          setActivePage('new-email');
+        }}
+        contactEmail={selectedEmailContact?.email}
+        contactName={selectedEmailContact?.name}
+      />
+      {isTemplateBuilderOpen && (
+        <TemplateBuilder
+          onClose={() => setIsTemplateBuilderOpen(false)}
+          templateType={templateBuilderType}
+        />
+      )}
+      <CallDetailsDrawer
+        isOpen={isCallDetailsDrawerOpen}
+        onClose={() => {
+          setIsCallDetailsDrawerOpen(false);
+          setSelectedCall(null);
+        }}
+        call={selectedCall}
+      />
+      <ColdCallModal
+        isOpen={isColdCallModalOpen}
+        onClose={() => {
+          setIsColdCallModalOpen(false);
+          setSelectedContact(null);
+        }}
+        contact={selectedContact}
+        onNavigateToHistory={() => setActivePage('call-history')}
+      />
+      <PaymentReminderModal
+        isOpen={isPaymentReminderModalOpen}
+        onClose={() => {
+          setIsPaymentReminderModalOpen(false);
+          setSelectedContact(null);
+          setSelectedInvoice(null);
+        }}
+        invoice={selectedInvoice}
+        contact={selectedContact}
+        onNavigateToHistory={() => setActivePage('call-history')}
+      />
+      <QuoteFollowUpModal
+        isOpen={isQuoteFollowUpModalOpen}
+        onClose={() => {
+          setIsQuoteFollowUpModalOpen(false);
+          setSelectedContact(null);
+          setSelectedQuotation(null);
+        }}
+        quotation={selectedQuotation}
+        contact={selectedContact}
+        onNavigateToHistory={() => setActivePage('call-history')}
+      />
+      <Celebration trigger={celebrationTrigger} originX={celebrationPosition.x} originY={celebrationPosition.y} />
+      <TreasureBurst trigger={shimmerBurstTrigger} originX={shimmerBurstPosition.x} originY={shimmerBurstPosition.y} />
+      <PaperFly trigger={paperFlyTrigger} originX={paperFlyPosition.x} originY={paperFlyPosition.y} />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        entityType={deleteModalEntity?.type || 'contact'}
+        entityName={deleteModalEntity?.name}
+        isDeleting={isDeletingEntity}
+      />
+      <MinimizedCallsBar />
+    </div>
+  );
+}
+
+function CallManagerWithToast({ children }: { children: React.ReactNode }) {
+  const { showToast } = useToast();
+
+  return (
+    <CallManagerProvider onError={(message) => showToast(message, 'warning')}>
+      {children}
+    </CallManagerProvider>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <CallManagerWithToast>
+        <AppContent />
+      </CallManagerWithToast>
+    </ToastProvider>
+  );
+}
+
+export default App;
