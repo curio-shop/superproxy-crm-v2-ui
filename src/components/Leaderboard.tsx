@@ -366,13 +366,13 @@ export default function Leaderboard() {
               return (
                 <div
                   key={entry.id}
-                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col`}
+                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col overflow-hidden`}
                 >
-                  <div className="absolute top-3 left-3 flex items-center justify-center h-6 w-6 rounded-lg bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-sm">
-                    <span className="text-xs font-bold text-slate-700">#{entry.rank}</span>
+                  <div className="absolute top-2 right-3 text-7xl font-black text-slate-900 opacity-50 leading-none pointer-events-none select-none">
+                    {entry.rank}
                   </div>
 
-                  <div className="flex flex-col items-center text-center flex-1">
+                  <div className="flex flex-col items-center text-center flex-1 relative z-10">
                     <div className="relative mb-3">
                       <div className="relative h-16 w-16 rounded-full overflow-hidden shadow-lg ring-4 ring-white">
                         <img
