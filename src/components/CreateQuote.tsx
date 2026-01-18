@@ -1,6 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useMemo, useCallback } from 'react';
 import AddProductDrawer from './AddProductDrawer';
 
 interface CreateQuoteProps {
@@ -180,27 +179,98 @@ const CURRENCIES = [
   { value: 'AUD', label: 'AUD (A$)' },
 ];
 
+const MOCK_PRODUCTS: Product[] = [
+  {
+    id: '1',
+    name: 'PREFAB CONTAINER',
+    description: 'Standard prefab container unit',
+    price: 295000.00,
+    sku: 'PC-001',
+    category: 'Construction',
+    is_custom: false,
+  },
+  {
+    id: '2',
+    name: 'Smart Prefab Container Office',
+    description: 'Premium smart office container with modern amenities',
+    price: 598000.00,
+    sku: 'SPCO-001',
+    category: 'Construction',
+    is_custom: false,
+  },
+  {
+    id: '3',
+    name: 'Installation Fee',
+    description: 'Professional installation service',
+    price: 50000.00,
+    sku: null,
+    category: 'Services',
+    is_custom: true,
+  },
+  {
+    id: '4',
+    name: 'Electrical Wiring Setup',
+    description: 'Complete electrical wiring and setup',
+    price: 35000.00,
+    sku: null,
+    category: 'Services',
+    is_custom: true,
+  },
+  {
+    id: '5',
+    name: 'Modular Container House',
+    description: 'Modern modular container home with 2 bedrooms',
+    price: 850000.00,
+    sku: 'MCH-002',
+    category: 'Construction',
+    is_custom: false,
+  },
+  {
+    id: '6',
+    name: 'Container Pool',
+    description: 'Shipping container converted into swimming pool',
+    price: 420000.00,
+    sku: 'CP-003',
+    category: 'Leisure',
+    is_custom: false,
+  },
+  {
+    id: '7',
+    name: 'Site Preparation',
+    description: 'Land preparation and foundation work',
+    price: 75000.00,
+    sku: null,
+    category: 'Services',
+    is_custom: true,
+  },
+];
+
+const MOCK_WORKSPACE = {
+  id: 'mock-workspace-1',
+  name: 'Superproxy Inc.',
+  logo_url: '/superproxy_logo_(2).jpg',
+  address: '123 Tech Street, Manila',
+};
+
+const MOCK_USER = {
+  user_name: 'Melwyn Arrubio',
+  user_email: 'melwyn@superproxy.com',
+  position: 'Sales Manager',
+  phone: '+639175328910',
+  profile_photo_url: null,
+};
+
 export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   const [quoteName, setQuoteName] = useState('Untitled Quote');
   const [currency, setCurrency] = useState('PHP');
   const [currentStep, setCurrentStep] = useState(1);
-  const [companyData, setCompanyData] = useState<Workspace | null>(null);
+  const [companyData] = useState<Workspace>(MOCK_WORKSPACE);
   const [selectedContactId, setSelectedContactId] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [currentUser, setCurrentUser] = useState<{
-    user_name: string;
-    user_email: string;
-    position?: string;
-    phone?: string;
-    profile_photo_url?: string;
-  } | null>(null);
-  const [workspaceDetails, setWorkspaceDetails] = useState<{
-    name: string;
-    address?: string;
-    logo_url?: string;
-  } | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [currentUser] = useState(MOCK_USER);
+  const [workspaceDetails] = useState(MOCK_WORKSPACE);
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const [productSearchQuery, setProductSearchQuery] = useState('');
@@ -220,139 +290,12 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   const [termsOfSale, setTermsOfSale] = useState(
     `1. Payment Terms: Payment is due within 30 days of invoice date. Late payments may incur a 1.5% monthly interest charge.\n\n2. Delivery: Estimated delivery times are provided in good faith but are not guaranteed. We are not liable for delays beyond our control.\n\n3. Returns & Refunds: Products may be returned within 14 days of delivery in original condition. Custom products are non-refundable.\n\n4. Warranty: All products come with a standard manufacturer's warranty. Extended warranties are available upon request.\n\n5. Limitation of Liability: Our liability is limited to the total value of this quotation. We are not liable for indirect or consequential damages.`
   );
-  const [isLoading, setIsLoading] = useState(true);
 
   const mockReferenceNumber = useMemo(() => {
     const year = new Date().getFullYear();
     const randomNum = Math.floor(Math.random() * 900) + 100;
     return `QT-${year}-${randomNum}`;
   }, []);
-
-  useEffect(() => {
-    const fetchWorkspaceData = async () => {
-      try {
-        const { data: workspaceData, error: workspaceError } = await supabase
-          .from('workspaces')
-          .select('id, name, logo_url, address')
-          .limit(1)
-          .maybeSingle();
-
-        if (workspaceData && !workspaceError) {
-          setCompanyData(workspaceData);
-          setWorkspaceDetails(workspaceData);
-
-          const { data: memberData, error: memberError } = await supabase
-            .from('workspace_members')
-            .select('user_name, user_email, position, phone, profile_photo_url')
-            .eq('workspace_id', workspaceData.id)
-            .eq('role', 'owner')
-            .maybeSingle();
-
-          if (memberData && !memberError) {
-            setCurrentUser(memberData);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching workspace data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWorkspaceData();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('name');
-
-      if (data && !error && data.length > 0) {
-        setProducts(data);
-      } else {
-        setProducts([
-          {
-            id: '1',
-            name: 'PREFAB CONTAINER',
-            description: 'Standard prefab container unit',
-            price: 295000.00,
-            sku: 'PC-001',
-            category: 'Construction',
-            is_custom: false,
-          },
-          {
-            id: '2',
-            name: 'Smart Prefab Container Office',
-            description: 'Premium smart office container with modern amenities',
-            price: 598000.00,
-            sku: 'SPCO-001',
-            category: 'Construction',
-            is_custom: false,
-          },
-          {
-            id: '3',
-            name: 'Installation Fee',
-            description: 'Professional installation service',
-            price: 50000.00,
-            sku: null,
-            category: 'Services',
-            is_custom: true,
-          },
-          {
-            id: '4',
-            name: 'Electrical Wiring Setup',
-            description: 'Complete electrical wiring and setup',
-            price: 35000.00,
-            sku: null,
-            category: 'Services',
-            is_custom: true,
-          },
-          {
-            id: '5',
-            name: 'Modular Container House',
-            description: 'Modern modular container home with 2 bedrooms',
-            price: 850000.00,
-            sku: 'MCH-002',
-            category: 'Construction',
-            is_custom: false,
-          },
-          {
-            id: '6',
-            name: 'Container Pool',
-            description: 'Shipping container converted into swimming pool',
-            price: 420000.00,
-            sku: 'CP-003',
-            category: 'Leisure',
-            is_custom: false,
-          },
-          {
-            id: '7',
-            name: 'Site Preparation',
-            description: 'Land preparation and foundation work',
-            price: 75000.00,
-            sku: null,
-            category: 'Services',
-            is_custom: true,
-          },
-        ]);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <p className="text-slate-600 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   const handleContactChange = (contactId: string) => {
     setSelectedContactId(contactId);

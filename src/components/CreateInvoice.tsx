@@ -1,6 +1,5 @@
 import { Icon } from '@iconify/react';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
 
 interface CreateInvoiceProps {
   onBack: () => void;
@@ -101,6 +100,15 @@ const INVOICE_STEPS = [
   { id: 3, label: 'Review' },
 ];
 
+const MOCK_WORKSPACE: Workspace = {
+  id: 'mock-workspace-1',
+  name: 'Superproxy Inc.',
+  logo_url: '/superproxy_logo_(2).jpg',
+  address: '123 Tech Street, Manila',
+  company_email: 'contact@superproxy.com',
+  company_phone: '+639175328910',
+};
+
 export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: CreateInvoiceProps) {
   const [invoiceTitle, setInvoiceTitle] = useState('Untitled Invoice');
   const [currentStep, setCurrentStep] = useState(1);
@@ -118,9 +126,8 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   const [billingDetails, setBillingDetails] = useState(
     `Payment is due within 30 days of invoice date.\n\nAccepted payment methods:\n- Bank transfer\n- Credit card\n- Check\n\nLate payments may incur a 1.5% monthly interest charge.`
   );
-  const [workspaceDetails, setWorkspaceDetails] = useState<Workspace | null>(null);
+  const [workspaceDetails] = useState<Workspace>(MOCK_WORKSPACE);
   const [currency] = useState('PHP');
-  const [isLoading, setIsLoading] = useState(true);
 
   const quoteDropdownRef = useRef<HTMLDivElement>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement>(null);
@@ -129,48 +136,6 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
     const year = new Date().getFullYear();
     const randomNum = Math.floor(Math.random() * 900) + 100;
     return `INV-${year}-${randomNum}`;
-  }, []);
-
-  useEffect(() => {
-    const fetchWorkspaceData = async () => {
-      try {
-        const { data: workspaceData, error: workspaceError } = await supabase
-          .from('workspaces')
-          .select('id, name, logo_url, address, company_email, company_phone')
-          .limit(1)
-          .maybeSingle();
-
-        if (workspaceData && !workspaceError) {
-          setWorkspaceDetails(workspaceData);
-        }
-      } catch (error) {
-        console.error('Error fetching workspace data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWorkspaceData();
-  }, []);
-
-  useEffect(() => {
-    // Using mock data for prototyping
-    // Uncomment below to fetch real quotations from database
-    /*
-    const fetchQuotations = async () => {
-      const { data, error } = await supabase
-        .from('quotations')
-        .select('*')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
-
-      if (data && !error) {
-        setQuotations(data);
-      }
-    };
-
-    fetchQuotations();
-    */
   }, []);
 
   useEffect(() => {
@@ -214,17 +179,6 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
       setInvoiceTitle(`Invoice for ${preSelectedQuote.title}`);
     }
   }, [preSelectedQuote]);
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <p className="text-slate-600 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   const amountDueNow = useMemo(() => {
     if (!selectedQuote) return 0;
