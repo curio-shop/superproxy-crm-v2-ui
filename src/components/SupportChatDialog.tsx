@@ -92,7 +92,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
         className="fixed bottom-24 right-6 w-[380px] h-[550px] bg-white shadow-2xl flex flex-col rounded-2xl border border-slate-200 animate-in slide-in-from-bottom-8 fade-in duration-300"
         style={{ zIndex: Z_INDEX.chatDialog + 1 }}
       >
-        <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-4 flex items-center justify-between rounded-t-2xl">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <Icon icon="solar:chat-round-dots-bold" width="20" />
@@ -101,7 +101,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
               <h2 className="text-base font-semibold">Support Chat</h2>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <p className="text-xs text-slate-300">Online</p>
+                <p className="text-xs text-blue-100">Online</p>
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
-              <Icon icon="svg-spinners:270-ring-with-bg" width="40" className="text-slate-700" />
+              <Icon icon="svg-spinners:270-ring-with-bg" width="40" className="text-blue-600" />
             </div>
           ) : (
             <>
@@ -148,10 +148,10 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
                               <img
                                 src={msg.sender_avatar}
                                 alt={msg.sender_name}
-                                className="w-7 h-7 rounded-full object-cover"
+                                className="w-7 h-7 rounded-full"
                               />
                             ) : (
-                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white text-xs font-semibold shadow-sm">
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-xs font-semibold shadow-sm">
                                 {msg.sender_name.charAt(0)}
                               </div>
                             )}
@@ -164,7 +164,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
                           <div
                             className={`rounded-2xl px-4 py-2.5 ${
                               msg.sender_type === 'user'
-                                ? 'bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-md'
+                                ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-md'
                                 : 'bg-white text-slate-800 shadow-sm border border-slate-200'
                             }`}
                           >
@@ -195,7 +195,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent text-sm transition-all"
+                className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all"
                 disabled={isSending}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -215,7 +215,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
             <button
               type="submit"
               disabled={!newMessage.trim() || isSending}
-              className="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-full p-3 hover:from-slate-700 hover:to-slate-800 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:shadow-none"
+              className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full p-3 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:shadow-none"
               aria-label="Send message"
             >
               {isSending ? (

@@ -14,7 +14,7 @@ export default function FloatingChatButton({ unreadCount, onClick, isOpen, isVis
   return (
     <button
       onClick={onClick}
-      className={`fixed bottom-6 right-6 bg-gradient-to-br from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-110 ${isOpen ? '' : 'animate-in fade-in slide-in-from-bottom-4'}`}
+      className={`fixed bottom-6 right-6 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-110 ${isOpen ? '' : 'animate-in fade-in slide-in-from-bottom-4'}`}
       style={{ zIndex: Z_INDEX.FLOATING_CHAT_BUTTON }}
       aria-label={isOpen ? "Close support chat" : "Open support chat"}
     >
