@@ -26,11 +26,6 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Debug logging for dialog state
-  useEffect(() => {
-    console.log('[SupportChatDialog] isOpen changed:', isOpen);
-  }, [isOpen]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -97,26 +92,17 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
         className="fixed bottom-24 right-6 w-[380px] h-[550px] bg-white shadow-2xl flex flex-col rounded-2xl border border-slate-200 animate-in slide-in-from-bottom-8 fade-in duration-300"
         style={{ zIndex: Z_INDEX.chatDialog + 1 }}
       >
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between rounded-t-2xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <Icon icon="solar:chat-round-dots-bold" width="20" />
-            </div>
-            <div>
-              <h2 className="text-base font-semibold">Support Chat</h2>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <p className="text-xs text-blue-100">Online</p>
-              </div>
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center gap-3 rounded-t-2xl">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+            <Icon icon="solar:chat-round-dots-bold" width="20" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold">Chat With Our Team</h2>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <p className="text-xs text-blue-100">Online</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
-            aria-label="Close chat"
-          >
-            <Icon icon="solar:close-circle-bold" width="24" />
-          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
