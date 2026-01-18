@@ -40,7 +40,7 @@ export const zIndex = {
   // Panels
   drawer: 100,
   chatDialog: 150,
-  floatingChatButton: 150,
+  floatingChatButton: 151,
 
   // Modals
   modal: 200,

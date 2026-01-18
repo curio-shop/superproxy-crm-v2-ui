@@ -148,7 +148,7 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
                               <img
                                 src={msg.sender_avatar}
                                 alt={msg.sender_name}
-                                className="w-7 h-7 rounded-full"
+                                className="w-7 h-7 rounded-full object-cover"
                               />
                             ) : (
                               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-xs font-semibold shadow-sm">
