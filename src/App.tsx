@@ -90,29 +90,8 @@ function AppContent() {
   });
   const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
 
-  // Debug logging for account tab and page changes
-  useEffect(() => {
-    console.log('[App] State changed:', {
-      activePage,
-      activeAccountTab,
-      chatButtonShouldBeVisible: activePage === 'account' && activeAccountTab === 'contact'
-    });
-  }, [activePage, activeAccountTab]);
-
-  // Debug logging for selectedEmailContact changes
-  useEffect(() => {
-    console.log('[App] selectedEmailContact changed:', selectedEmailContact);
-  }, [selectedEmailContact]);
   const [isCallDetailsDrawerOpen, setIsCallDetailsDrawerOpen] = useState(false);
   const [isEmailHistoryDrawerOpen, setIsEmailHistoryDrawerOpen] = useState(false);
-
-  // Debug logging for email history drawer state changes
-  useEffect(() => {
-    console.log('[App] isEmailHistoryDrawerOpen changed:', isEmailHistoryDrawerOpen);
-    if (isEmailHistoryDrawerOpen) {
-      console.log('[App] Drawer opening with selectedEmailContact:', selectedEmailContact);
-    }
-  }, [isEmailHistoryDrawerOpen]);
   const [workspaceHandlers, setWorkspaceHandlers] = useState<{
     onCreateWorkspace?: () => void;
     onJoinWorkspace?: () => void;
@@ -489,7 +468,6 @@ function AppContent() {
               }}
               onViewHistory={() => setActivePage('call-history')}
               onSendEmail={(contact) => {
-                console.log('[App] Setting selectedEmailContact:', contact.name, 'email:', contact.email);
                 setSelectedEmailContact({ name: contact.name, email: contact.email });
                 setEmailOriginPage('contacts');
                 setActivePage('new-email');
@@ -515,7 +493,6 @@ function AppContent() {
               preSelectedQuote={preSelectedQuote}
               preSelectedInvoice={preSelectedInvoice}
               onOpenEmailHistory={() => {
-                console.log('[App] Opening email history drawer. selectedEmailContact:', selectedEmailContact);
                 setIsEmailHistoryDrawerOpen(true);
               }}
             />

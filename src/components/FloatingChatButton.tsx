@@ -1,5 +1,4 @@
 import { Icon } from '@iconify/react';
-import { useEffect } from 'react';
 import { Z_INDEX } from '../lib/zIndex';
 
 interface FloatingChatButtonProps {
@@ -10,13 +9,7 @@ interface FloatingChatButtonProps {
 }
 
 export default function FloatingChatButton({ unreadCount, onClick, isOpen, isVisible }: FloatingChatButtonProps) {
-  // Debug logging for visibility changes
-  useEffect(() => {
-    console.log('[FloatingChatButton] Props changed:', { isVisible, isOpen, unreadCount });
-  }, [isVisible, isOpen, unreadCount]);
-
   if (!isVisible) {
-    console.log('[FloatingChatButton] Not rendering - isVisible is false');
     return null;
   }
 
@@ -24,7 +17,7 @@ export default function FloatingChatButton({ unreadCount, onClick, isOpen, isVis
     <button
       onClick={onClick}
       className={`fixed bottom-6 right-6 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-110 ${isOpen ? '' : 'animate-in fade-in slide-in-from-bottom-4'}`}
-      style={{ zIndex: Z_INDEX.FLOATING_CHAT_BUTTON }}
+      style={{ zIndex: Z_INDEX.floatingChatButton }}
       aria-label={isOpen ? "Close support chat" : "Open support chat"}
     >
       <Icon
