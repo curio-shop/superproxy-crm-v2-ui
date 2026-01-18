@@ -1,0 +1,99 @@
+import { Icon } from '@iconify/react';
+
+interface PricingCardProps {
+  onUpgradeClick: () => void;
+}
+
+export default function PricingCard({ onUpgradeClick }: PricingCardProps) {
+  const features = [
+    'Unlimited quotations, invoices, and presentations',
+    'No watermarks on any documents',
+    'Team collaboration with shared access',
+    'Full access to AI features and smart calling',
+    'Priority support and dedicated account manager',
+  ];
+
+  return (
+    <div className="relative w-full max-w-5xl">
+      <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl shadow-slate-200/60 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="relative z-10 p-8 md:p-12 lg:p-14">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div className="flex items-start gap-5">
+              <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                <Icon icon="solar:crown-linear" width="24" className="text-amber-400" />
+              </div>
+
+              <div className="space-y-1">
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+                  Free Trial
+                </h2>
+                <p className="text-sm font-medium text-slate-500">
+                  14 days remaining
+                </p>
+              </div>
+            </div>
+
+            <div className="self-start">
+              <span className="inline-flex items-center px-3 py-1 rounded-lg border border-amber-200 bg-amber-50 text-[11px] font-semibold tracking-wider text-amber-600 uppercase shadow-sm">
+                Trial
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-10 flex items-baseline gap-2">
+            <span className="text-6xl md:text-7xl font-semibold tracking-tighter text-slate-900">
+              $9
+            </span>
+            <span className="text-lg text-slate-500 font-medium">/month</span>
+          </div>
+
+          <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl font-light">
+            Unlock unlimited potential with multiple workspaces, team
+            collaboration, and advanced features. No lock-in period, cancel
+            anytime.
+          </p>
+
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent my-10"></div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-end">
+            <div className="lg:col-span-3">
+              <ul className="flex flex-col gap-4">
+                {features.map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3.5 group">
+                    <Icon
+                      icon="solar:check-circle-bold"
+                      width="20"
+                      className="text-emerald-500 mt-0.5 shrink-0 transition-transform group-hover:scale-110 duration-300"
+                    />
+                    <span className="text-base text-slate-600 font-light group-hover:text-slate-900 transition-colors">
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:col-span-2 w-full">
+              <button
+                onClick={onUpgradeClick}
+                className="group relative w-full flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-slate-800 transition-all duration-300 rounded-xl py-4 px-6 shadow-xl shadow-slate-900/10 hover:shadow-2xl hover:shadow-slate-900/20 hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <Icon
+                  icon="solar:rocket-2-linear"
+                  width="20"
+                  className="transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 rotate-45"
+                />
+                <span className="font-semibold text-sm tracking-wide">
+                  Upgrade to Professional
+                </span>
+              </button>
+              <p className="text-center text-xs mt-4 text-slate-400">
+                Secure payment • Cancel anytime
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

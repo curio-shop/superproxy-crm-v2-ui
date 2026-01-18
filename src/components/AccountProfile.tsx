@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import PricingCard from './PricingCard';
 
 interface AccountProfileProps {
   activeTab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact';
@@ -622,97 +623,9 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
 
             {activeTab === 'billing' && (
               <div className="space-y-6">
-                <div className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-700/50">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-emerald-500/5"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_50%)]"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.08),transparent_50%)]"></div>
-
-                  <div className="relative p-8">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="absolute inset-0 bg-amber-400 blur-xl opacity-40 rounded-full"></div>
-                          <Icon icon="solar:crown-bold" width="26" className="text-amber-400 relative drop-shadow-lg" />
-                        </div>
-                        <div>
-                          <h2 className="text-2xl font-bold text-white tracking-tight">Free Trial</h2>
-                          <p className="text-slate-400 text-sm">14 days remaining</p>
-                        </div>
-                      </div>
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-xl"></div>
-                        <span className="relative px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-300 rounded-lg text-xs font-bold border border-amber-400/40 tracking-wider shadow-lg backdrop-blur-sm">
-                          TRIAL
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold text-white tracking-tight">$9</span>
-                        <span className="text-slate-400 text-sm">/month</span>
-                      </div>
-                      <p className="text-slate-300 text-sm leading-relaxed">
-                        Unlock unlimited potential with multiple workspaces, team collaboration, and advanced features. No lock-in period, cancel anytime.
-                      </p>
-                      <ul className="space-y-2.5 text-sm">
-                        <li className="flex items-start gap-2.5">
-                          <div className="flex-shrink-0 mt-0.5">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"></div>
-                              <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
-                            </div>
-                          </div>
-                          <span className="text-slate-200 font-medium">Unlimited quotations, invoices, and presentations</span>
-                        </li>
-                        <li className="flex items-start gap-2.5">
-                          <div className="flex-shrink-0 mt-0.5">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"></div>
-                              <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
-                            </div>
-                          </div>
-                          <span className="text-slate-200 font-medium">No watermarks on any documents</span>
-                        </li>
-                        <li className="flex items-start gap-2.5">
-                          <div className="flex-shrink-0 mt-0.5">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"></div>
-                              <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
-                            </div>
-                          </div>
-                          <span className="text-slate-200 font-medium">Team collaboration with shared access</span>
-                        </li>
-                        <li className="flex items-start gap-2.5">
-                          <div className="flex-shrink-0 mt-0.5">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"></div>
-                              <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
-                            </div>
-                          </div>
-                          <span className="text-slate-200 font-medium">Full access to AI features and smart calling</span>
-                        </li>
-                        <li className="flex items-start gap-2.5">
-                          <div className="flex-shrink-0 mt-0.5">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"></div>
-                              <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
-                            </div>
-                          </div>
-                          <span className="text-slate-200 font-medium">Priority support and dedicated account manager</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <button
-                      onClick={() => window.open('https://billing.stripe.com', '_blank')}
-                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl"
-                    >
-                      <Icon icon="solar:rocket-2-bold" width="18" />
-                      Upgrade to Superporxy Professional Now
-                    </button>
-                  </div>
-                </div>
+                <PricingCard
+                  onUpgradeClick={() => window.open('https://billing.stripe.com', '_blank')}
+                />
 
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                   <div className="p-6 border-b border-slate-100">
