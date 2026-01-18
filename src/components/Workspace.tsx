@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import Leaderboard from './Leaderboard';
 
 interface WorkspaceProps {
   onRegisterHandlers?: (handlers: {
@@ -1063,6 +1064,8 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
               </div>
             </div>
           </div>
+
+          <Leaderboard />
 
           {currentWorkspace.profile && (
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
