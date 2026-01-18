@@ -20,6 +20,7 @@ export interface Workspace {
   phone: string | null;
   email: string | null;
   profile: string | null;
+  show_leaderboard: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +55,7 @@ const mockWorkspaces: Workspace[] = [
     phone: '+66 2 123 4567',
     email: 'hello@admoremedia.com',
     profile: 'A modern business solutions company focused on delivering exceptional value through innovative technology and outstanding customer service.',
+    show_leaderboard: true,
     created_at: '2024-01-15T10:00:00Z',
     updated_at: '2024-12-30T10:00:00Z',
   },
@@ -66,6 +68,7 @@ const mockWorkspaces: Workspace[] = [
     phone: '+1 415 555 0123',
     email: 'contact@roccofurnishings.com',
     profile: 'Leading provider of innovative solutions for enterprise businesses worldwide.',
+    show_leaderboard: true,
     created_at: '2024-03-20T10:00:00Z',
     updated_at: '2024-12-28T10:00:00Z',
   },
@@ -78,6 +81,7 @@ const mockWorkspaces: Workspace[] = [
     phone: '+1 512 555 0456',
     email: 'hello@sugrfind.com',
     profile: 'Empowering startups with cutting-edge technology and innovative software solutions.',
+    show_leaderboard: true,
     created_at: '2024-06-10T10:00:00Z',
     updated_at: '2024-12-29T10:00:00Z',
   },
@@ -532,6 +536,7 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
       phone: newWorkspace.phone || null,
       email: newWorkspace.email || null,
       profile: newWorkspace.profile || null,
+      show_leaderboard: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -1065,7 +1070,7 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
             </div>
           </div>
 
-          <Leaderboard />
+          {currentWorkspace.show_leaderboard && <Leaderboard />}
 
           {currentWorkspace.profile && (
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -1305,6 +1310,36 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
                   <p className="text-xs text-slate-500 mt-1.5">
                     A brief description that helps others understand your business
                   </p>
+                </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-slate-200">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
+                  Display Preferences
+                </label>
+                <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Icon icon="solar:chart-bold" width="16" className="text-slate-600" />
+                      <span className="text-sm font-semibold text-slate-900">Sales Leaderboard</span>
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      Show or hide the sales leaderboard section in your workspace
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEditingWorkspace({ ...editingWorkspace, show_leaderboard: !editingWorkspace.show_leaderboard })}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 ${
+                      editingWorkspace.show_leaderboard ? 'bg-slate-900' : 'bg-slate-300'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                        editingWorkspace.show_leaderboard ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
 
