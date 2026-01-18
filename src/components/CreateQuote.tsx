@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import AddProductDrawer from './AddProductDrawer';
 
@@ -370,9 +370,9 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
     });
   };
 
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
 
-  const calculateExpiryDate = () => {
+  const validUntil = useMemo(() => {
     const date = new Date(today);
     if (expiryPeriod === 'custom') {
       date.setDate(date.getDate() + customExpiryDays);
@@ -380,9 +380,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
       date.setDate(date.getDate() + parseInt(expiryPeriod));
     }
     return date;
-  };
-
-  const validUntil = calculateExpiryDate();
+  }, [today, expiryPeriod, customExpiryDays]);
 
   const selectedContact = useMemo(
     () => CONTACTS.find((c) => c.id === selectedContactId),
@@ -726,7 +724,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                           className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all placeholder:text-slate-400 hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm"
                         >
                           <option value="">Select a contact</option>
-                          {contacts.map((contact) => (
+                          {CONTACTS.map((contact) => (
                             <option key={contact.id} value={contact.id}>
                               {contact.name} {contact.email ? `(${contact.email})` : ''}
                             </option>
@@ -779,7 +777,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                           className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all placeholder:text-slate-400 hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm"
                         >
                           <option value="">Select a company</option>
-                          {companies.map((company) => (
+                          {COMPANIES.map((company) => (
                             <option key={company.id} value={company.id}>
                               {company.name}
                             </option>
@@ -1492,7 +1490,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                       <div className="p-3 rounded-lg bg-slate-50 border border-slate-100">
                         <p className="text-xs text-slate-600">
                           <span className="font-semibold text-slate-700">Quote will expire on:</span>{' '}
-                          {formatDate(calculateExpiryDate())}
+                          {formatDate(validUntil)}
                         </p>
                       </div>
                     </div>
@@ -1794,7 +1792,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                           </div>
                           <div className="space-y-1">
                             <p className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider">Expires On</p>
-                            <p className="text-xs text-slate-700">{formatDate(calculateExpiryDate())}</p>
+                            <p className="text-xs text-slate-700">{formatDate(validUntil)}</p>
                           </div>
                         </div>
                       </div>

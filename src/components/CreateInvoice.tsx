@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface CreateInvoiceProps {
@@ -226,19 +226,19 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
     );
   }
 
-  const calculateAmountDueNow = () => {
+  const amountDueNow = useMemo(() => {
     if (!selectedQuote) return 0;
     const percentage = parseFloat(amountDueNowPercentage) || 0;
     return (selectedQuote.total_amount * percentage) / 100;
-  };
+  }, [selectedQuote, amountDueNowPercentage]);
 
-  const calculateDueDate = () => {
+  const dueDate = useMemo(() => {
     const today = new Date();
-    const dueDate = new Date(today);
+    const dueDateCalc = new Date(today);
     const days = invoiceDueInDays === 'custom' ? (parseInt(customDays) || 30) : invoiceDueInDays;
-    dueDate.setDate(dueDate.getDate() + days);
-    return dueDate;
-  };
+    dueDateCalc.setDate(dueDateCalc.getDate() + days);
+    return dueDateCalc;
+  }, [invoiceDueInDays, customDays]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-PH', {
@@ -644,7 +644,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                       </div>
                       {selectedQuote && parseFloat(amountDueNowPercentage) > 0 && (
                         <p className="text-xs text-slate-500 mt-2">
-                          Amount due now: <span className="font-semibold text-slate-900">{formatCurrency(calculateAmountDueNow())}</span>
+                          Amount due now: <span className="font-semibold text-slate-900">{formatCurrency(amountDueNow)}</span>
                         </p>
                       )}
                     </div>
@@ -732,7 +732,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                         />
                       )}
                       <p className="text-xs text-slate-500 mt-2">
-                        Invoice due on: <span className="font-semibold text-slate-900">{formatDate(calculateDueDate().toISOString().split('T')[0])}</span>
+                        Invoice due on: <span className="font-semibold text-slate-900">{formatDate(dueDate.toISOString().split('T')[0])}</span>
                       </p>
                     </div>
 
@@ -850,7 +850,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                             Amount Due Now
                           </p>
                           <p className="text-2xl font-bold text-blue-600">
-                            {formatCurrency(calculateAmountDueNow())}
+                            {formatCurrency(amountDueNow)}
                           </p>
                           <p className="text-xs text-slate-500 mt-1.5">
                             {parseFloat(amountDueNowPercentage) || 0}% of total
@@ -871,7 +871,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                             Payment Due Date
                           </p>
                           <p className="text-base font-semibold text-slate-900">
-                            {formatDate(calculateDueDate().toISOString().split('T')[0])}
+                            {formatDate(dueDate.toISOString().split('T')[0])}
                           </p>
                           <p className="text-xs text-slate-500 mt-1.5">
                             Due in {invoiceDueInDays === 'custom' ? (customDays || '30') : invoiceDueInDays} days
@@ -1003,7 +1003,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                           <span className="font-semibold text-slate-600">Issue Date:</span> {formatDate(new Date().toISOString().split('T')[0])}
                         </p>
                         <p className="text-[10px] text-slate-400">
-                          <span className="font-semibold text-slate-600">Due Date:</span> {formatDate(calculateDueDate().toISOString().split('T')[0])}
+                          <span className="font-semibold text-slate-600">Due Date:</span> {formatDate(dueDate.toISOString().split('T')[0])}
                         </p>
                       </div>
                     </div>
@@ -1050,7 +1050,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                             <span className="text-blue-600 font-semibold">Amount Due Now</span>
                             <span className="text-xs text-blue-700 ml-2">({parseFloat(amountDueNowPercentage) || 0}%)</span>
                           </div>
-                          <span className="font-bold text-blue-900">{formatCurrency(calculateAmountDueNow())}</span>
+                          <span className="font-bold text-blue-900">{formatCurrency(amountDueNow)}</span>
                         </div>
                       )}
                       <div className="border-t-2 border-slate-900 pt-3 flex justify-between items-center">
