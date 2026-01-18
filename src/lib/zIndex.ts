@@ -10,14 +10,13 @@
  * 3. Header (30)
  * 4. Sidebar tooltips (35) - visible above content, below dropdowns
  * 5. MinimizedCallsBar (40)
- * 6. Floating chat button (45)
- * 7. Dropdowns, menus, and popovers (50)
- * 8. Celebration effects (confetti, paper fly) (60)
- * 9. Drawers (side panels) (100)
- * 10. Chat dialog (150)
- * 11. Regular modals (200)
- * 12. Presentation viewer (250)
- * 13. Critical modals (1000) - PostCall, EndCall, etc.
+ * 6. Dropdowns, menus, and popovers (50)
+ * 7. Celebration effects (confetti, paper fly) (60)
+ * 8. Drawers (side panels) (100)
+ * 9. Chat dialog and floating chat button (150)
+ * 10. Regular modals (200)
+ * 11. Presentation viewer (250)
+ * 12. Critical modals (1000) - PostCall, EndCall, etc.
  */
 
 export const zIndex = {
@@ -29,7 +28,6 @@ export const zIndex = {
   header: 30,
   sidebarTooltip: 35,
   minimizedCalls: 40,
-  floatingChatButton: 45,
 
   // Overlays
   dropdown: 50,
@@ -42,6 +40,7 @@ export const zIndex = {
   // Panels
   drawer: 100,
   chatDialog: 150,
+  floatingChatButton: 150,
 
   // Modals
   modal: 200,
