@@ -14,7 +14,7 @@ export default function PricingCard({ onUpgradeClick }: PricingCardProps) {
   ];
 
   return (
-    <div className="relative w-full max-w-4xl">
+    <div className="relative w-full">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-lg shadow-slate-200/40 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         <div className="relative z-10 p-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
