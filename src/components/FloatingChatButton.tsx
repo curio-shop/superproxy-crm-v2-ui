@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useEffect } from 'react';
 import { Z_INDEX } from '../lib/zIndex';
 
 interface FloatingChatButtonProps {
@@ -9,7 +10,15 @@ interface FloatingChatButtonProps {
 }
 
 export default function FloatingChatButton({ unreadCount, onClick, isOpen, isVisible }: FloatingChatButtonProps) {
-  if (!isVisible) return null;
+  // Debug logging for visibility changes
+  useEffect(() => {
+    console.log('[FloatingChatButton] Props changed:', { isVisible, isOpen, unreadCount });
+  }, [isVisible, isOpen, unreadCount]);
+
+  if (!isVisible) {
+    console.log('[FloatingChatButton] Not rendering - isVisible is false');
+    return null;
+  }
 
   return (
     <button

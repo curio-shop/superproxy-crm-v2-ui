@@ -90,6 +90,15 @@ function AppContent() {
   });
   const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
 
+  // Debug logging for account tab and page changes
+  useEffect(() => {
+    console.log('[App] State changed:', {
+      activePage,
+      activeAccountTab,
+      chatButtonShouldBeVisible: activePage === 'account' && activeAccountTab === 'contact'
+    });
+  }, [activePage, activeAccountTab]);
+
   // Debug logging for selectedEmailContact changes
   useEffect(() => {
     console.log('[App] selectedEmailContact changed:', selectedEmailContact);

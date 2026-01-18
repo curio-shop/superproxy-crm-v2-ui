@@ -26,6 +26,11 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Debug logging for dialog state
+  useEffect(() => {
+    console.log('[SupportChatDialog] isOpen changed:', isOpen);
+  }, [isOpen]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
