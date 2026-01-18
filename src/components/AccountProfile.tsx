@@ -48,6 +48,7 @@ export default function AccountProfile() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,6 +100,12 @@ export default function AccountProfile() {
       return () => document.removeEventListener('keydown', handleEscape);
     }
   }, [showDeleteModal, isDeleting]);
+
+  useEffect(() => {
+    if (contentScrollRef.current) {
+      contentScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab]);
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: 'solar:user-linear' },
@@ -197,7 +204,7 @@ export default function AccountProfile() {
             </nav>
           </div>
 
-          <div className="flex-1 min-w-0 overflow-y-auto custom-scrollbar pr-2">
+          <div ref={contentScrollRef} className="flex-1 min-w-0 overflow-y-auto custom-scrollbar pr-2">
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
