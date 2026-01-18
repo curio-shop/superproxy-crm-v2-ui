@@ -1,11 +1,15 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import FloatingChatButton from './FloatingChatButton';
-import SupportChatDialog from './SupportChatDialog';
 
-export default function AccountProfile() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
+interface AccountProfileProps {
+  activeTab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact';
+  onTabChange: (tab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact') => void;
+  onChatOpen: () => void;
+  chatUnreadCount: number;
+}
+
+export default function AccountProfile({ activeTab, onTabChange, onChatOpen, chatUnreadCount }: AccountProfileProps) {
   const [showDangerZone, setShowDangerZone] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -61,14 +65,6 @@ export default function AccountProfile() {
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
-
-  // Chat state
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatUnreadCount, setChatUnreadCount] = useState(3);
-  const [currentUser] = useState<{ id: string; name: string }>({
-    id: 'mock-user-id',
-    name: 'Melwyn Arrubio'
-  });
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -183,48 +179,6 @@ export default function AccountProfile() {
     }
   }, [activeTab]);
 
-  // Load unread count when Contact Us tab is active
-  useEffect(() => {
-    if (activeTab !== 'contact' || !currentUser?.id) return;
-
-    const loadUnreadCount = async () => {
-      const { data } = await supabase
-        .from('support_conversations')
-        .select('unread_count')
-        .eq('user_id', currentUser.id)
-        .eq('status', 'open')
-        .maybeSingle();
-
-      if (data) {
-        setChatUnreadCount(data.unread_count || 0);
-      }
-    };
-
-    loadUnreadCount();
-
-    const channel = supabase
-      .channel(`support_unread:${currentUser.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'support_conversations',
-          filter: `user_id=eq.${currentUser.id}`
-        },
-        (payload) => {
-          if (payload.new && typeof payload.new === 'object' && 'unread_count' in payload.new) {
-            setChatUnreadCount((payload.new as any).unread_count || 0);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [activeTab, currentUser?.id]);
-
   const tabs = [
     { id: 'profile', label: 'Profile', icon: 'solar:user-linear' },
     { id: 'preferences', label: 'Preferences', icon: 'solar:settings-minimalistic-linear' },
@@ -309,7 +263,7 @@ export default function AccountProfile() {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => onTabChange(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     activeTab === tab.id
                       ? 'bg-slate-900 text-white shadow-lg'
@@ -1236,22 +1190,6 @@ export default function AccountProfile() {
             </div>
           </div>
         </div>
-      )}
-
-      <FloatingChatButton
-        unreadCount={chatUnreadCount}
-        onClick={() => setIsChatOpen(!isChatOpen)}
-        isOpen={isChatOpen}
-        isVisible={activeTab === 'contact'}
-      />
-
-      {activeTab === 'contact' && (
-        <SupportChatDialog
-          isOpen={isChatOpen}
-          onClose={() => setIsChatOpen(false)}
-          userId={currentUser.id}
-          userName={currentUser.name}
-        />
       )}
     </div>
   );

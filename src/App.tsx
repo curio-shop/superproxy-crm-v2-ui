@@ -36,8 +36,11 @@ import MinimizedCallsBar from './components/MinimizedCallsBar';
 import TemplateBuilder from './components/TemplateBuilder';
 import AIChat from './components/AIChat';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
+import FloatingChatButton from './components/FloatingChatButton';
+import SupportChatDialog from './components/SupportChatDialog';
 import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
 import { ToastProvider, useToast } from './components/ToastContainer';
+import { supabase } from './lib/supabase';
 
 function AppContent() {
   const { focusedCallId, getFocusedCall } = useCallManager();
@@ -77,6 +80,15 @@ function AppContent() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteModalEntity, setDeleteModalEntity] = useState<{ type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation'; id: string; name: string } | null>(null);
   const [isDeletingEntity, setIsDeletingEntity] = useState(false);
+
+  // Chat state management
+  const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(3);
+  const [currentUser] = useState<{ id: string; name: string }>({
+    id: 'mock-user-id',
+    name: 'Melwyn Arrubio'
+  });
+  const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
 
   // Debug logging for selectedEmailContact changes
   useEffect(() => {
@@ -146,6 +158,48 @@ function AppContent() {
       }
     }
   }, [focusedCallId, getFocusedCall]);
+
+  // Load unread count when Contact Us tab is active
+  useEffect(() => {
+    if (activePage !== 'account' || activeAccountTab !== 'contact' || !currentUser?.id) return;
+
+    const loadUnreadCount = async () => {
+      const { data } = await supabase
+        .from('support_conversations')
+        .select('unread_count')
+        .eq('user_id', currentUser.id)
+        .eq('status', 'open')
+        .maybeSingle();
+
+      if (data) {
+        setChatUnreadCount(data.unread_count || 0);
+      }
+    };
+
+    loadUnreadCount();
+
+    const channel = supabase
+      .channel(`support_unread:${currentUser.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'support_conversations',
+          filter: `user_id=eq.${currentUser.id}`
+        },
+        (payload) => {
+          if (payload.new && typeof payload.new === 'object' && 'unread_count' in payload.new) {
+            setChatUnreadCount((payload.new as any).unread_count || 0);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activePage, activeAccountTab, currentUser?.id]);
 
   if (isViewingQuote) {
     return <QuoteView onBackToQuotes={() => {
@@ -558,7 +612,12 @@ function AppContent() {
           ) : activePage === 'workspace' ? (
             <Workspace onRegisterHandlers={setWorkspaceHandlers} onWorkspaceChange={setCurrentWorkspace} />
           ) : activePage === 'account' ? (
-            <AccountProfile />
+            <AccountProfile
+              activeTab={activeAccountTab}
+              onTabChange={setActiveAccountTab}
+              onChatOpen={() => setIsSupportChatOpen(true)}
+              chatUnreadCount={chatUnreadCount}
+            />
           ) : activePage === 'call-history' ? (
             <CallHistory onBack={() => setActivePage('contacts')} onViewCall={handleViewCall} />
           ) : activePage === 'ai-chat' ? (
@@ -670,6 +729,20 @@ function AppContent() {
         isDeleting={isDeletingEntity}
       />
       <MinimizedCallsBar />
+      <FloatingChatButton
+        unreadCount={chatUnreadCount}
+        onClick={() => setIsSupportChatOpen(!isSupportChatOpen)}
+        isOpen={isSupportChatOpen}
+        isVisible={activePage === 'account' && activeAccountTab === 'contact'}
+      />
+      {activePage === 'account' && activeAccountTab === 'contact' && (
+        <SupportChatDialog
+          isOpen={isSupportChatOpen}
+          onClose={() => setIsSupportChatOpen(false)}
+          userId={currentUser.id}
+          userName={currentUser.name}
+        />
+      )}
     </div>
   );
 }
