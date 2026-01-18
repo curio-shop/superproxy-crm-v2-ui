@@ -1014,29 +1014,13 @@ export default function AccountProfile() {
                         <Icon icon="solar:chat-round-dots-bold" width="20" className="text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-sm font-semibold text-slate-900">Live Chat Support</h3>
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">Available Now</span>
-                        </div>
-                        <p className="text-xs text-slate-600 leading-relaxed">
+                        <h3 className="text-sm font-semibold text-slate-900 mb-1">Live Chat Support</h3>
+                        <p className="text-xs text-slate-600 leading-relaxed mb-2">
                           Get instant responses from our support team through the live chat feature. Available right here in your account profile for faster assistance.
                         </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                      <Icon icon="solar:clock-circle-linear" width="20" className="text-slate-400" />
-                      <div className="text-sm">
-                        <span className="font-semibold text-slate-900">Response Time:</span>
-                        <span className="text-slate-600 ml-1">We typically respond within 24 hours</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                      <Icon icon="solar:danger-triangle-bold" width="20" className="text-amber-600" />
-                      <div className="text-sm">
-                        <span className="font-semibold text-slate-900">Urgent Matters:</span>
-                        <span className="text-slate-600 ml-1">Mark your message as urgent for priority handling</span>
+                        <p className="text-xs text-slate-500 italic">
+                          Response time: We typically respond within 24 hours
+                        </p>
                       </div>
                     </div>
                   </div>
