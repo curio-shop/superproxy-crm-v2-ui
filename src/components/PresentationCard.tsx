@@ -120,7 +120,7 @@ export default function PresentationCard({ presentation, onView, onDelete }: Pre
                 </button>
                 <button
                   onClick={handleDownload}
-                  className="w-full px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2 transition-colors"
+                  className="w-full px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Download
