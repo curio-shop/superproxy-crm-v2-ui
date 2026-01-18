@@ -33,7 +33,7 @@ export default function TreasureBurst({ trigger, originX, originY }: TreasureBur
     prevTriggerRef.current = trigger;
 
     const newParticles: TreasureParticle[] = [];
-    const particleCount = 45;
+    const particleCount = 30;
 
     for (let i = 0; i < particleCount; i++) {
       const angle = (i * 360) / particleCount + (Math.random() - 0.5) * 25;
@@ -75,7 +75,7 @@ export default function TreasureBurst({ trigger, originX, originY }: TreasureBur
   }, [trigger, originX, originY]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden" style={{ contain: 'layout style paint', willChange: 'contents' }}>
       {particles.map((particle) => {
         const radians = (particle.angle * Math.PI) / 180;
         const endX = Math.cos(radians) * particle.velocity;

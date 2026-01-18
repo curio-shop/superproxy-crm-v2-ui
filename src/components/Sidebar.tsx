@@ -57,7 +57,7 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
 
   return (
     <aside
-      className={`hidden lg:flex flex-col z-40 shadow-slate-200/40 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] group/sidebar bg-white/60 border-white/50 border rounded-[24px] relative shadow-2xl backdrop-blur-2xl overflow-visible ${
+      className={`hidden lg:flex flex-col z-40 shadow-slate-200/40 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] group/sidebar bg-white/60 border-white/50 border rounded-[24px] relative shadow-2xl backdrop-blur-lg overflow-visible ${
         collapsed ? 'w-[88px]' : 'w-72'
       }`}
     >

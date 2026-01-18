@@ -63,7 +63,7 @@ export default function MoneyRain({ trigger, originX, originY }: MoneyRainProps)
   }, [trigger, originX, originY]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden" style={{ contain: 'layout style paint', willChange: 'contents' }}>
       {particles.map((particle) => (
         <div
           key={particle.id}

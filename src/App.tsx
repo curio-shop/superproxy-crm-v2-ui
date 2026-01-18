@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import SimpleHeader from './components/SimpleHeader';
@@ -106,20 +106,20 @@ function AppContent() {
   const [isTeamView, setIsTeamView] = useState(false);
   const homeFilterPreference = isTeamView ? 'team' : 'personal';
 
-  const handleDealWonClick = (x: number, y: number) => {
+  const handleDealWonClick = useCallback((x: number, y: number) => {
     setCelebrationPosition({ x, y });
     setCelebrationTrigger(prev => prev + 1);
-  };
+  }, []);
 
-  const handlePaymentsClick = (x: number, y: number) => {
+  const handlePaymentsClick = useCallback((x: number, y: number) => {
     setShimmerBurstPosition({ x, y });
     setShimmerBurstTrigger(prev => prev + 1);
-  };
+  }, []);
 
-  const handleQuotationsClick = (x: number, y: number) => {
+  const handleQuotationsClick = useCallback((x: number, y: number) => {
     setPaperFlyPosition({ x, y });
     setPaperFlyTrigger(prev => prev + 1);
-  };
+  }, []);
 
   const [currentWorkspace, setCurrentWorkspace] = useState<WorkspaceType | null>(null);
 
@@ -180,7 +180,7 @@ function AppContent() {
     />;
   }
 
-  const handleCreateNew = (type: 'contact' | 'company' | 'product' | 'quote' | 'invoice') => {
+  const handleCreateNew = useCallback((type: 'contact' | 'company' | 'product' | 'quote' | 'invoice') => {
     switch (type) {
       case 'contact':
         setIsContactDrawerOpen(true);
@@ -198,12 +198,12 @@ function AppContent() {
         setIsCreatingInvoice(true);
         break;
     }
-  };
+  }, []);
 
-  const handleViewCall = (call: CallHistoryRecord) => {
+  const handleViewCall = useCallback((call: CallHistoryRecord) => {
     setSelectedCall(call);
     setIsCallDetailsDrawerOpen(true);
-  };
+  }, []);
 
   const handleOpenDeleteModal = (type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation', id: string, name: string) => {
     setDeleteModalEntity({ type, id, name });

@@ -32,7 +32,7 @@ export default function Celebration({ trigger }: CelebrationProps) {
     prevTriggerRef.current = trigger;
 
     const newParticles: ConfettiParticle[] = [];
-    const particleCount = 80;
+    const particleCount = 40;
 
     for (let i = 0; i < particleCount; i++) {
       newParticles.push({
@@ -60,7 +60,7 @@ export default function Celebration({ trigger }: CelebrationProps) {
   }, [trigger]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden" style={{ contain: 'layout style paint', willChange: 'contents' }}>
       {particles.map((particle) => (
         <div
           key={particle.id}

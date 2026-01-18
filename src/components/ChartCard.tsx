@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import {
   AreaChart,
@@ -43,13 +43,16 @@ const revenueData = [
   { month: 'Dec', invoiced: 2100000, collected: 1890000 },
 ];
 
-export default function ChartCard() {
+function ChartCard() {
   const [fiscalYear, setFiscalYear] = useState('2026');
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [activeView, setActiveView] = useState<ViewType>('pipeline');
   const [dateRange, setDateRange] = useState<DateRangeType>('12M');
 
-  const chartData = activeView === 'pipeline' ? pipelineData : revenueData;
+  const chartData = useMemo(() =>
+    activeView === 'pipeline' ? pipelineData : revenueData,
+    [activeView]
+  );
 
   const ytdMetrics = {
     quotations: 15.2,
@@ -290,3 +293,5 @@ export default function ChartCard() {
     </div>
   );
 }
+
+export default memo(ChartCard);

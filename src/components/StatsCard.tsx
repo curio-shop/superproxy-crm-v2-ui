@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useRef, memo } from 'react';
 import { Icon } from '@iconify/react';
 
 interface StatsCardProps {
@@ -12,7 +12,7 @@ interface StatsCardProps {
   iconAnimation?: 'celebrate' | 'shine';
 }
 
-export default function StatsCard({
+function StatsCard({
   title,
   value,
   subtitle,
@@ -66,3 +66,5 @@ export default function StatsCard({
     </div>
   );
 }
+
+export default memo(StatsCard);
