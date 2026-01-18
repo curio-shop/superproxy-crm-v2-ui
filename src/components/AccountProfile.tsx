@@ -902,10 +902,7 @@ export default function AccountProfile() {
                     <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 mb-4">
                       <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">We're Here to Help</h2>
-                    <p className="text-slate-600 max-w-md mx-auto mb-4">
-                      Have a question or need assistance? Our support team is ready to help you succeed.
-                    </p>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-6">We're Here to Help</h2>
                     <div className="inline-flex items-center gap-2 px-5 py-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
                       <Icon icon="solar:chat-round-dots-bold" width="20" />
                       <span className="font-medium">Use the chat button in the bottom-right corner to start a live chat</span>
@@ -1071,11 +1068,8 @@ export default function AccountProfile() {
                       </div>
                       <div className="flex-1">
                         <h3 className="text-sm font-semibold text-slate-900 mb-1">Live Chat Support</h3>
-                        <p className="text-xs text-slate-600 leading-relaxed mb-2">
+                        <p className="text-xs text-slate-600 leading-relaxed">
                           Get instant responses from our support team through the live chat feature. Available right here in your account profile for faster assistance.
-                        </p>
-                        <p className="text-xs text-slate-500 italic">
-                          Response time: We typically respond within 24 hours
                         </p>
                       </div>
                     </div>
@@ -1246,7 +1240,7 @@ export default function AccountProfile() {
 
       <FloatingChatButton
         unreadCount={chatUnreadCount}
-        onClick={() => setIsChatOpen(true)}
+        onClick={() => setIsChatOpen(!isChatOpen)}
         isOpen={isChatOpen}
         isVisible={activeTab === 'contact'}
       />

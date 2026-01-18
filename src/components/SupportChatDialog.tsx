@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import { supabase } from '../lib/supabase';
 import { Z_INDEX } from '../lib/zIndex';
+import { mockChatMessages } from '../data/mockChatMessages';
 
 interface Message {
   id: string;
@@ -22,7 +22,6 @@ interface SupportChatDialogProps {
 export default function SupportChatDialog({ isOpen, onClose, userId, userName }: SupportChatDialogProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [conversationId, setConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -36,147 +35,49 @@ export default function SupportChatDialog({ isOpen, onClose, userId, userName }:
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && userId) {
-      initializeConversation();
+    if (isOpen) {
+      loadMockMessages();
     }
-  }, [isOpen, userId]);
+  }, [isOpen]);
 
-  const initializeConversation = async () => {
+  const loadMockMessages = () => {
     setIsLoading(true);
-    try {
-      const { data: existingConversation } = await supabase
-        .from('support_conversations')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('status', 'open')
-        .maybeSingle();
-
-      let convId = existingConversation?.id;
-
-      if (!convId) {
-        const { data: newConversation, error } = await supabase
-          .from('support_conversations')
-          .insert({
-            user_id: userId,
-            status: 'open',
-            unread_count: 0
-          })
-          .select('id')
-          .single();
-
-        if (error) throw error;
-        convId = newConversation.id;
-
-        await sendAutoGreeting(convId);
-      }
-
-      setConversationId(convId);
-      await loadMessages(convId);
-      await markMessagesAsRead(convId);
-    } catch (error) {
-      console.error('Error initializing conversation:', error);
-    } finally {
+    setTimeout(() => {
+      setMessages(mockChatMessages);
       setIsLoading(false);
-    }
+    }, 500);
   };
 
-  const sendAutoGreeting = async (convId: string) => {
-    const greetingMessage = {
-      conversation_id: convId,
-      sender_type: 'support',
-      sender_id: '00000000-0000-0000-0000-000000000000',
-      sender_name: 'Support Team',
-      sender_avatar: null,
-      message: `Hi ${userName}! 👋 Welcome to our support chat. We're here to help you with any questions you might have. Our team typically responds within a few hours during business hours. How can we assist you today?`
-    };
-
-    await supabase
-      .from('support_messages')
-      .insert(greetingMessage);
-  };
-
-  const loadMessages = async (convId: string) => {
-    const { data, error } = await supabase
-      .from('support_messages')
-      .select('*')
-      .eq('conversation_id', convId)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error loading messages:', error);
-      return;
-    }
-
-    setMessages(data || []);
-  };
-
-  const markMessagesAsRead = async (convId: string) => {
-    await supabase
-      .from('support_conversations')
-      .update({ unread_count: 0 })
-      .eq('id', convId);
-  };
-
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !conversationId || isSending) return;
+    if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
-    try {
-      const messageData = {
-        conversation_id: conversationId,
-        sender_type: 'user',
-        sender_id: userId,
-        sender_name: userName,
-        message: newMessage.trim()
-      };
 
-      const { data, error } = await supabase
-        .from('support_messages')
-        .insert(messageData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setMessages(prev => [...prev, data]);
-      setNewMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
-      setIsSending(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!conversationId) return;
-
-    const channel = supabase
-      .channel(`support_messages:${conversationId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'support_messages',
-          filter: `conversation_id=eq.${conversationId}`
-        },
-        (payload) => {
-          const newMsg = payload.new as Message;
-          if (newMsg.sender_id !== userId) {
-            setMessages(prev => {
-              if (prev.some(m => m.id === newMsg.id)) return prev;
-              return [...prev, newMsg];
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      sender_type: 'user',
+      sender_name: 'You',
+      message: newMessage.trim(),
+      created_at: new Date().toISOString()
     };
-  }, [conversationId, userId]);
+
+    setMessages(prev => [...prev, userMessage]);
+    setNewMessage('');
+
+    setTimeout(() => {
+      const supportMessage: Message = {
+        id: `support-${Date.now()}`,
+        sender_type: 'support',
+        sender_name: 'Sarah Johnson',
+        sender_avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2',
+        message: 'Thanks for your message! Our support team will respond shortly. In the meantime, feel free to check out our help center for quick answers to common questions.',
+        created_at: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, supportMessage]);
+      setIsSending(false);
+    }, 1500);
+  };
 
   if (!isOpen) return null;
 
