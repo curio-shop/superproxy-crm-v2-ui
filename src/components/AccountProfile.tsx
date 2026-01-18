@@ -1,6 +1,8 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import FloatingChatButton from './FloatingChatButton';
+import SupportChatDialog from './SupportChatDialog';
 
 export default function AccountProfile() {
   const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
@@ -59,6 +61,14 @@ export default function AccountProfile() {
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
+
+  // Chat state
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(3);
+  const [currentUser] = useState<{ id: string; name: string }>({
+    id: 'mock-user-id',
+    name: 'Melwyn Arrubio'
+  });
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -172,6 +182,48 @@ export default function AccountProfile() {
       contentScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeTab]);
+
+  // Load unread count when Contact Us tab is active
+  useEffect(() => {
+    if (activeTab !== 'contact' || !currentUser?.id) return;
+
+    const loadUnreadCount = async () => {
+      const { data } = await supabase
+        .from('support_conversations')
+        .select('unread_count')
+        .eq('user_id', currentUser.id)
+        .eq('status', 'open')
+        .maybeSingle();
+
+      if (data) {
+        setChatUnreadCount(data.unread_count || 0);
+      }
+    };
+
+    loadUnreadCount();
+
+    const channel = supabase
+      .channel(`support_unread:${currentUser.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'support_conversations',
+          filter: `user_id=eq.${currentUser.id}`
+        },
+        (payload) => {
+          if (payload.new && typeof payload.new === 'object' && 'unread_count' in payload.new) {
+            setChatUnreadCount((payload.new as any).unread_count || 0);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeTab, currentUser?.id]);
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: 'solar:user-linear' },
@@ -851,9 +903,21 @@ export default function AccountProfile() {
                       <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">We're Here to Help</h2>
-                    <p className="text-slate-600 max-w-md mx-auto">
+                    <p className="text-slate-600 max-w-md mx-auto mb-6">
                       Have a question or need assistance? Our support team is ready to help you succeed.
                     </p>
+                    <button
+                      onClick={() => setIsChatOpen(true)}
+                      className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-base font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 relative"
+                    >
+                      <Icon icon="solar:chat-round-dots-bold" width="24" />
+                      <span>Start Live Chat</span>
+                      {chatUnreadCount > 0 && (
+                        <span className="absolute -top-2 -right-2 h-7 w-7 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                          {chatUnreadCount}
+                        </span>
+                      )}
+                    </button>
                   </div>
                 </div>
 
@@ -1186,6 +1250,15 @@ export default function AccountProfile() {
             </div>
           </div>
         </div>
+      )}
+
+      {activeTab === 'contact' && (
+        <SupportChatDialog
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          userId={currentUser.id}
+          userName={currentUser.name}
+        />
       )}
     </div>
   );

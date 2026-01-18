@@ -36,11 +36,8 @@ import MinimizedCallsBar from './components/MinimizedCallsBar';
 import TemplateBuilder from './components/TemplateBuilder';
 import AIChat from './components/AIChat';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
-import FloatingChatButton from './components/FloatingChatButton';
-import SupportChatDialog from './components/SupportChatDialog';
 import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
 import { ToastProvider, useToast } from './components/ToastContainer';
-import { supabase } from './lib/supabase';
 
 function AppContent() {
   const { focusedCallId, getFocusedCall } = useCallManager();
@@ -80,70 +77,6 @@ function AppContent() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteModalEntity, setDeleteModalEntity] = useState<{ type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation'; id: string; name: string } | null>(null);
   const [isDeletingEntity, setIsDeletingEntity] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatUnreadCount, setChatUnreadCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
-
-  useEffect(() => {
-    const initializeUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        setCurrentUser({
-          id: user.id,
-          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
-        });
-      } else {
-        setCurrentUser({
-          id: 'mock-user-id',
-          name: 'Melwyn Arrubio'
-        });
-      }
-    };
-
-    initializeUser();
-  }, []);
-
-  useEffect(() => {
-    if (!currentUser?.id) return;
-
-    const loadUnreadCount = async () => {
-      const { data } = await supabase
-        .from('support_conversations')
-        .select('unread_count')
-        .eq('user_id', currentUser.id)
-        .eq('status', 'open')
-        .maybeSingle();
-
-      if (data) {
-        setChatUnreadCount(data.unread_count || 0);
-      }
-    };
-
-    loadUnreadCount();
-
-    const channel = supabase
-      .channel(`support_unread:${currentUser.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'support_conversations',
-          filter: `user_id=eq.${currentUser.id}`
-        },
-        (payload) => {
-          if (payload.new && typeof payload.new === 'object' && 'unread_count' in payload.new) {
-            setChatUnreadCount((payload.new as any).unread_count || 0);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUser?.id]);
 
   // Debug logging for selectedEmailContact changes
   useEffect(() => {
@@ -737,21 +670,6 @@ function AppContent() {
         isDeleting={isDeletingEntity}
       />
       <MinimizedCallsBar />
-      {currentUser && (
-        <>
-          <FloatingChatButton
-            unreadCount={chatUnreadCount}
-            onClick={() => setIsChatOpen(true)}
-            isOpen={isChatOpen}
-          />
-          <SupportChatDialog
-            isOpen={isChatOpen}
-            onClose={() => setIsChatOpen(false)}
-            userId={currentUser.id}
-            userName={currentUser.name}
-          />
-        </>
-      )}
     </div>
   );
 }
