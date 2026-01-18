@@ -53,6 +53,133 @@ interface LineItem {
   total: number;
 }
 
+const CONTACTS: Contact[] = [
+  {
+    id: '1',
+    name: 'Let Cruz',
+    email: 'vcc.letcruz@myyah.com',
+    phone: '+639064636955',
+    company_id: null,
+    company_name: null,
+    title: null,
+  },
+  {
+    id: '2',
+    name: 'Hailey Collins',
+    email: 'hailey@riggedparts.com',
+    phone: '+17135558235',
+    company_id: '2',
+    company_name: 'Notion',
+    title: 'Client',
+  },
+  {
+    id: '3',
+    name: 'Wang Wen',
+    email: 'melwyn.arrubio@yahoo.com',
+    phone: '+639175328910',
+    company_id: '3',
+    company_name: 'SpaceX',
+    title: 'Client',
+  },
+  {
+    id: '4',
+    name: 'Khim Tanglao',
+    email: 'metriccon.purchasing@gmail.com',
+    phone: '+639088938387',
+    company_id: null,
+    company_name: null,
+    title: null,
+  },
+  {
+    id: '5',
+    name: 'Mac Mill',
+    email: 'mac@m.com',
+    phone: null,
+    company_id: '4',
+    company_name: 'Apple',
+    title: 'Purchaser',
+  },
+  {
+    id: '6',
+    name: 'Micaela Pena',
+    email: 'micaela.pena@gmail.com',
+    phone: '+639171337142',
+    company_id: null,
+    company_name: null,
+    title: null,
+  },
+  {
+    id: '7',
+    name: 'Gillian Guiang',
+    email: null,
+    phone: '+639178102367',
+    company_id: null,
+    company_name: null,
+    title: 'Interior Designer',
+  },
+];
+
+const COMPANIES: Company[] = [
+  {
+    id: '1',
+    name: 'Superproxy Inc.',
+    address: '123 Tech Street, Manila',
+    phone: '+639175328910',
+    website: 'superproxy.com',
+    city: 'Manila',
+  },
+  {
+    id: '2',
+    name: 'Notion',
+    address: null,
+    phone: '+17135558235',
+    website: 'notion.so',
+    city: 'San Francisco',
+  },
+  {
+    id: '3',
+    name: 'SpaceX',
+    address: 'Rocket Road',
+    phone: '+13105551234',
+    website: 'spacex.com',
+    city: 'Hawthorne',
+  },
+  {
+    id: '4',
+    name: 'Apple',
+    address: 'One Apple Park Way',
+    phone: null,
+    website: 'apple.com',
+    city: 'Cupertino',
+  },
+  {
+    id: '5',
+    name: 'Acme Corp',
+    address: null,
+    phone: '+12125559876',
+    website: 'acme.com',
+    city: 'New York',
+  },
+];
+
+const STEPS = [
+  { id: 1, label: 'Quote Details', active: true },
+  { id: 2, label: 'Buyer Info', active: false },
+  { id: 3, label: 'Your Info', active: false },
+  { id: 4, label: 'Line Items', active: false },
+  { id: 5, label: 'Signature', active: false },
+  { id: 6, label: 'Terms & Expiry', active: false },
+  { id: 7, label: 'Review', active: false },
+];
+
+const CURRENCIES = [
+  { value: 'PHP', label: 'PHP (₱)' },
+  { value: 'USD', label: 'USD ($)' },
+  { value: 'EUR', label: 'EUR (€)' },
+  { value: 'GBP', label: 'GBP (£)' },
+  { value: 'AUD', label: 'AUD (A$)' },
+];
+
 export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   const [quoteName, setQuoteName] = useState('Untitled Quote');
   const [currency, setCurrency] = useState('PHP');
@@ -216,140 +343,24 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
     fetchProducts();
   }, []);
 
-  const contacts: Contact[] = [
-    {
-      id: '1',
-      name: 'Let Cruz',
-      email: 'vcc.letcruz@myyah.com',
-      phone: '+639064636955',
-      company_id: null,
-      company_name: null,
-      title: null,
-    },
-    {
-      id: '2',
-      name: 'Hailey Collins',
-      email: 'hailey@riggedparts.com',
-      phone: '+17135558235',
-      company_id: '2',
-      company_name: 'Notion',
-      title: 'Client',
-    },
-    {
-      id: '3',
-      name: 'Wang Wen',
-      email: 'melwyn.arrubio@yahoo.com',
-      phone: '+639175328910',
-      company_id: '3',
-      company_name: 'SpaceX',
-      title: 'Client',
-    },
-    {
-      id: '4',
-      name: 'Khim Tanglao',
-      email: 'metriccon.purchasing@gmail.com',
-      phone: '+639088938387',
-      company_id: null,
-      company_name: null,
-      title: null,
-    },
-    {
-      id: '5',
-      name: 'Mac Mill',
-      email: 'mac@m.com',
-      phone: null,
-      company_id: '4',
-      company_name: 'Apple',
-      title: 'Purchaser',
-    },
-    {
-      id: '6',
-      name: 'Micaela Pena',
-      email: 'micaela.pena@gmail.com',
-      phone: '+639171337142',
-      company_id: null,
-      company_name: null,
-      title: null,
-    },
-    {
-      id: '7',
-      name: 'Gillian Guiang',
-      email: null,
-      phone: '+639178102367',
-      company_id: null,
-      company_name: null,
-      title: 'Interior Designer',
-    },
-  ];
-
-  const companies: Company[] = [
-    {
-      id: '1',
-      name: 'Superproxy Inc.',
-      address: '123 Tech Street, Manila',
-      phone: '+639175328910',
-      website: 'superproxy.com',
-      city: 'Manila',
-    },
-    {
-      id: '2',
-      name: 'Notion',
-      address: null,
-      phone: '+17135558235',
-      website: 'notion.so',
-      city: 'San Francisco',
-    },
-    {
-      id: '3',
-      name: 'SpaceX',
-      address: 'Rocket Road',
-      phone: '+13105551234',
-      website: 'spacex.com',
-      city: 'Hawthorne',
-    },
-    {
-      id: '4',
-      name: 'Apple',
-      address: 'One Apple Park Way',
-      phone: null,
-      website: 'apple.com',
-      city: 'Cupertino',
-    },
-    {
-      id: '5',
-      name: 'Acme Corp',
-      address: null,
-      phone: '+12125559876',
-      website: 'acme.com',
-      city: 'New York',
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-slate-600 text-sm font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleContactChange = (contactId: string) => {
     setSelectedContactId(contactId);
-    const contact = contacts.find((c) => c.id === contactId);
+    const contact = CONTACTS.find((c) => c.id === contactId);
     if (contact?.company_id) {
       setSelectedCompanyId(contact.company_id);
     }
   };
-
-  const steps = [
-    { id: 1, label: 'Quote Details', active: true },
-    { id: 2, label: 'Buyer Info', active: false },
-    { id: 3, label: 'Your Info', active: false },
-    { id: 4, label: 'Line Items', active: false },
-    { id: 5, label: 'Signature', active: false },
-    { id: 6, label: 'Terms & Expiry', active: false },
-    { id: 7, label: 'Review', active: false },
-  ];
-
-  const currencies = [
-    { value: 'PHP', label: 'PHP (₱)' },
-    { value: 'USD', label: 'USD ($)' },
-    { value: 'EUR', label: 'EUR (€)' },
-    { value: 'GBP', label: 'GBP (£)' },
-    { value: 'AUD', label: 'AUD (A$)' },
-  ];
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -373,8 +384,15 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
 
   const validUntil = calculateExpiryDate();
 
-  const selectedContact = contacts.find((c) => c.id === selectedContactId);
-  const selectedCompany = companies.find((c) => c.id === selectedCompanyId);
+  const selectedContact = useMemo(
+    () => CONTACTS.find((c) => c.id === selectedContactId),
+    [selectedContactId]
+  );
+
+  const selectedCompany = useMemo(
+    () => COMPANIES.find((c) => c.id === selectedCompanyId),
+    [selectedCompanyId]
+  );
 
   const handleNextStep = () => {
     if (currentStep < 7) {
@@ -462,17 +480,26 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
     return subtotal + tax - discount;
   };
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(productSearchQuery.toLowerCase());
-    const matchesFilter =
-      productFilter === 'all' ||
-      (productFilter === 'team' && !product.is_custom) ||
-      (productFilter === 'custom' && product.is_custom);
-    return matchesSearch && matchesFilter;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch = product.name.toLowerCase().includes(productSearchQuery.toLowerCase());
+      const matchesFilter =
+        productFilter === 'all' ||
+        (productFilter === 'team' && !product.is_custom) ||
+        (productFilter === 'custom' && product.is_custom);
+      return matchesSearch && matchesFilter;
+    });
+  }, [products, productSearchQuery, productFilter]);
 
-  const teamProducts = filteredProducts.filter((p) => !p.is_custom);
-  const customProducts = filteredProducts.filter((p) => p.is_custom);
+  const teamProducts = useMemo(
+    () => filteredProducts.filter((p) => !p.is_custom),
+    [filteredProducts]
+  );
+
+  const customProducts = useMemo(
+    () => filteredProducts.filter((p) => p.is_custom),
+    [filteredProducts]
+  );
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-PH', {
@@ -480,17 +507,6 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
       currency: 'PHP',
     }).format(amount);
   };
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <p className="text-slate-600 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex flex-col overflow-hidden">
@@ -571,7 +587,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
 
           <div className="px-6 border-t border-slate-200 bg-slate-50 relative z-10">
             <div className="flex gap-1 overflow-x-auto no-scrollbar pt-3 pb-3 items-center">
-              {steps.map((step, index) => {
+              {STEPS.map((step, index) => {
                 const isCompleted = completedSteps.includes(step.id);
                 const isActive = step.id === currentStep;
                 const isClickable = step.id <= currentStep || completedSteps.includes(step.id);
@@ -615,7 +631,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                         {step.label}
                       </span>
                     </div>
-                    {index < steps.length - 1 && (
+                    {index < STEPS.length - 1 && (
                       <Icon
                         icon="solar:alt-arrow-right-linear"
                         className={`flex-shrink-0 transition-colors ${

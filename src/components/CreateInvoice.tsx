@@ -95,6 +95,12 @@ const mockQuotes: Quotation[] = [
   },
 ];
 
+const INVOICE_STEPS = [
+  { id: 1, label: 'Quote Selection' },
+  { id: 2, label: 'Notes & Details' },
+  { id: 3, label: 'Review' },
+];
+
 export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: CreateInvoiceProps) {
   const [invoiceTitle, setInvoiceTitle] = useState('Untitled Invoice');
   const [currentStep, setCurrentStep] = useState(1);
@@ -209,7 +215,16 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
     }
   }, [preSelectedQuote]);
 
-  const selectedQuote = quotations.find((q) => q.id === selectedQuoteId);
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-slate-600 text-sm font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const calculateAmountDueNow = () => {
     if (!selectedQuote) return 0;
@@ -267,26 +282,17 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
     }
   };
 
-  const steps = [
-    { id: 1, label: 'Quote Selection' },
-    { id: 2, label: 'Notes & Details' },
-    { id: 3, label: 'Review' },
-  ];
-
-  const filteredQuotations = quotations.filter((quote) =>
-    quote.title.toLowerCase().includes(quoteSearchQuery.toLowerCase())
+  const filteredQuotations = useMemo(
+    () => quotations.filter((quote) =>
+      quote.title.toLowerCase().includes(quoteSearchQuery.toLowerCase())
+    ),
+    [quotations, quoteSearchQuery]
   );
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <p className="text-slate-600 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const selectedQuote = useMemo(
+    () => quotations.find((q) => q.id === selectedQuoteId),
+    [quotations, selectedQuoteId]
+  );
 
   return (
     <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex flex-col overflow-hidden">
@@ -367,7 +373,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
 
           <div className="px-6 border-t border-slate-200 bg-slate-50 relative z-10">
             <div className="flex gap-1 overflow-x-auto no-scrollbar pt-3 pb-3 items-center">
-              {steps.map((step, index) => {
+              {INVOICE_STEPS.map((step, index) => {
                 const isCompleted = completedSteps.includes(step.id);
                 const isActive = step.id === currentStep;
                 const isClickable = step.id <= currentStep || completedSteps.includes(step.id);
@@ -411,7 +417,7 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                         {step.label}
                       </span>
                     </div>
-                    {index < steps.length - 1 && (
+                    {index < INVOICE_STEPS.length - 1 && (
                       <Icon
                         icon="solar:alt-arrow-right-linear"
                         className={`flex-shrink-0 transition-colors ${
