@@ -285,7 +285,7 @@ function AppContent() {
   };
 
   return (
-    <div className="h-screen text-slate-600 antialiased selection:bg-indigo-100 selection:text-indigo-700 overflow-hidden">
+    <div className="h-screen text-slate-600 antialiased selection:bg-slate-200 selection:text-slate-900 overflow-hidden">
         <div className="fixed inset-0 -z-10 h-full w-full bg-[#f8fafc]">
           <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-100/60 blur-[100px] mix-blend-multiply"></div>
           <div className="absolute top-[10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-sky-100/60 blur-[100px] mix-blend-multiply"></div>
