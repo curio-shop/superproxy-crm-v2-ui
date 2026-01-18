@@ -7,6 +7,7 @@ export default function AccountProfile() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   const [profileData, setProfileData] = useState({
     firstName: 'Melwyn',
@@ -81,6 +82,7 @@ export default function AccountProfile() {
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsDeleting(false);
     setShowDeleteModal(false);
+    setDeleteConfirmText('');
     alert('Account deletion requested. You will receive a confirmation email.');
   };
 
@@ -88,6 +90,7 @@ export default function AccountProfile() {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showDeleteModal && !isDeleting) {
         setShowDeleteModal(false);
+        setDeleteConfirmText('');
       }
     };
 
@@ -132,8 +135,8 @@ export default function AccountProfile() {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
                       </div>
                     )}
-                    <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-md">
-                      <Icon icon="solar:check-read-linear" width="14" className="text-emerald-600" />
+                    <div className="absolute -bottom-1.5 -right-1.5 h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center shadow-lg ring-2 ring-white">
+                      <Icon icon="solar:check-circle-bold" width="18" className="text-white" />
                     </div>
                   </div>
 
@@ -716,7 +719,10 @@ export default function AccountProfile() {
         >
           <div
             className="fixed inset-0"
-            onClick={!isDeleting ? () => setShowDeleteModal(false) : undefined}
+            onClick={!isDeleting ? () => {
+              setShowDeleteModal(false);
+              setDeleteConfirmText('');
+            } : undefined}
           />
 
           <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
@@ -756,9 +762,26 @@ export default function AccountProfile() {
                 </ul>
               </div>
 
+              <div className="w-full mb-6">
+                <label className="block text-sm font-semibold text-slate-900 mb-2 text-left">
+                  Type <span className="font-mono text-rose-600">DELETE</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="Type DELETE"
+                  disabled={isDeleting}
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </div>
+
               <div className="flex items-center gap-3 w-full">
                 <button
-                  onClick={() => setShowDeleteModal(false)}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteConfirmText('');
+                  }}
                   disabled={isDeleting}
                   className="flex-1 px-5 py-3 rounded-xl font-semibold text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
@@ -767,7 +790,7 @@ export default function AccountProfile() {
 
                 <button
                   onClick={handleDeleteAccount}
-                  disabled={isDeleting}
+                  disabled={isDeleting || deleteConfirmText !== 'DELETE'}
                   className="flex-1 px-5 py-3 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2"
                 >
                   {isDeleting ? (
