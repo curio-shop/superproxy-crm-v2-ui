@@ -32,7 +32,7 @@ export default function Celebration({ trigger }: CelebrationProps) {
     prevTriggerRef.current = trigger;
 
     const newParticles: ConfettiParticle[] = [];
-    const particleCount = 40;
+    const particleCount = 100;
 
     for (let i = 0; i < particleCount; i++) {
       newParticles.push({

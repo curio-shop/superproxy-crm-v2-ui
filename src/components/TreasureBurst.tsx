@@ -33,7 +33,7 @@ export default function TreasureBurst({ trigger, originX, originY }: TreasureBur
     prevTriggerRef.current = trigger;
 
     const newParticles: TreasureParticle[] = [];
-    const particleCount = 30;
+    const particleCount = 45;
 
     for (let i = 0; i < particleCount; i++) {
       const angle = (i * 360) / particleCount + (Math.random() - 0.5) * 25;
