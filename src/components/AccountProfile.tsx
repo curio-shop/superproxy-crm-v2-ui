@@ -864,11 +864,10 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
                     <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 mb-4">
                       <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-6">We're Here to Help</h2>
-                    <div className="inline-flex items-center gap-2 px-5 py-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
-                      <Icon icon="solar:chat-round-dots-bold" width="20" />
-                      <span className="font-medium">Use the chat button in the bottom-right corner to start a live chat</span>
-                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-3">We're Here to Help</h2>
+                    <p className="text-slate-600 max-w-xl mx-auto leading-relaxed">
+                      Our support team is ready to assist you with any questions or concerns you may have
+                    </p>
                   </div>
                 </div>
 
