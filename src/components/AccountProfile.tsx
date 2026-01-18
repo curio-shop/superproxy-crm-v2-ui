@@ -132,8 +132,8 @@ export default function AccountProfile() {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
                       </div>
                     )}
-                    <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-emerald-500 ring-4 ring-white flex items-center justify-center shadow-lg">
-                      <Icon icon="solar:check-circle-bold" width="16" className="text-white" />
+                    <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-md">
+                      <Icon icon="solar:check-read-linear" width="14" className="text-emerald-600" />
                     </div>
                   </div>
 
@@ -541,10 +541,10 @@ export default function AccountProfile() {
                     ))}
                   </div>
 
-                  <div className="px-6 py-5 bg-slate-50 border-t border-slate-100">
+                  <div className="px-6 py-5 bg-slate-50 border-t border-slate-100 flex justify-end">
                     <button
                       onClick={() => alert('Logging out...')}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 rounded-xl transition-all text-white text-sm font-semibold shadow-sm"
+                      className="inline-flex items-center gap-2 px-10 py-2.5 bg-slate-900 hover:bg-slate-800 rounded-xl transition-all text-white text-sm font-semibold shadow-sm"
                     >
                       <Icon icon="solar:logout-linear" width="18" />
                       Log Out
@@ -580,7 +580,7 @@ export default function AccountProfile() {
                       className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-100 transition-all shadow-lg"
                     >
                       <Icon icon="solar:card-linear" width="18" />
-                      Upgrade to Pro
+                      Upgrade to Superproxy Professional
                     </button>
                   </div>
                 </div>
@@ -650,9 +650,6 @@ export default function AccountProfile() {
                           }`}>
                             {company.role}
                           </span>
-                          <button className="p-2 text-slate-400 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-all">
-                            <Icon icon="solar:settings-linear" width="18" />
-                          </button>
                         </div>
                       </div>
                     ))}
@@ -781,7 +778,7 @@ export default function AccountProfile() {
                   ) : (
                     <>
                       <Icon icon="solar:trash-bin-minimalistic-bold" width="16" />
-                      <span>Yes, Delete My Account</span>
+                      <span>Yes, delete account</span>
                     </>
                   )}
                 </button>
