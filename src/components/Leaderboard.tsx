@@ -451,13 +451,13 @@ export default function Leaderboard() {
                     return (
                       <div
                         key={entry.id}
-                        className="bg-white border border-slate-200/60 rounded-lg p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
+                        className="relative bg-white border border-slate-200/60 rounded-lg p-3 flex items-center gap-3 hover:border-slate-300 transition-colors overflow-hidden"
                       >
-                        <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs flex-shrink-0">
-                          #{entry.rank}
+                        <div className="absolute top-1 right-2 text-5xl font-black text-slate-900 opacity-[0.03] leading-none pointer-events-none select-none">
+                          {entry.rank}
                         </div>
 
-                        <div className="h-8 w-8 rounded-full overflow-hidden shadow-sm flex-shrink-0">
+                        <div className="h-9 w-9 rounded-full overflow-hidden shadow-sm flex-shrink-0 ring-2 ring-slate-100">
                           <img
                             src={entry.member_avatar_url}
                             alt={entry.member_name}
@@ -469,15 +469,15 @@ export default function Leaderboard() {
                           <span className="text-sm font-semibold text-slate-900 block truncate">{entry.member_name}</span>
                         </div>
 
-                        <div className="flex items-center gap-4 flex-shrink-0">
-                          <div className="text-right">
-                            <p className="text-xs text-slate-500 leading-none mb-0.5">Revenue</p>
-                            <p className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</p>
+                        <div className="flex items-center gap-5 flex-shrink-0">
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xs font-medium text-slate-500">Revenue:</span>
+                            <span className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</span>
                           </div>
 
-                          <div className="text-right">
-                            <p className="text-xs text-slate-500 leading-none mb-0.5">Deals</p>
-                            <p className="text-sm font-bold text-slate-900">{entry.deals_won}</p>
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xs font-medium text-slate-500">Deals Won:</span>
+                            <span className="text-sm font-bold text-slate-900">{entry.deals_won}</span>
                           </div>
                         </div>
                       </div>
