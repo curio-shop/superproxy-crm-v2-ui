@@ -36,8 +36,11 @@ import MinimizedCallsBar from './components/MinimizedCallsBar';
 import TemplateBuilder from './components/TemplateBuilder';
 import AIChat from './components/AIChat';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
+import FloatingChatButton from './components/FloatingChatButton';
+import SupportChatDialog from './components/SupportChatDialog';
 import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
 import { ToastProvider, useToast } from './components/ToastContainer';
+import { supabase } from './lib/supabase';
 
 function AppContent() {
   const { focusedCallId, getFocusedCall } = useCallManager();
@@ -77,6 +80,10 @@ function AppContent() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteModalEntity, setDeleteModalEntity] = useState<{ type: 'contact' | 'company' | 'product' | 'quotation' | 'invoice' | 'presentation'; id: string; name: string } | null>(null);
   const [isDeletingEntity, setIsDeletingEntity] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [currentUserName, setCurrentUserName] = useState<string>('User');
 
   // Debug logging for selectedEmailContact changes
   useEffect(() => {
@@ -121,6 +128,24 @@ function AppContent() {
   }, []);
 
   const [currentWorkspace, setCurrentWorkspace] = useState<WorkspaceType | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+        const { data: userData } = await supabase
+          .from('users')
+          .select('first_name, last_name')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (userData) {
+          setCurrentUserName(`${userData.first_name} ${userData.last_name}`);
+        }
+      }
+    };
+    fetchCurrentUser();
+  }, []);
 
   useEffect(() => {
     if (focusedCallId) {
@@ -670,6 +695,18 @@ function AppContent() {
         isDeleting={isDeletingEntity}
       />
       <MinimizedCallsBar />
+      <FloatingChatButton
+        unreadCount={chatUnreadCount}
+        onClick={() => setIsChatOpen(!isChatOpen)}
+        isOpen={isChatOpen}
+        isVisible={true}
+      />
+      <SupportChatDialog
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        userId={currentUserId}
+        userName={currentUserName}
+      />
     </div>
   );
 }

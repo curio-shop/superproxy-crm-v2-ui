@@ -1,8 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import FloatingChatButton from './FloatingChatButton';
-import SupportChatDialog from './SupportChatDialog';
 
 export default function AccountProfile() {
   const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
@@ -61,14 +59,6 @@ export default function AccountProfile() {
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
-
-  // Chat state
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatUnreadCount, setChatUnreadCount] = useState(3);
-  const [currentUser] = useState<{ id: string; name: string }>({
-    id: 'mock-user-id',
-    name: 'Melwyn Arrubio'
-  });
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -899,11 +889,11 @@ export default function AccountProfile() {
               <div className="space-y-6">
                 <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                   <div className="p-8 text-center">
-                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 mb-4">
-                      <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
+                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-slate-50 border border-slate-200 mb-4">
+                      <Icon icon="solar:chat-round-call-bold" width="32" className="text-slate-700" />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-6">We're Here to Help</h2>
-                    <div className="inline-flex items-center gap-2 px-5 py-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
+                    <div className="inline-flex items-center gap-2 px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700">
                       <Icon icon="solar:chat-round-dots-bold" width="20" />
                       <span className="font-medium">Use the chat button in the bottom-right corner to start a live chat</span>
                     </div>
@@ -1062,9 +1052,9 @@ export default function AccountProfile() {
                       </button>
                     </div>
 
-                    <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-emerald-50/30 rounded-xl border border-blue-100">
-                      <div className="h-11 w-11 rounded-xl bg-white border border-blue-200 flex items-center justify-center flex-shrink-0 shadow-sm">
-                        <Icon icon="solar:chat-round-dots-bold" width="20" className="text-blue-600" />
+                    <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl border border-slate-200">
+                      <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <Icon icon="solar:chat-round-dots-bold" width="20" className="text-slate-700" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-sm font-semibold text-slate-900 mb-1">Live Chat Support</h3>
@@ -1236,22 +1226,6 @@ export default function AccountProfile() {
             </div>
           </div>
         </div>
-      )}
-
-      <FloatingChatButton
-        unreadCount={chatUnreadCount}
-        onClick={() => setIsChatOpen(!isChatOpen)}
-        isOpen={isChatOpen}
-        isVisible={activeTab === 'contact'}
-      />
-
-      {activeTab === 'contact' && (
-        <SupportChatDialog
-          isOpen={isChatOpen}
-          onClose={() => setIsChatOpen(false)}
-          userId={currentUser.id}
-          userName={currentUser.name}
-        />
       )}
     </div>
   );
