@@ -163,7 +163,7 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
     { id: 'profile', label: 'Profile', icon: 'solar:user-linear' },
     { id: 'preferences', label: 'Preferences', icon: 'solar:settings-minimalistic-linear' },
     { id: 'security', label: 'Security', icon: 'solar:shield-keyhole-linear' },
-    { id: 'billing', label: 'Billing', icon: 'solar:card-linear' },
+    { id: 'billing', label: 'Subscription', icon: 'solar:card-linear' },
     { id: 'workspaces', label: 'Workspaces', icon: 'solar:buildings-2-linear' },
     { id: 'contact', label: 'Contact Us', icon: 'solar:chat-round-call-linear' },
   ] as const;
