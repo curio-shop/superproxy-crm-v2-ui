@@ -142,8 +142,8 @@ export default function AccountProfile() {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
                       </div>
                     )}
-                    <div className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-white flex items-center justify-center shadow-lg ring-2 ring-blue-100">
-                      <Icon icon="solar:check-circle-bold" width="20" className="text-blue-600" />
+                    <div className="absolute -bottom-1.5 -right-1.5 h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-lg ring-2 ring-blue-50">
+                      <Icon icon="solar:check-circle-bold" width="18" className="text-blue-600" />
                     </div>
                   </div>
 
