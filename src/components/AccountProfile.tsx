@@ -847,7 +847,7 @@ export default function AccountProfile() {
               <div className="space-y-6">
                 <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                   <div className="p-8 text-center">
-                    <div className="inline-flex items-center justify-center h-16 w-16 mb-4">
+                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 mb-4">
                       <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">We're Here to Help</h2>
