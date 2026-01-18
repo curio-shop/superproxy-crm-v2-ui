@@ -95,6 +95,114 @@ const mockLeaderboardData: LeaderboardEntry[] = [
     rank: 4,
     badges: [],
   },
+  {
+    id: '5',
+    member_id: '5',
+    member_name: 'Emily Chen',
+    member_email: 'emily@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&q=80',
+    total_revenue: 72000,
+    quotations_sent: 12,
+    deals_won: 3,
+    deals_won_value: 72000,
+    invoices_collected: 3,
+    success_rate: 25.0,
+    activity_streak: 6,
+    response_time_hours: 4.5,
+    points_scored: 360,
+    rank: 5,
+    badges: [],
+  },
+  {
+    id: '6',
+    member_id: '6',
+    member_name: 'James Wilson',
+    member_email: 'james@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80',
+    total_revenue: 58000,
+    quotations_sent: 10,
+    deals_won: 2,
+    deals_won_value: 58000,
+    invoices_collected: 2,
+    success_rate: 20.0,
+    activity_streak: 4,
+    response_time_hours: 6.2,
+    points_scored: 290,
+    rank: 6,
+    badges: [],
+  },
+  {
+    id: '7',
+    member_id: '7',
+    member_name: 'Lisa Anderson',
+    member_email: 'lisa@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80',
+    total_revenue: 45000,
+    quotations_sent: 9,
+    deals_won: 2,
+    deals_won_value: 45000,
+    invoices_collected: 2,
+    success_rate: 22.2,
+    activity_streak: 3,
+    response_time_hours: 5.1,
+    points_scored: 225,
+    rank: 7,
+    badges: [],
+  },
+  {
+    id: '8',
+    member_id: '8',
+    member_name: 'Robert Taylor',
+    member_email: 'robert@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80',
+    total_revenue: 38000,
+    quotations_sent: 8,
+    deals_won: 2,
+    deals_won_value: 38000,
+    invoices_collected: 1,
+    success_rate: 25.0,
+    activity_streak: 2,
+    response_time_hours: 7.3,
+    points_scored: 190,
+    rank: 8,
+    badges: [],
+  },
+  {
+    id: '9',
+    member_id: '9',
+    member_name: 'Amanda Martinez',
+    member_email: 'amanda@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&q=80',
+    total_revenue: 29000,
+    quotations_sent: 7,
+    deals_won: 1,
+    deals_won_value: 29000,
+    invoices_collected: 1,
+    success_rate: 14.3,
+    activity_streak: 3,
+    response_time_hours: 8.1,
+    points_scored: 145,
+    rank: 9,
+    badges: [],
+  },
+  {
+    id: '10',
+    member_id: '10',
+    member_name: 'David Brown',
+    member_email: 'david@fiamma.com',
+    member_avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&q=80',
+    total_revenue: 21000,
+    quotations_sent: 6,
+    deals_won: 1,
+    deals_won_value: 21000,
+    invoices_collected: 1,
+    success_rate: 16.7,
+    activity_streak: 1,
+    response_time_hours: 9.5,
+    points_scored: 105,
+    rank: 10,
+    badges: [],
+  },
 ];
 
 const badgeConfig = {
@@ -147,60 +255,46 @@ const formatCurrency = (amount: number) => {
 
 export default function Leaderboard() {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('month');
-  const [expandedMember, setExpandedMember] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const leaderboardData = mockLeaderboardData;
-  const topThree = leaderboardData.slice(0, 3);
-  const remaining = leaderboardData.slice(3);
+  const topTen = mockLeaderboardData.slice(0, 10);
+  const topThree = topTen.slice(0, 3);
+  const remaining = topTen.slice(3);
 
-  const totalTeamRevenue = leaderboardData.reduce((sum, entry) => sum + entry.total_revenue, 0);
-  const totalDealsWon = leaderboardData.reduce((sum, entry) => sum + entry.deals_won, 0);
+  const totalTeamRevenue = mockLeaderboardData.reduce((sum, entry) => sum + entry.total_revenue, 0);
 
   const getPodiumStyles = (rank: number) => {
     switch (rank) {
       case 1:
         return {
-          gradient: 'from-amber-50 to-yellow-100',
-          border: 'border-amber-200',
-          ring: 'ring-amber-100',
+          gradient: 'from-amber-50/50 to-yellow-100/50',
+          border: 'border-amber-200/60',
           iconBg: 'bg-gradient-to-br from-amber-400 to-yellow-500',
           icon: 'solar:cup-star-bold',
-          medal: '🥇',
-          shadow: 'shadow-amber-200/50',
-          height: 'h-64',
+          height: 'h-56',
         };
       case 2:
         return {
-          gradient: 'from-slate-100 to-slate-200',
-          border: 'border-slate-300',
-          ring: 'ring-slate-200',
+          gradient: 'from-slate-100/50 to-slate-200/50',
+          border: 'border-slate-300/60',
           iconBg: 'bg-gradient-to-br from-slate-400 to-slate-500',
           icon: 'solar:medal-star-bold',
-          medal: '🥈',
-          shadow: 'shadow-slate-200/50',
-          height: 'h-56',
+          height: 'h-52',
         };
       case 3:
         return {
-          gradient: 'from-orange-50 to-orange-100',
-          border: 'border-orange-200',
-          ring: 'ring-orange-100',
+          gradient: 'from-orange-50/50 to-orange-100/50',
+          border: 'border-orange-200/60',
           iconBg: 'bg-gradient-to-br from-orange-400 to-orange-500',
           icon: 'solar:medal-ribbons-star-bold',
-          medal: '🥉',
-          shadow: 'shadow-orange-200/50',
-          height: 'h-52',
+          height: 'h-48',
         };
       default:
         return {
           gradient: 'from-white to-slate-50',
           border: 'border-slate-200',
-          ring: 'ring-slate-100',
           iconBg: 'bg-slate-300',
           icon: 'solar:cup-bold',
-          medal: '',
-          shadow: 'shadow-slate-200/50',
           height: 'h-48',
         };
     }
@@ -212,31 +306,22 @@ export default function Leaderboard() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-100">
+      <div className="p-5 border-b border-slate-100">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-lg">
-              <Icon icon="solar:cup-star-bold" width="20" className="text-white" />
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-md">
+              <Icon icon="solar:cup-star-bold" width="18" className="text-white" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-slate-900">Sales Leaderboard</h3>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                  </span>
-                  Live
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Team performance • {formatCurrency(totalTeamRevenue)} • {totalDealsWon} deals won
+              <h3 className="text-lg font-bold text-slate-900">Sales Leaderboard</h3>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Top 10 Leaders • {formatCurrency(totalTeamRevenue)}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
+            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
               {[
                 { value: 'week' as PeriodType, label: 'Week' },
                 { value: 'month' as PeriodType, label: 'Month' },
@@ -245,7 +330,7 @@ export default function Leaderboard() {
                 <button
                   key={period.value}
                   onClick={() => setSelectedPeriod(period.value)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     selectedPeriod === period.value
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'text-slate-600 hover:text-slate-900'
@@ -258,11 +343,11 @@ export default function Leaderboard() {
 
             <button
               onClick={toggleExpanded}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
             >
               <Icon
                 icon={isExpanded ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}
-                width="20"
+                width="18"
                 className="text-slate-400"
               />
             </button>
@@ -271,26 +356,20 @@ export default function Leaderboard() {
       </div>
 
       {isExpanded && (
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {topThree.map((entry) => {
               const styles = getPodiumStyles(entry.rank);
-              const topPerformerRevenue = topThree[0].total_revenue;
-              const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
+              const topBadge = entry.badges[0];
 
               return (
                 <div
                   key={entry.id}
-                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-2xl p-6 ${styles.shadow} hover:shadow-lg transition-all duration-300 hover:scale-105 group ${styles.height} flex flex-col`}
+                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col`}
                 >
-                  <div className="absolute top-4 right-4 text-4xl opacity-20 group-hover:opacity-30 transition-opacity">
-                    {styles.medal}
-                  </div>
-
                   <div className="flex flex-col items-center text-center flex-1">
-                    <div className="relative mb-4">
-                      <div className={`absolute inset-0 rounded-full ${styles.ring} ring-4 animate-pulse`}></div>
-                      <div className="relative h-20 w-20 rounded-full overflow-hidden shadow-xl ring-4 ring-white">
+                    <div className="relative mb-3">
+                      <div className="relative h-16 w-16 rounded-full overflow-hidden shadow-lg ring-4 ring-white">
                         <img
                           src={entry.member_avatar_url}
                           alt={entry.member_name}
@@ -298,103 +377,70 @@ export default function Leaderboard() {
                         />
                       </div>
                       <div
-                        className={`absolute -bottom-2 -right-2 h-10 w-10 ${styles.iconBg} rounded-full flex items-center justify-center shadow-lg ring-4 ring-white`}
+                        className={`absolute -bottom-1 -right-1 h-8 w-8 ${styles.iconBg} rounded-full flex items-center justify-center shadow-md ring-3 ring-white`}
                       >
-                        <Icon icon={styles.icon} width="18" className="text-white" />
+                        <Icon icon={styles.icon} width="14" className="text-white" />
                       </div>
                     </div>
 
-                    <div className="mb-3">
-                      <h4 className="text-lg font-bold text-slate-900 mb-1">{entry.member_name}</h4>
-                      <div className="flex items-center justify-center gap-1 flex-wrap">
-                        {entry.badges.slice(0, 2).map((badge) => {
-                          const config = badgeConfig[badge as keyof typeof badgeConfig];
-                          return (
-                            <div
-                              key={badge}
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${config.bg} group/badge relative`}
-                            >
-                              <Icon icon={config.icon} width="12" className={config.color} />
-                              <span className={`text-[10px] font-bold ${config.color}`}>
-                                {config.label}
-                              </span>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] rounded-lg opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                                {config.description}
+                    <div className="mb-4">
+                      <h4 className="text-base font-bold text-slate-900 mb-1">{entry.member_name}</h4>
+                      {topBadge && (
+                        <div className="flex items-center justify-center">
+                          {(() => {
+                            const config = badgeConfig[topBadge as keyof typeof badgeConfig];
+                            return (
+                              <div
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${config.bg}`}
+                                title={config.description}
+                              >
+                                <Icon icon={config.icon} width="10" className={config.color} />
+                                <span className={`text-[10px] font-semibold ${config.color}`}>
+                                  {config.label}
+                                </span>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-3 flex-1 flex flex-col justify-center w-full">
                       <div>
                         <p className="text-xs font-medium text-slate-600 mb-1">Total Revenue</p>
-                        <p className="text-3xl font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</p>
+                        <p className="text-2xl font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</p>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="flex items-center justify-center gap-4">
                         <div>
-                          <p className="text-xs text-slate-600">Deals</p>
+                          <p className="text-xs text-slate-600">Deals Won</p>
                           <p className="text-lg font-bold text-slate-900">{entry.deals_won}</p>
                         </div>
-                        <div>
-                          <p className="text-xs text-slate-600">Success</p>
-                          <p className="text-lg font-bold text-slate-900">{entry.success_rate.toFixed(1)}%</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-600">Streak</p>
-                          <p className="text-lg font-bold text-slate-900">{entry.activity_streak}d</p>
-                        </div>
                       </div>
-
-                      {entry.rank !== 1 && (
-                        <div className="pt-2">
-                          <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
-                            <span>Performance</span>
-                            <span>{percentage.toFixed(0)}%</span>
-                          </div>
-                          <div className="h-2 bg-white/50 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-slate-900 rounded-full transition-all duration-500"
-                              style={{ width: `${percentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
-
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 </div>
               );
             })}
           </div>
 
           {remaining.length > 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-px flex-1 bg-slate-200"></div>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Team Rankings</span>
-                <div className="h-px flex-1 bg-slate-200"></div>
-              </div>
+            <div className="pt-2">
+              <div className="space-y-1 bg-slate-50/50 rounded-xl p-3">
+                {remaining.map((entry) => {
+                  const topPerformerRevenue = topThree[0].total_revenue;
+                  const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
 
-              {remaining.map((entry) => {
-                const topPerformerRevenue = topThree[0].total_revenue;
-                const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
-                const isExpanded = expandedMember === entry.id;
-
-                return (
-                  <div key={entry.id} className="border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition-all">
-                    <button
-                      onClick={() => setExpandedMember(isExpanded ? null : entry.id)}
-                      className="w-full p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors"
+                  return (
+                    <div
+                      key={entry.id}
+                      className="bg-white border border-slate-200/60 rounded-lg p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
                     >
-                      <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-100 text-slate-700 font-bold text-sm flex-shrink-0">
+                      <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs flex-shrink-0">
                         #{entry.rank}
                       </div>
 
-                      <div className="h-10 w-10 rounded-full overflow-hidden shadow-sm flex-shrink-0 ring-2 ring-white">
+                      <div className="h-8 w-8 rounded-full overflow-hidden shadow-sm flex-shrink-0">
                         <img
                           src={entry.member_avatar_url}
                           alt={entry.member_name}
@@ -403,97 +449,30 @@ export default function Leaderboard() {
                       </div>
 
                       <div className="flex-1 text-left min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-semibold text-slate-900 truncate">{entry.member_name}</span>
-                          {entry.badges.length > 0 && (
-                            <div className="flex items-center gap-1">
-                              {entry.badges.slice(0, 2).map((badge) => {
-                                const config = badgeConfig[badge as keyof typeof badgeConfig];
-                                return (
-                                  <div
-                                    key={badge}
-                                    className={`${config.bg} p-1 rounded`}
-                                    title={config.label}
-                                  >
-                                    <Icon icon={config.icon} width="10" className={config.color} />
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-xs text-slate-600">{formatCurrency(entry.total_revenue)} revenue</span>
-                          <span className="text-xs text-slate-400">•</span>
-                          <span className="text-xs text-slate-600">{entry.deals_won} deals</span>
-                          <span className="text-xs text-slate-400">•</span>
-                          <span className="text-xs text-slate-600">{entry.success_rate.toFixed(1)}% success</span>
+                        <span className="text-sm font-semibold text-slate-900 block truncate">{entry.member_name}</span>
+                      </div>
+
+                      <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                        <span className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</span>
+                      </div>
+
+                      <div className="hidden md:block w-24 flex-shrink-0">
+                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-slate-400 rounded-full"
+                            style={{ width: `${percentage}%` }}
+                          ></div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="hidden md:block w-32">
-                          <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
-                            <span>{percentage.toFixed(0)}%</span>
-                          </div>
-                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                              style={{ width: `${percentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-
-                        <div className="text-xl font-bold text-slate-400">
-                          {entry.points_scored}
-                          <span className="text-xs text-slate-400 ml-1">pts</span>
-                        </div>
-
-                        <Icon
-                          icon={isExpanded ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}
-                          width="20"
-                          className="text-slate-400"
-                        />
+                      <div className="text-base font-bold text-slate-600 flex-shrink-0">
+                        {entry.points_scored}
+                        <span className="text-xs text-slate-400 ml-0.5">pts</span>
                       </div>
-                    </button>
-
-                    {isExpanded && (
-                      <div className="px-4 pb-4 bg-slate-50 border-t border-slate-200">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-                          <div className="bg-white rounded-lg p-3 border border-slate-200">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Icon icon="solar:document-text-bold" width="14" className="text-blue-500" />
-                              <span className="text-xs font-medium text-slate-600">Quotations</span>
-                            </div>
-                            <p className="text-lg font-bold text-slate-900">{entry.quotations_sent}</p>
-                          </div>
-                          <div className="bg-white rounded-lg p-3 border border-slate-200">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Icon icon="solar:bill-check-bold" width="14" className="text-emerald-500" />
-                              <span className="text-xs font-medium text-slate-600">Invoices</span>
-                            </div>
-                            <p className="text-lg font-bold text-slate-900">{entry.invoices_collected}</p>
-                          </div>
-                          <div className="bg-white rounded-lg p-3 border border-slate-200">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Icon icon="solar:fire-bold" width="14" className="text-orange-500" />
-                              <span className="text-xs font-medium text-slate-600">Streak</span>
-                            </div>
-                            <p className="text-lg font-bold text-slate-900">{entry.activity_streak} days</p>
-                          </div>
-                          <div className="bg-white rounded-lg p-3 border border-slate-200">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Icon icon="solar:clock-circle-bold" width="14" className="text-amber-500" />
-                              <span className="text-xs font-medium text-slate-600">Response</span>
-                            </div>
-                            <p className="text-lg font-bold text-slate-900">{entry.response_time_hours.toFixed(1)}h</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
