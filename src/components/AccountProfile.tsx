@@ -171,66 +171,64 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-shrink-0 px-8 pt-6">
+      <div className="flex-shrink-0 px-8 pt-4 pb-3 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-            <div className="p-8">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-6">
-                  <div className="relative group">
-                    <div className="h-24 w-24 rounded-3xl overflow-hidden bg-slate-100 border-2 border-white shadow-xl ring-2 ring-slate-200">
-                      {avatarPreview || profileData.avatar ? (
-                        <img
-                          src={avatarPreview || profileData.avatar}
-                          alt="Profile"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center">
-                          <Icon icon="solar:user-linear" width="36" className="text-slate-400" />
-                        </div>
-                      )}
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <div className="relative group flex-shrink-0">
+                <div className="h-14 w-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-md ring-1 ring-slate-200">
+                  {avatarPreview || profileData.avatar ? (
+                    <img
+                      src={avatarPreview || profileData.avatar}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center">
+                      <Icon icon="solar:user-linear" width="24" className="text-slate-400" />
                     </div>
-                    {uploadingAvatar && (
-                      <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-3xl">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
-                      </div>
-                    )}
-                    <div className="absolute -bottom-1.5 -right-1.5 h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-lg ring-2 ring-blue-50">
-                      <Icon icon="solar:check-circle-bold" width="18" className="text-blue-600" />
-                    </div>
+                  )}
+                </div>
+                {uploadingAvatar && (
+                  <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-2xl">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-900"></div>
                   </div>
+                )}
+                <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-white flex items-center justify-center shadow-md ring-2 ring-blue-50">
+                  <Icon icon="solar:check-circle-bold" width="14" className="text-blue-600" />
+                </div>
+              </div>
 
-                  <div className="pt-1">
-                    <h1 className="text-3xl font-bold text-slate-900 mb-1">
-                      {profileData.firstName} {profileData.lastName}
-                    </h1>
-                    <p className="text-slate-600 mb-3">{profileData.email}</p>
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1.5 text-slate-600">
-                        <Icon icon="solar:map-point-linear" width="16" />
-                        {profileData.location}
-                      </div>
-                      <div className="h-1 w-1 rounded-full bg-slate-300"></div>
-                      <div className="flex items-center gap-1.5 text-slate-600">
-                        <Icon icon="solar:calendar-linear" width="16" />
-                        Member since {activityData.accountCreated}
-                      </div>
-                    </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h1 className="text-xl font-bold text-slate-900 truncate">
+                    {profileData.firstName} {profileData.lastName}
+                  </h1>
+                </div>
+                <p className="text-sm text-slate-600 mb-1.5 truncate">{profileData.email}</p>
+                <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1.5 text-slate-500">
+                    <Icon icon="solar:map-point-linear" width="14" />
+                    {profileData.location}
+                  </div>
+                  <div className="h-1 w-1 rounded-full bg-slate-300"></div>
+                  <div className="flex items-center gap-1.5 text-slate-500">
+                    <Icon icon="solar:calendar-linear" width="14" />
+                    Member since {activityData.accountCreated}
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="text-center px-4">
-                    <div className="text-2xl font-bold text-slate-900">{activityData.totalQuotations}</div>
-                    <div className="text-xs text-slate-500 font-medium">Quotations</div>
-                  </div>
-                  <div className="h-10 w-px bg-slate-200"></div>
-                  <div className="text-center px-4">
-                    <div className="text-2xl font-bold text-slate-900">{activityData.totalInvoices}</div>
-                    <div className="text-xs text-slate-500 font-medium">Invoices</div>
-                  </div>
-                </div>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="text-center px-4">
+                <div className="text-xl font-bold text-slate-900">{activityData.totalQuotations}</div>
+                <div className="text-xs text-slate-500 font-medium">Quotations</div>
+              </div>
+              <div className="h-10 w-px bg-slate-200"></div>
+              <div className="text-center px-4">
+                <div className="text-xl font-bold text-slate-900">{activityData.totalInvoices}</div>
+                <div className="text-xs text-slate-500 font-medium">Invoices</div>
               </div>
             </div>
           </div>
