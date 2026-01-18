@@ -6,6 +6,7 @@ interface QuoteViewProps {
 }
 
 export default function QuoteView({ onBackToQuotes }: QuoteViewProps) {
+  const [hasError, setHasError] = useState(false);
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -20,6 +21,27 @@ export default function QuoteView({ onBackToQuotes }: QuoteViewProps) {
     email: '',
     feedback: ''
   });
+
+  if (hasError) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <Icon icon="solar:danger-triangle-linear" width="48" className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Something went wrong</h2>
+          <p className="text-sm text-slate-600 mb-4">Unable to load the quote</p>
+          <button
+            onClick={() => {
+              setHasError(false);
+              onBackToQuotes();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const mockQuote = {
     name: 'Churning',

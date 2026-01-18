@@ -103,13 +103,14 @@ const INVOICE_STEPS = [
 const MOCK_WORKSPACE: Workspace = {
   id: 'mock-workspace-1',
   name: 'Superproxy Inc.',
-  logo_url: '/superproxy_logo_(2).jpg',
+  logo_url: '/superproxy_logo.svg',
   address: '123 Tech Street, Manila',
   company_email: 'contact@superproxy.com',
   company_phone: '+639175328910',
 };
 
 export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: CreateInvoiceProps) {
+  const [hasError, setHasError] = useState(false);
   const [invoiceTitle, setInvoiceTitle] = useState('Untitled Invoice');
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -128,6 +129,27 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   );
   const [workspaceDetails] = useState<Workspace>(MOCK_WORKSPACE);
   const [currency] = useState('PHP');
+
+  if (hasError) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <Icon icon="solar:danger-triangle-linear" width="48" className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Something went wrong</h2>
+          <p className="text-sm text-slate-600 mb-4">Unable to load the invoice editor</p>
+          <button
+            onClick={() => {
+              setHasError(false);
+              onBack();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const quoteDropdownRef = useRef<HTMLDivElement>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement>(null);
@@ -180,6 +202,11 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
     }
   }, [preSelectedQuote]);
 
+  const selectedQuote = useMemo(
+    () => quotations.find((q) => q.id === selectedQuoteId),
+    [quotations, selectedQuoteId]
+  );
+
   const amountDueNow = useMemo(() => {
     if (!selectedQuote) return 0;
     const percentage = parseFloat(amountDueNowPercentage) || 0;
@@ -195,11 +222,12 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   }, [invoiceDueInDays, customDays]);
 
   const formatCurrency = (amount: number) => {
+    const safeAmount = typeof amount === 'number' && !isNaN(amount) ? amount : 0;
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2,
-    }).format(amount);
+    }).format(safeAmount);
   };
 
   const formatDate = (dateString: string) => {
@@ -241,11 +269,6 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
       quote.title.toLowerCase().includes(quoteSearchQuery.toLowerCase())
     ),
     [quotations, quoteSearchQuery]
-  );
-
-  const selectedQuote = useMemo(
-    () => quotations.find((q) => q.id === selectedQuoteId),
-    [quotations, selectedQuoteId]
   );
 
   return (

@@ -248,7 +248,7 @@ const MOCK_PRODUCTS: Product[] = [
 const MOCK_WORKSPACE = {
   id: 'mock-workspace-1',
   name: 'Superproxy Inc.',
-  logo_url: '/superproxy_logo_(2).jpg',
+  logo_url: '/superproxy_logo.svg',
   address: '123 Tech Street, Manila',
 };
 
@@ -261,6 +261,7 @@ const MOCK_USER = {
 };
 
 export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
+  const [hasError, setHasError] = useState(false);
   const [quoteName, setQuoteName] = useState('Untitled Quote');
   const [currency, setCurrency] = useState('PHP');
   const [currentStep, setCurrentStep] = useState(1);
@@ -290,6 +291,27 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   const [termsOfSale, setTermsOfSale] = useState(
     `1. Payment Terms: Payment is due within 30 days of invoice date. Late payments may incur a 1.5% monthly interest charge.\n\n2. Delivery: Estimated delivery times are provided in good faith but are not guaranteed. We are not liable for delays beyond our control.\n\n3. Returns & Refunds: Products may be returned within 14 days of delivery in original condition. Custom products are non-refundable.\n\n4. Warranty: All products come with a standard manufacturer's warranty. Extended warranties are available upon request.\n\n5. Limitation of Liability: Our liability is limited to the total value of this quotation. We are not liable for indirect or consequential damages.`
   );
+
+  if (hasError) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <Icon icon="solar:danger-triangle-linear" width="48" className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Something went wrong</h2>
+          <p className="text-sm text-slate-600 mb-4">Unable to load the quote editor</p>
+          <button
+            onClick={() => {
+              setHasError(false);
+              onBack();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const mockReferenceNumber = useMemo(() => {
     const year = new Date().getFullYear();
@@ -401,7 +423,8 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   };
 
   const calculateSubtotal = () => {
-    return lineItems.reduce((sum, item) => sum + item.total, 0);
+    if (!Array.isArray(lineItems) || lineItems.length === 0) return 0;
+    return lineItems.reduce((sum, item) => sum + (item?.total || 0), 0);
   };
 
   const calculateTax = () => {
@@ -422,8 +445,10 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   };
 
   const filteredProducts = useMemo(() => {
+    if (!Array.isArray(products)) return [];
     return products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(productSearchQuery.toLowerCase());
+      if (!product) return false;
+      const matchesSearch = product.name?.toLowerCase().includes(productSearchQuery.toLowerCase()) ?? false;
       const matchesFilter =
         productFilter === 'all' ||
         (productFilter === 'team' && !product.is_custom) ||
@@ -433,20 +458,21 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   }, [products, productSearchQuery, productFilter]);
 
   const teamProducts = useMemo(
-    () => filteredProducts.filter((p) => !p.is_custom),
+    () => (Array.isArray(filteredProducts) ? filteredProducts.filter((p) => p && !p.is_custom) : []),
     [filteredProducts]
   );
 
   const customProducts = useMemo(
-    () => filteredProducts.filter((p) => p.is_custom),
+    () => (Array.isArray(filteredProducts) ? filteredProducts.filter((p) => p && p.is_custom) : []),
     [filteredProducts]
   );
 
   const formatCurrency = (amount: number) => {
+    const safeAmount = typeof amount === 'number' && !isNaN(amount) ? amount : 0;
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
       currency: 'PHP',
-    }).format(amount);
+    }).format(safeAmount);
   };
 
   return (
