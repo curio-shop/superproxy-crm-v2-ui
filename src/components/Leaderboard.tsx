@@ -368,6 +368,10 @@ export default function Leaderboard() {
                   key={entry.id}
                   className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col`}
                 >
+                  <div className="absolute top-3 left-3 flex items-center justify-center h-6 w-6 rounded-lg bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-sm">
+                    <span className="text-xs font-bold text-slate-700">#{entry.rank}</span>
+                  </div>
+
                   <div className="flex flex-col items-center text-center flex-1">
                     <div className="relative mb-3">
                       <div className="relative h-16 w-16 rounded-full overflow-hidden shadow-lg ring-4 ring-white">
@@ -444,9 +448,6 @@ export default function Leaderboard() {
               {showRemaining && (
                 <div className="space-y-1 bg-slate-50/50 rounded-xl p-3 mt-2">
                   {remaining.map((entry) => {
-                    const topPerformerRevenue = topThree[0].total_revenue;
-                    const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
-
                     return (
                       <div
                         key={entry.id}
@@ -468,22 +469,16 @@ export default function Leaderboard() {
                           <span className="text-sm font-semibold text-slate-900 block truncate">{entry.member_name}</span>
                         </div>
 
-                        <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
-                          <span className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</span>
-                        </div>
-
-                        <div className="hidden md:block w-24 flex-shrink-0">
-                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-slate-400 rounded-full"
-                              style={{ width: `${percentage}%` }}
-                            ></div>
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                          <div className="text-right">
+                            <p className="text-xs text-slate-500 leading-none mb-0.5">Revenue</p>
+                            <p className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</p>
                           </div>
-                        </div>
 
-                        <div className="text-base font-bold text-slate-600 flex-shrink-0">
-                          {entry.points_scored}
-                          <span className="text-xs text-slate-400 ml-0.5">pts</span>
+                          <div className="text-right">
+                            <p className="text-xs text-slate-500 leading-none mb-0.5">Deals</p>
+                            <p className="text-sm font-bold text-slate-900">{entry.deals_won}</p>
+                          </div>
                         </div>
                       </div>
                     );
