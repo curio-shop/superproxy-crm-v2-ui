@@ -20,9 +20,7 @@ export default function AccountProfile() {
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
     pushNotifications: false,
-    weeklyDigest: true,
     marketingEmails: false,
-    language: 'en',
   });
 
   const [sessions] = useState([
@@ -85,73 +83,77 @@ export default function AccountProfile() {
   ] as const;
 
   return (
-    <div className="flex-1 overflow-y-auto custom-scrollbar px-8 py-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-          <div className="p-8">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-6">
-                <div className="relative group">
-                  <div className="h-24 w-24 rounded-3xl overflow-hidden bg-slate-100 border-2 border-white shadow-xl ring-2 ring-slate-200">
-                    {avatarPreview || profileData.avatar ? (
-                      <img
-                        src={avatarPreview || profileData.avatar}
-                        alt="Profile"
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center">
-                        <Icon icon="solar:user-linear" width="36" className="text-slate-400" />
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-shrink-0 px-8 pt-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="p-8">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-6">
+                  <div className="relative group">
+                    <div className="h-24 w-24 rounded-3xl overflow-hidden bg-slate-100 border-2 border-white shadow-xl ring-2 ring-slate-200">
+                      {avatarPreview || profileData.avatar ? (
+                        <img
+                          src={avatarPreview || profileData.avatar}
+                          alt="Profile"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center">
+                          <Icon icon="solar:user-linear" width="36" className="text-slate-400" />
+                        </div>
+                      )}
+                    </div>
+                    {uploadingAvatar && (
+                      <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-3xl">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
                       </div>
                     )}
-                  </div>
-                  {uploadingAvatar && (
-                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-3xl">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900"></div>
+                    <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-emerald-500 ring-4 ring-white flex items-center justify-center shadow-lg">
+                      <Icon icon="solar:check-circle-bold" width="16" className="text-white" />
                     </div>
-                  )}
-                  <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-emerald-500 ring-4 ring-white flex items-center justify-center shadow-lg">
-                    <Icon icon="solar:check-circle-bold" width="16" className="text-white" />
+                  </div>
+
+                  <div className="pt-1">
+                    <h1 className="text-3xl font-bold text-slate-900 mb-1">
+                      {profileData.firstName} {profileData.lastName}
+                    </h1>
+                    <p className="text-slate-600 mb-3">{profileData.email}</p>
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-1.5 text-slate-600">
+                        <Icon icon="solar:map-point-linear" width="16" />
+                        {profileData.location}
+                      </div>
+                      <div className="h-1 w-1 rounded-full bg-slate-300"></div>
+                      <div className="flex items-center gap-1.5 text-slate-600">
+                        <Icon icon="solar:calendar-linear" width="16" />
+                        Member since {activityData.accountCreated}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-1">
-                  <h1 className="text-3xl font-bold text-slate-900 mb-1">
-                    {profileData.firstName} {profileData.lastName}
-                  </h1>
-                  <p className="text-slate-600 mb-3">{profileData.email}</p>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1.5 text-slate-600">
-                      <Icon icon="solar:map-point-linear" width="16" />
-                      {profileData.location}
-                    </div>
-                    <div className="h-1 w-1 rounded-full bg-slate-300"></div>
-                    <div className="flex items-center gap-1.5 text-slate-600">
-                      <Icon icon="solar:calendar-linear" width="16" />
-                      Member since {activityData.accountCreated}
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-center px-4">
+                    <div className="text-2xl font-bold text-slate-900">{activityData.totalQuotations}</div>
+                    <div className="text-xs text-slate-500 font-medium">Quotations</div>
                   </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="text-center px-4">
-                  <div className="text-2xl font-bold text-slate-900">{activityData.totalQuotations}</div>
-                  <div className="text-xs text-slate-500 font-medium">Quotations</div>
-                </div>
-                <div className="h-10 w-px bg-slate-200"></div>
-                <div className="text-center px-4">
-                  <div className="text-2xl font-bold text-slate-900">{activityData.totalInvoices}</div>
-                  <div className="text-xs text-slate-500 font-medium">Invoices</div>
+                  <div className="h-10 w-px bg-slate-200"></div>
+                  <div className="text-center px-4">
+                    <div className="text-2xl font-bold text-slate-900">{activityData.totalInvoices}</div>
+                    <div className="text-xs text-slate-500 font-medium">Invoices</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="flex gap-8">
+      <div className="flex-1 overflow-hidden px-8 py-6">
+        <div className="max-w-7xl mx-auto h-full flex gap-8">
           <div className="w-64 flex-shrink-0">
-            <nav className="bg-white border border-slate-200 rounded-2xl shadow-sm p-2 sticky top-6">
+            <nav className="bg-white border border-slate-200 rounded-2xl shadow-sm p-2 sticky top-0">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -169,7 +171,7 @@ export default function AccountProfile() {
             </nav>
           </div>
 
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 overflow-y-auto custom-scrollbar pr-2">
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
@@ -329,7 +331,7 @@ export default function AccountProfile() {
                     <p className="text-sm text-slate-500 mt-1">Customize how the app looks and feels</p>
                   </div>
 
-                  <div className="p-6 space-y-5">
+                  <div className="p-6">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
@@ -352,28 +354,6 @@ export default function AccountProfile() {
                           }`}
                         />
                       </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                          <Icon icon="solar:palette-2-linear" width="24" className="text-slate-700" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-semibold text-slate-900">Language</h3>
-                          <p className="text-xs text-slate-500">Select your preferred language</p>
-                        </div>
-                      </div>
-                      <select
-                        value={preferences.language}
-                        onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
-                        className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-50 transition-colors"
-                      >
-                        <option value="en">English</option>
-                        <option value="es">Spanish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
-                      </select>
                     </div>
                   </div>
                 </div>
@@ -426,30 +406,6 @@ export default function AccountProfile() {
                         <span
                           className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
                             preferences.pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    <div className="h-px bg-slate-100"></div>
-
-                    <div className="flex items-center justify-between py-3">
-                      <div className="flex items-center gap-3">
-                        <Icon icon="solar:calendar-linear" width="20" className="text-slate-400" />
-                        <div>
-                          <h3 className="text-sm font-semibold text-slate-900">Weekly Digest</h3>
-                          <p className="text-xs text-slate-500">Get a weekly summary of your activity</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setPreferences({ ...preferences, weeklyDigest: !preferences.weeklyDigest })}
-                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
-                          preferences.weeklyDigest ? 'bg-slate-900' : 'bg-slate-300'
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
-                            preferences.weeklyDigest ? 'translate-x-6' : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -561,15 +517,13 @@ export default function AccountProfile() {
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                  <div className="p-6">
+                  <div className="px-6 py-5 bg-slate-50 border-t border-slate-100">
                     <button
                       onClick={() => alert('Logging out...')}
-                      className="w-full flex items-center justify-center gap-3 p-4 bg-slate-900 hover:bg-slate-800 rounded-xl transition-all text-white font-semibold shadow-lg"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 rounded-xl transition-all text-white text-sm font-semibold shadow-sm"
                     >
-                      <Icon icon="solar:logout-linear" width="20" />
+                      <Icon icon="solar:logout-linear" width="18" />
                       Log Out
                     </button>
                   </div>
