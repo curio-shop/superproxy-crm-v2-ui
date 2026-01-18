@@ -1,8 +1,9 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 export default function AccountProfile() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
   const [showDangerZone, setShowDangerZone] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -50,6 +51,15 @@ export default function AccountProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const contentScrollRef = useRef<HTMLDivElement>(null);
 
+  const [contactForm, setContactForm] = useState({
+    subject: 'General Inquiry',
+    message: '',
+    priority: 'normal' as 'normal' | 'urgent',
+  });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [ticketNumber, setTicketNumber] = useState('');
+
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -87,6 +97,62 @@ export default function AccountProfile() {
     alert('Account deletion requested. You will receive a confirmation email.');
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!contactForm.message.trim()) {
+      alert('Please enter a message');
+      return;
+    }
+
+    if (contactForm.message.length > 500) {
+      alert('Message must be 500 characters or less');
+      return;
+    }
+
+    setIsSubmittingContact(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        alert('You must be logged in to submit a contact form');
+        setIsSubmittingContact(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          user_id: user.id,
+          user_email: profileData.email,
+          user_name: `${profileData.firstName} ${profileData.lastName}`,
+          subject: contactForm.subject,
+          message: contactForm.message,
+          priority: contactForm.priority,
+          status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newTicketNumber = `CS-${data.id.slice(0, 8).toUpperCase()}`;
+      setTicketNumber(newTicketNumber);
+      setShowSuccessModal(true);
+      setContactForm({
+        subject: 'General Inquiry',
+        message: '',
+        priority: 'normal',
+      });
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      alert('Failed to submit contact form. Please try again.');
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showDeleteModal && !isDeleting) {
@@ -113,6 +179,7 @@ export default function AccountProfile() {
     { id: 'security', label: 'Security', icon: 'solar:shield-keyhole-linear' },
     { id: 'billing', label: 'Billing', icon: 'solar:card-linear' },
     { id: 'workspaces', label: 'Workspaces', icon: 'solar:buildings-2-linear' },
+    { id: 'contact', label: 'Contact Us', icon: 'solar:chat-round-call-linear' },
   ] as const;
 
   return (
@@ -775,6 +842,207 @@ export default function AccountProfile() {
                 )}
               </div>
             )}
+
+            {activeTab === 'contact' && (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="p-8 text-center">
+                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 mb-4">
+                      <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">We're Here to Help</h2>
+                    <p className="text-slate-600 max-w-md mx-auto">
+                      Have a question or need assistance? Our support team is ready to help you succeed.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-slate-100">
+                    <h2 className="text-xl font-bold text-slate-900">Send Us a Message</h2>
+                    <p className="text-sm text-slate-500 mt-1">Fill out the form below and we'll get back to you shortly</p>
+                  </div>
+
+                  <form onSubmit={handleContactSubmit} className="p-6 space-y-5">
+                    <div className="grid grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-900 mb-2">Your Name</label>
+                        <input
+                          type="text"
+                          value={`${profileData.firstName} ${profileData.lastName}`}
+                          readOnly
+                          className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 text-sm cursor-not-allowed text-slate-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-900 mb-2">Your Email</label>
+                        <input
+                          type="email"
+                          value={profileData.email}
+                          readOnly
+                          className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 text-sm cursor-not-allowed text-slate-600"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-900 mb-2">Subject</label>
+                      <select
+                        value={contactForm.subject}
+                        onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                        disabled={isSubmittingContact}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Technical Support">Technical Support</option>
+                        <option value="Billing Question">Billing Question</option>
+                        <option value="Feature Request">Feature Request</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-900 mb-2">Message</label>
+                      <textarea
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        disabled={isSubmittingContact}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        rows={6}
+                        maxLength={500}
+                        placeholder="Describe your question or issue in detail..."
+                        required
+                      />
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="text-xs text-slate-500">Please be as detailed as possible</p>
+                        <p className={`text-xs font-medium ${contactForm.message.length > 450 ? 'text-amber-600' : 'text-slate-500'}`}>
+                          {contactForm.message.length}/500
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-900 mb-3">Priority</label>
+                      <div className="flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setContactForm({ ...contactForm, priority: 'normal' })}
+                          disabled={isSubmittingContact}
+                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                            contactForm.priority === 'normal'
+                              ? 'border-slate-900 bg-slate-900 text-white'
+                              : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                          }`}
+                        >
+                          <Icon icon="solar:chat-round-line-linear" width="18" />
+                          Normal
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setContactForm({ ...contactForm, priority: 'urgent' })}
+                          disabled={isSubmittingContact}
+                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                            contactForm.priority === 'urgent'
+                              ? 'border-amber-500 bg-amber-500 text-white'
+                              : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                          }`}
+                        >
+                          <Icon icon="solar:danger-triangle-linear" width="18" />
+                          Urgent
+                        </button>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmittingContact || !contactForm.message.trim()}
+                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmittingContact ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <span>Sending...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon="solar:letter-bold" width="18" />
+                          <span>Send Message</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-slate-100">
+                    <h2 className="text-xl font-bold text-slate-900">Other Ways to Reach Us</h2>
+                    <p className="text-sm text-slate-500 mt-1">Alternative contact methods for your convenience</p>
+                  </div>
+
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                      <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <Icon icon="solar:letter-linear" width="20" className="text-slate-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-slate-900 mb-1">Email Support</h3>
+                        <p className="text-xs text-slate-500 mb-2">Send us an email directly</p>
+                        <a
+                          href="mailto:support@superproxy.ai"
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                        >
+                          support@superproxy.ai
+                          <Icon icon="solar:arrow-right-up-linear" width="14" />
+                        </a>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText('support@superproxy.ai');
+                          alert('Email address copied to clipboard!');
+                        }}
+                        className="flex-shrink-0 p-2 text-slate-400 hover:text-slate-600 hover:bg-white rounded-lg transition-all"
+                        title="Copy email address"
+                      >
+                        <Icon icon="solar:copy-linear" width="18" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-emerald-50/30 rounded-xl border border-blue-100">
+                      <div className="h-11 w-11 rounded-xl bg-white border border-blue-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <Icon icon="solar:chat-round-dots-bold" width="20" className="text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-semibold text-slate-900">Live Chat Support</h3>
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">Available Now</span>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Get instant responses from our support team through the live chat feature. Available right here in your account profile for faster assistance.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                      <Icon icon="solar:clock-circle-linear" width="20" className="text-slate-400" />
+                      <div className="text-sm">
+                        <span className="font-semibold text-slate-900">Response Time:</span>
+                        <span className="text-slate-600 ml-1">We typically respond within 24 hours</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                      <Icon icon="solar:danger-triangle-bold" width="20" className="text-amber-600" />
+                      <div className="text-sm">
+                        <span className="font-semibold text-slate-900">Urgent Matters:</span>
+                        <span className="text-slate-600 ml-1">Mark your message as urgent for priority handling</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -876,6 +1144,61 @@ export default function AccountProfile() {
                   )}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-300"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="fixed inset-0" onClick={() => setShowSuccessModal(false)} />
+
+          <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-8 flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-5 ring-8 ring-emerald-50">
+                <Icon icon="solar:check-circle-bold" width="32" className="text-emerald-600" />
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-900 mb-2">
+                Message Sent Successfully
+              </h3>
+
+              <p className="text-sm text-slate-600 mb-4">
+                Thank you for contacting us. We've received your message and will respond to <span className="font-semibold text-slate-900">{profileData.email}</span> within 24 hours.
+              </p>
+
+              <div className="w-full bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-600">Your Ticket Number</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(ticketNumber);
+                      alert('Ticket number copied to clipboard!');
+                    }}
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <p className="text-lg font-mono font-bold text-slate-900">{ticketNumber}</p>
+              </div>
+
+              <div className="w-full bg-slate-50 rounded-xl p-4 mb-6 text-left">
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  For faster support, use the live chat feature available in your account profile. Our team can provide instant assistance with your inquiry.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full px-5 py-3 rounded-xl font-semibold text-sm text-white bg-slate-900 hover:bg-slate-800 transition-all duration-200 active:scale-95"
+              >
+                Got it, thanks!
+              </button>
             </div>
           </div>
         </div>
