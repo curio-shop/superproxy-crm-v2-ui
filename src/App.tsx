@@ -36,6 +36,7 @@ import MinimizedCallsBar from './components/MinimizedCallsBar';
 import TemplateBuilder from './components/TemplateBuilder';
 import AIChat from './components/AIChat';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
+import DeleteAccountModal from './components/DeleteAccountModal';
 import FloatingChatButton from './components/FloatingChatButton';
 import SupportChatDialog from './components/SupportChatDialog';
 import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
@@ -89,6 +90,10 @@ function AppContent() {
     name: 'Melwyn Arrubio'
   });
   const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
+
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
+  const [isAccountDeleting, setIsAccountDeleting] = useState(false);
+  const [deleteAccountConfirmText, setDeleteAccountConfirmText] = useState('');
 
   const [isCallDetailsDrawerOpen, setIsCallDetailsDrawerOpen] = useState(false);
   const [isEmailHistoryDrawerOpen, setIsEmailHistoryDrawerOpen] = useState(false);
@@ -323,6 +328,26 @@ function AppContent() {
     } finally {
       setIsDeletingEntity(false);
     }
+  };
+
+  const handleOpenDeleteAccountModal = () => {
+    setIsDeleteAccountModalOpen(true);
+  };
+
+  const handleCloseDeleteAccountModal = () => {
+    if (!isAccountDeleting) {
+      setIsDeleteAccountModalOpen(false);
+      setDeleteAccountConfirmText('');
+    }
+  };
+
+  const handleConfirmDeleteAccount = async () => {
+    setIsAccountDeleting(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsAccountDeleting(false);
+    setIsDeleteAccountModalOpen(false);
+    setDeleteAccountConfirmText('');
+    showToast('Account deletion requested. You will receive a confirmation email.', 'info');
   };
 
   return (
@@ -603,6 +628,7 @@ function AppContent() {
               onTabChange={setActiveAccountTab}
               onChatOpen={() => setIsSupportChatOpen(true)}
               chatUnreadCount={chatUnreadCount}
+              onDeleteAccountClick={handleOpenDeleteAccountModal}
             />
           ) : activePage === 'call-history' ? (
             <CallHistory onBack={() => setActivePage('contacts')} onViewCall={handleViewCall} />
@@ -729,6 +755,14 @@ function AppContent() {
           userName={currentUser.name}
         />
       )}
+      <DeleteAccountModal
+        isOpen={isDeleteAccountModalOpen}
+        onClose={handleCloseDeleteAccountModal}
+        onConfirm={handleConfirmDeleteAccount}
+        deleteConfirmText={deleteAccountConfirmText}
+        onDeleteConfirmTextChange={setDeleteAccountConfirmText}
+        isDeleting={isAccountDeleting}
+      />
     </div>
   );
 }
