@@ -256,6 +256,7 @@ const formatCurrency = (amount: number) => {
 export default function Leaderboard() {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('month');
   const [isExpanded, setIsExpanded] = useState(true);
+  const [showRemaining, setShowRemaining] = useState(false);
 
   const topTen = mockLeaderboardData.slice(0, 10);
   const topThree = topTen.slice(0, 3);
@@ -426,53 +427,69 @@ export default function Leaderboard() {
 
           {remaining.length > 0 && (
             <div className="pt-2">
-              <div className="space-y-1 bg-slate-50/50 rounded-xl p-3">
-                {remaining.map((entry) => {
-                  const topPerformerRevenue = topThree[0].total_revenue;
-                  const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
+              <button
+                onClick={() => setShowRemaining(!showRemaining)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors group"
+              >
+                <span>
+                  {showRemaining ? 'Hide' : 'Show'} Ranks 4-10
+                </span>
+                <Icon
+                  icon={showRemaining ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}
+                  width="16"
+                  className="text-slate-400 group-hover:text-slate-600 transition-colors"
+                />
+              </button>
 
-                  return (
-                    <div
-                      key={entry.id}
-                      className="bg-white border border-slate-200/60 rounded-lg p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
-                    >
-                      <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs flex-shrink-0">
-                        #{entry.rank}
-                      </div>
+              {showRemaining && (
+                <div className="space-y-1 bg-slate-50/50 rounded-xl p-3 mt-2">
+                  {remaining.map((entry) => {
+                    const topPerformerRevenue = topThree[0].total_revenue;
+                    const percentage = (entry.total_revenue / topPerformerRevenue) * 100;
 
-                      <div className="h-8 w-8 rounded-full overflow-hidden shadow-sm flex-shrink-0">
-                        <img
-                          src={entry.member_avatar_url}
-                          alt={entry.member_name}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
+                    return (
+                      <div
+                        key={entry.id}
+                        className="bg-white border border-slate-200/60 rounded-lg p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
+                      >
+                        <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs flex-shrink-0">
+                          #{entry.rank}
+                        </div>
 
-                      <div className="flex-1 text-left min-w-0">
-                        <span className="text-sm font-semibold text-slate-900 block truncate">{entry.member_name}</span>
-                      </div>
+                        <div className="h-8 w-8 rounded-full overflow-hidden shadow-sm flex-shrink-0">
+                          <img
+                            src={entry.member_avatar_url}
+                            alt={entry.member_name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
 
-                      <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
-                        <span className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</span>
-                      </div>
+                        <div className="flex-1 text-left min-w-0">
+                          <span className="text-sm font-semibold text-slate-900 block truncate">{entry.member_name}</span>
+                        </div>
 
-                      <div className="hidden md:block w-24 flex-shrink-0">
-                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-slate-400 rounded-full"
-                            style={{ width: `${percentage}%` }}
-                          ></div>
+                        <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                          <span className="text-sm font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</span>
+                        </div>
+
+                        <div className="hidden md:block w-24 flex-shrink-0">
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-slate-400 rounded-full"
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div className="text-base font-bold text-slate-600 flex-shrink-0">
+                          {entry.points_scored}
+                          <span className="text-xs text-slate-400 ml-0.5">pts</span>
                         </div>
                       </div>
-
-                      <div className="text-base font-bold text-slate-600 flex-shrink-0">
-                        {entry.points_scored}
-                        <span className="text-xs text-slate-400 ml-0.5">pts</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>
