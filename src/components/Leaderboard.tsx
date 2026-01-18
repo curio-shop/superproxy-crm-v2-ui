@@ -280,7 +280,7 @@ export default function Leaderboard() {
           border: 'border-slate-300/60',
           iconBg: 'bg-gradient-to-br from-slate-400 to-slate-500',
           icon: 'solar:medal-star-bold',
-          height: 'h-52',
+          height: 'h-56',
         };
       case 3:
         return {
@@ -288,7 +288,7 @@ export default function Leaderboard() {
           border: 'border-orange-200/60',
           iconBg: 'bg-gradient-to-br from-orange-400 to-orange-500',
           icon: 'solar:medal-ribbons-star-bold',
-          height: 'h-48',
+          height: 'h-56',
         };
       default:
         return {
@@ -296,7 +296,7 @@ export default function Leaderboard() {
           border: 'border-slate-200',
           iconBg: 'bg-slate-300',
           icon: 'solar:cup-bold',
-          height: 'h-48',
+          height: 'h-56',
         };
     }
   };
@@ -366,14 +366,14 @@ export default function Leaderboard() {
               return (
                 <div
                   key={entry.id}
-                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col overflow-hidden`}
+                  className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-6 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col overflow-hidden`}
                 >
-                  <div className="absolute top-2 right-3 text-7xl font-black text-slate-900 opacity-50 leading-none pointer-events-none select-none">
+                  <div className="absolute top-2 right-3 text-7xl font-black text-slate-900 opacity-10 leading-none pointer-events-none select-none">
                     {entry.rank}
                   </div>
 
                   <div className="flex flex-col items-center text-center flex-1 relative z-10">
-                    <div className="relative mb-3">
+                    <div className="relative mb-4">
                       <div className="relative h-16 w-16 rounded-full overflow-hidden shadow-lg ring-4 ring-white">
                         <img
                           src={entry.member_avatar_url}
@@ -388,8 +388,8 @@ export default function Leaderboard() {
                       </div>
                     </div>
 
-                    <div className="mb-4">
-                      <h4 className="text-base font-bold text-slate-900 mb-1">{entry.member_name}</h4>
+                    <div className="mb-5">
+                      <h4 className="text-base font-bold text-slate-900 mb-1.5">{entry.member_name}</h4>
                       {topBadge && (
                         <div className="flex items-center justify-center">
                           {(() => {
