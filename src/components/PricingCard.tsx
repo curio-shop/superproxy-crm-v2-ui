@@ -73,7 +73,7 @@ export default function PricingCard({ onUpgradeClick }: PricingCardProps) {
               </ul>
             </div>
 
-            <div className="lg:col-span-2 w-full">
+            <div className="lg:col-span-2 w-full mt-8">
               <button
                 onClick={onUpgradeClick}
                 className="group relative w-full flex items-center justify-center gap-2 bg-slate-900 text-white hover:bg-slate-800 transition-all duration-300 rounded-xl py-3 px-5 shadow-lg shadow-slate-900/10 hover:shadow-xl hover:shadow-slate-900/15 hover:-translate-y-0.5 active:translate-y-0"
