@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface CreateInvoiceProps {
@@ -114,28 +114,33 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   );
   const [workspaceDetails, setWorkspaceDetails] = useState<Workspace | null>(null);
   const [currency] = useState('PHP');
+  const [isLoading, setIsLoading] = useState(true);
 
   const quoteDropdownRef = useRef<HTMLDivElement>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement>(null);
 
-  const generateMockReference = () => {
+  const mockReferenceNumber = useMemo(() => {
     const year = new Date().getFullYear();
     const randomNum = Math.floor(Math.random() * 900) + 100;
     return `INV-${year}-${randomNum}`;
-  };
-
-  const mockReferenceNumber = generateMockReference();
+  }, []);
 
   useEffect(() => {
     const fetchWorkspaceData = async () => {
-      const { data: workspaceData, error: workspaceError } = await supabase
-        .from('workspaces')
-        .select('id, name, logo_url, address, company_email, company_phone')
-        .limit(1)
-        .maybeSingle();
+      try {
+        const { data: workspaceData, error: workspaceError } = await supabase
+          .from('workspaces')
+          .select('id, name, logo_url, address, company_email, company_phone')
+          .limit(1)
+          .maybeSingle();
 
-      if (workspaceData && !workspaceError) {
-        setWorkspaceDetails(workspaceData);
+        if (workspaceData && !workspaceError) {
+          setWorkspaceDetails(workspaceData);
+        }
+      } catch (error) {
+        console.error('Error fetching workspace data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -191,10 +196,13 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
         created_at: preSelectedQuote.date,
       };
 
-      const existingQuoteIndex = quotations.findIndex(q => q.id === preSelectedQuote.id);
-      if (existingQuoteIndex === -1) {
-        setQuotations([mappedQuote, ...quotations]);
-      }
+      setQuotations(prev => {
+        const existingQuoteIndex = prev.findIndex(q => q.id === preSelectedQuote.id);
+        if (existingQuoteIndex === -1) {
+          return [mappedQuote, ...prev];
+        }
+        return prev;
+      });
 
       setSelectedQuoteId(preSelectedQuote.id);
       setInvoiceTitle(`Invoice for ${preSelectedQuote.title}`);
@@ -268,6 +276,17 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   const filteredQuotations = quotations.filter((quote) =>
     quote.title.toLowerCase().includes(quoteSearchQuery.toLowerCase())
   );
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-slate-600 text-sm font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex flex-col overflow-hidden">

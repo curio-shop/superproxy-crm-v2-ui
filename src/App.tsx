@@ -24,6 +24,7 @@ import ViewProductDrawer from './components/ViewProductDrawer';
 import CreateQuote from './components/CreateQuote';
 import CreateInvoice from './components/CreateInvoice';
 import QuoteView from './components/QuoteView';
+import ErrorBoundary from './components/ErrorBoundary';
 import NewEmail from './components/NewEmail';
 import EmailHistoryDrawer from './components/EmailHistoryDrawer';
 import Celebration from './components/Celebration';
@@ -195,35 +196,47 @@ function AppContent() {
   }, [activePage, activeAccountTab, currentUser?.id]);
 
   if (isViewingQuote) {
-    return <QuoteView onBackToQuotes={() => {
-      setIsViewingQuote(false);
-      setActivePage('quotations');
-    }} />;
+    return (
+      <ErrorBoundary>
+        <QuoteView onBackToQuotes={() => {
+          setIsViewingQuote(false);
+          setActivePage('quotations');
+        }} />
+      </ErrorBoundary>
+    );
   }
 
   if (isCreatingQuote) {
-    return <CreateQuote
-      onBack={() => setIsCreatingQuote(false)}
-      onPublish={() => {
-        setIsCreatingQuote(false);
-        setIsViewingQuote(true);
-      }}
-    />;
+    return (
+      <ErrorBoundary>
+        <CreateQuote
+          onBack={() => setIsCreatingQuote(false)}
+          onPublish={() => {
+            setIsCreatingQuote(false);
+            setIsViewingQuote(true);
+          }}
+        />
+      </ErrorBoundary>
+    );
   }
 
   if (isCreatingInvoice) {
-    return <CreateInvoice
-      onBack={() => {
-        setIsCreatingInvoice(false);
-        setPreSelectedQuoteForInvoice(null);
-      }}
-      onPublish={() => {
-        setIsCreatingInvoice(false);
-        setPreSelectedQuoteForInvoice(null);
-        setActivePage('invoices');
-      }}
-      preSelectedQuote={preSelectedQuoteForInvoice}
-    />;
+    return (
+      <ErrorBoundary>
+        <CreateInvoice
+          onBack={() => {
+            setIsCreatingInvoice(false);
+            setPreSelectedQuoteForInvoice(null);
+          }}
+          onPublish={() => {
+            setIsCreatingInvoice(false);
+            setPreSelectedQuoteForInvoice(null);
+            setActivePage('invoices');
+          }}
+          preSelectedQuote={preSelectedQuoteForInvoice}
+        />
+      </ErrorBoundary>
+    );
   }
 
   const handleCreateNew = useCallback((type: 'contact' | 'company' | 'product' | 'quote' | 'invoice') => {

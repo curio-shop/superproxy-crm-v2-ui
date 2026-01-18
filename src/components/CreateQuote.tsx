@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 import AddProductDrawer from './AddProductDrawer';
 
@@ -93,37 +93,42 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   const [termsOfSale, setTermsOfSale] = useState(
     `1. Payment Terms: Payment is due within 30 days of invoice date. Late payments may incur a 1.5% monthly interest charge.\n\n2. Delivery: Estimated delivery times are provided in good faith but are not guaranteed. We are not liable for delays beyond our control.\n\n3. Returns & Refunds: Products may be returned within 14 days of delivery in original condition. Custom products are non-refundable.\n\n4. Warranty: All products come with a standard manufacturer's warranty. Extended warranties are available upon request.\n\n5. Limitation of Liability: Our liability is limited to the total value of this quotation. We are not liable for indirect or consequential damages.`
   );
+  const [isLoading, setIsLoading] = useState(true);
 
-  const generateMockReference = () => {
+  const mockReferenceNumber = useMemo(() => {
     const year = new Date().getFullYear();
     const randomNum = Math.floor(Math.random() * 900) + 100;
     return `QT-${year}-${randomNum}`;
-  };
-
-  const mockReferenceNumber = generateMockReference();
+  }, []);
 
   useEffect(() => {
     const fetchWorkspaceData = async () => {
-      const { data: workspaceData, error: workspaceError } = await supabase
-        .from('workspaces')
-        .select('id, name, logo_url, address')
-        .limit(1)
-        .maybeSingle();
-
-      if (workspaceData && !workspaceError) {
-        setCompanyData(workspaceData);
-        setWorkspaceDetails(workspaceData);
-
-        const { data: memberData, error: memberError } = await supabase
-          .from('workspace_members')
-          .select('user_name, user_email, position, phone, profile_photo_url')
-          .eq('workspace_id', workspaceData.id)
-          .eq('role', 'owner')
+      try {
+        const { data: workspaceData, error: workspaceError } = await supabase
+          .from('workspaces')
+          .select('id, name, logo_url, address')
+          .limit(1)
           .maybeSingle();
 
-        if (memberData && !memberError) {
-          setCurrentUser(memberData);
+        if (workspaceData && !workspaceError) {
+          setCompanyData(workspaceData);
+          setWorkspaceDetails(workspaceData);
+
+          const { data: memberData, error: memberError } = await supabase
+            .from('workspace_members')
+            .select('user_name, user_email, position, phone, profile_photo_url')
+            .eq('workspace_id', workspaceData.id)
+            .eq('role', 'owner')
+            .maybeSingle();
+
+          if (memberData && !memberError) {
+            setCurrentUser(memberData);
+          }
         }
+      } catch (error) {
+        console.error('Error fetching workspace data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -475,6 +480,17 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
       currency: 'PHP',
     }).format(amount);
   };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-slate-600 text-sm font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-[#F8FAFC] z-[200] flex flex-col overflow-hidden">
