@@ -46,7 +46,7 @@ export default function CurrencyDropdown({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
 
   // Normalize options to always have value and label
   const normalizedOptions = options.map((opt) =>
@@ -65,8 +65,9 @@ export default function CurrencyDropdown({
     <div ref={dropdownRef} className={`relative ${className}`}>
       {/* Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md transition-all group whitespace-nowrap"
+        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md transition-all group whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1"
       >
         {icon && (
           <Icon
@@ -86,25 +87,31 @@ export default function CurrencyDropdown({
         />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - Updated to light theme matching ScopeFilter */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 min-w-[160px] rounded-xl bg-gradient-to-b from-slate-700 to-slate-800 border border-slate-600 shadow-2xl shadow-slate-900/30 overflow-hidden z-50">
-          <div className="py-1">
+        <div
+          className="absolute top-full left-0 mt-2 min-w-[160px] rounded-xl bg-white border border-slate-200/80 shadow-xl overflow-hidden z-50"
+          style={{
+            animation: 'fadeIn 200ms ease-out, slideInFromTop 200ms ease-out',
+          }}
+        >
+          <div className="py-1.5">
             {normalizedOptions.map((option) => {
               const isSelected = option.value === value;
               return (
                 <button
                   key={option.value}
+                  type="button"
                   onClick={() => handleSelect(option.value)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2 text-sm font-medium transition-all ${
+                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-150 ${
                     isSelected
-                      ? 'bg-blue-500 text-white'
-                      : 'text-white hover:bg-slate-600/60'
+                      ? 'bg-blue-50/80 text-blue-700'
+                      : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <span>{option.label}</span>
+                  <span className={isSelected ? 'font-semibold' : ''}>{option.label}</span>
                   {isSelected && (
-                    <Icon icon="solar:check-circle-bold" width="16" className="text-white" />
+                    <Icon icon="solar:check-circle-bold" width="16" className="text-blue-600" />
                   )}
                 </button>
               );
@@ -112,6 +119,26 @@ export default function CurrencyDropdown({
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInFromTop {
+          from {
+            transform: translateY(-8px);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

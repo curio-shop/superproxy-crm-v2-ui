@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
+import Dropdown from './Dropdown';
 
 interface AddContactDrawerProps {
   isOpen: boolean;
@@ -6,6 +8,9 @@ interface AddContactDrawerProps {
 }
 
 export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerProps) {
+  const [company, setCompany] = useState('');
+  const [lifecycleStage, setLifecycleStage] = useState('Lead');
+
   if (!isOpen) return null;
 
   return (
@@ -134,19 +139,21 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Company
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option value="" disabled selected>
-                        Select company...
-                      </option>
-                      <option>Superproxy Inc.</option>
-                      <option>Acme Corp.</option>
-                      <option>Global Industries</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={company}
+                    options={[
+                      'Superproxy Inc.',
+                      'Acme Corp.',
+                      'Global Industries',
+                    ]}
+                    onChange={(val) => setCompany(val as string)}
+                    placeholder="Select company..."
+                    searchable
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
               </div>
             </div>
@@ -184,17 +191,20 @@ export default function AddContactDrawer({ isOpen, onClose }: AddContactDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Lifecycle Stage
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option>Lead</option>
-                      <option>Marketing Qualified Lead</option>
-                      <option>Sales Qualified Lead</option>
-                      <option>Customer</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={lifecycleStage}
+                    options={[
+                      'Lead',
+                      'Marketing Qualified Lead',
+                      'Sales Qualified Lead',
+                      'Customer',
+                    ]}
+                    onChange={(val) => setLifecycleStage(val as string)}
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
               </div>
             </div>

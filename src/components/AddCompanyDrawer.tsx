@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
+import Dropdown from './Dropdown';
 
 interface AddCompanyDrawerProps {
   isOpen: boolean;
@@ -6,6 +8,9 @@ interface AddCompanyDrawerProps {
 }
 
 export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerProps) {
+  const [companyType, setCompanyType] = useState('');
+  const [industry, setIndustry] = useState('');
+
   if (!isOpen) return null;
 
   return (
@@ -88,21 +93,16 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Type
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option value="" disabled selected>
-                        Select Type
-                      </option>
-                      <option>Client</option>
-                      <option>Partner</option>
-                      <option>Prospect</option>
-                      <option>Vendor</option>
-                      <option>Competitor</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={companyType}
+                    options={['Client', 'Partner', 'Prospect', 'Vendor', 'Competitor']}
+                    onChange={(val) => setCompanyType(val as string)}
+                    placeholder="Select Type"
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
               </div>
             </div>
@@ -169,26 +169,28 @@ export default function AddCompanyDrawer({ isOpen, onClose }: AddCompanyDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Industry
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option value="" disabled selected>
-                        Select an industry
-                      </option>
-                      <option>Technology</option>
-                      <option>Software</option>
-                      <option>Finance</option>
-                      <option>Healthcare</option>
-                      <option>Manufacturing</option>
-                      <option>Retail</option>
-                      <option>Education</option>
-                      <option>Aerospace</option>
-                      <option>Real Estate</option>
-                      <option>Other</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={industry}
+                    options={[
+                      'Technology',
+                      'Software',
+                      'Finance',
+                      'Healthcare',
+                      'Manufacturing',
+                      'Retail',
+                      'Education',
+                      'Aerospace',
+                      'Real Estate',
+                      'Other',
+                    ]}
+                    onChange={(val) => setIndustry(val as string)}
+                    placeholder="Select an industry"
+                    searchable
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
 
                 <div className="space-y-1.5">

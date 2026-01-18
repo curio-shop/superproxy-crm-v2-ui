@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
+import Dropdown from './Dropdown';
 
 interface AddProductDrawerProps {
   isOpen: boolean;
@@ -6,6 +8,11 @@ interface AddProductDrawerProps {
 }
 
 export default function AddProductDrawer({ isOpen, onClose }: AddProductDrawerProps) {
+  const [category, setCategory] = useState('');
+  const [productType, setProductType] = useState('');
+  const [currency, setCurrency] = useState('');
+  const [status, setStatus] = useState('Active');
+
   if (!isOpen) return null;
 
   return (
@@ -93,41 +100,39 @@ export default function AddProductDrawer({ isOpen, onClose }: AddProductDrawerPr
                     <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                       Category
                     </label>
-                    <div className="relative">
-                      <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                        <option value="" disabled selected>
-                          Select category
-                        </option>
-                        <option>Electronics</option>
-                        <option>Footwear</option>
-                        <option>Apparel</option>
-                        <option>Accessories</option>
-                        <option>Furniture</option>
-                        <option>Photography</option>
-                        <option>Bundles</option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                        <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                      </div>
-                    </div>
+                    <Dropdown
+                      value={category}
+                      options={[
+                        'Electronics',
+                        'Footwear',
+                        'Apparel',
+                        'Accessories',
+                        'Furniture',
+                        'Photography',
+                        'Bundles',
+                      ]}
+                      onChange={(val) => setCategory(val as string)}
+                      placeholder="Select category"
+                      className="w-full"
+                      buttonClassName="w-full"
+                      menuClassName="w-full"
+                      menuAlign="left"
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                       Product Type
                     </label>
-                    <div className="relative">
-                      <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                        <option value="" disabled selected>
-                          Select type
-                        </option>
-                        <option>Inventory</option>
-                        <option>Non-inventory</option>
-                        <option>Service</option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                        <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                      </div>
-                    </div>
+                    <Dropdown
+                      value={productType}
+                      options={['Inventory', 'Non-inventory', 'Service']}
+                      onChange={(val) => setProductType(val as string)}
+                      placeholder="Select type"
+                      className="w-full"
+                      buttonClassName="w-full"
+                      menuClassName="w-full"
+                      menuAlign="left"
+                    />
                   </div>
                 </div>
               </div>
@@ -143,26 +148,28 @@ export default function AddProductDrawer({ isOpen, onClose }: AddProductDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Currency
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option value="" disabled selected>
-                        Select currency
-                      </option>
-                      <option>USD - US Dollar</option>
-                      <option>EUR - Euro</option>
-                      <option>GBP - British Pound</option>
-                      <option>JPY - Japanese Yen</option>
-                      <option>AUD - Australian Dollar</option>
-                      <option>CAD - Canadian Dollar</option>
-                      <option>CHF - Swiss Franc</option>
-                      <option>CNY - Chinese Yuan</option>
-                      <option>INR - Indian Rupee</option>
-                      <option>SGD - Singapore Dollar</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={currency}
+                    options={[
+                      { value: 'USD', label: 'USD - US Dollar' },
+                      { value: 'EUR', label: 'EUR - Euro' },
+                      { value: 'GBP', label: 'GBP - British Pound' },
+                      { value: 'JPY', label: 'JPY - Japanese Yen' },
+                      { value: 'AUD', label: 'AUD - Australian Dollar' },
+                      { value: 'CAD', label: 'CAD - Canadian Dollar' },
+                      { value: 'CHF', label: 'CHF - Swiss Franc' },
+                      { value: 'CNY', label: 'CNY - Chinese Yuan' },
+                      { value: 'INR', label: 'INR - Indian Rupee' },
+                      { value: 'SGD', label: 'SGD - Singapore Dollar' },
+                    ]}
+                    onChange={(val) => setCurrency(val as string)}
+                    placeholder="Select currency"
+                    searchable
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -278,16 +285,15 @@ export default function AddProductDrawer({ isOpen, onClose }: AddProductDrawerPr
                   <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                     Status
                   </label>
-                  <div className="relative">
-                    <select className="block w-full appearance-none rounded-xl border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer">
-                      <option>Active</option>
-                      <option>Draft</option>
-                      <option>Archived</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                      <Icon icon="solar:alt-arrow-down-linear" width="12" />
-                    </div>
-                  </div>
+                  <Dropdown
+                    value={status}
+                    options={['Active', 'Draft', 'Archived']}
+                    onChange={(val) => setStatus(val as string)}
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
                 </div>
               </div>
             </div>

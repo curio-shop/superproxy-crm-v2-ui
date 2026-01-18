@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import Dropdown from './Dropdown';
 
 interface TemplateSettings {
   logoSize: 'small' | 'medium' | 'large' | 'custom';
@@ -59,86 +60,6 @@ const CollapsibleSection = ({ icon, title, description, children, defaultOpen = 
         />
       </button>
       {isOpen && <div className="px-6 pb-6">{children}</div>}
-    </div>
-  );
-};
-
-interface CustomDropdownProps {
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-  className?: string;
-}
-
-const CustomDropdown = ({ value, options, onChange, className = '' }: CustomDropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  const selectedOption = options.find((opt) => opt.value === value);
-  const displayText = selectedOption?.label || 'Select';
-
-  const handleSelect = (optionValue: string) => {
-    onChange(optionValue);
-    setIsOpen(false);
-  };
-
-  return (
-    <div ref={dropdownRef} className={`relative ${className}`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-slate-200 text-sm font-medium text-slate-900 bg-white hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      >
-        <span>{displayText}</span>
-        <Icon
-          icon="solar:alt-arrow-down-linear"
-          width="16"
-          className={`text-slate-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 rounded-lg bg-white border border-slate-200 shadow-lg shadow-slate-200/50 overflow-hidden z-50">
-          <div className="py-1 max-h-60 overflow-y-auto custom-scrollbar">
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => handleSelect(option.value)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-medium transition-all ${
-                    isSelected
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <Icon icon="solar:check-circle-bold" width="16" className="text-blue-600" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -228,6 +149,15 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
     );
   };
 
+  const handleSaveTemplate = () => {
+    // Here you would typically save the settings to localStorage or backend
+    console.log('Saving template settings:', settings);
+    // Close the template builder and return to previous page
+    if (onClose) {
+      onClose();
+    }
+  };
+
   const content = (
       <div className={`${onClose ? '' : 'h-full'} flex flex-col bg-slate-50 ${onClose ? 'relative w-full h-full rounded-2xl overflow-hidden shadow-2xl' : ''}`}>
       {/* Header */}
@@ -255,7 +185,10 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
           <button className="hover:bg-slate-100 hover:text-slate-900 transition-all focus:ring-2 focus:ring-slate-200 focus:outline-none active:scale-[0.98] text-sm font-medium text-slate-600 bg-white h-10 border border-slate-200 rounded-lg px-5">
             Reset to Default
           </button>
-          <button className="group h-10 flex items-center gap-2 px-5 rounded-lg text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 hover:shadow-lg transition-all focus:ring-2 focus:ring-slate-300 focus:outline-none active:scale-[0.98]">
+          <button 
+            onClick={handleSaveTemplate}
+            className="group h-10 flex items-center gap-2 px-5 rounded-lg text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 hover:shadow-lg transition-all focus:ring-2 focus:ring-slate-300 focus:outline-none active:scale-[0.98]"
+          >
             <span>Save Template</span>
             <Icon
               icon="solar:check-circle-linear"
@@ -338,13 +271,17 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
                 {/* Logo Visibility */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-900 mb-3">Logo Visibility</label>
-                  <CustomDropdown
+                  <Dropdown
                     value={settings.logoVisibility}
                     options={[
                       { value: 'visible', label: 'Visible' },
                       { value: 'hidden', label: 'Hidden' },
                     ]}
                     onChange={(value) => updateSetting('logoVisibility', value as any)}
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
                   />
                 </div>
               </div>
@@ -385,13 +322,17 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
               {/* Color Effect */}
               <div>
                 <label className="block text-xs font-semibold text-slate-900 mb-3">Color Effect</label>
-                <CustomDropdown
+                <Dropdown
                   value={settings.colorEffect}
                   options={[
                     { value: 'plain', label: 'Plain Color' },
                     { value: 'gradient', label: 'Gradient Effect' },
                   ]}
                   onChange={(value) => updateSetting('colorEffect', value as any)}
+                  className="w-full"
+                  buttonClassName="w-full"
+                  menuClassName="w-full"
+                  menuAlign="left"
                 />
               </div>
 
@@ -435,7 +376,7 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
             <div className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-slate-900 mb-3">Font Family</label>
-                <CustomDropdown
+                <Dropdown
                   value={settings.fontFamily}
                   options={[
                     { value: 'Inter', label: 'Inter' },
@@ -445,7 +386,11 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
                     { value: 'Lato', label: 'Lato' },
                     { value: 'Poppins', label: 'Poppins' },
                   ]}
-                  onChange={(value) => updateSetting('fontFamily', value)}
+                  onChange={(value) => updateSetting('fontFamily', value as string)}
+                  className="w-full"
+                  buttonClassName="w-full"
+                  menuClassName="w-full"
+                  menuAlign="left"
                 />
               </div>
 

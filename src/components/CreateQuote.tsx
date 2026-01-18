@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState, useMemo } from 'react';
 import AddProductDrawer from './AddProductDrawer';
+import Dropdown from './Dropdown';
 
 interface CreateQuoteProps {
   onBack: () => void;
@@ -660,27 +661,24 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                           Required
                         </span>
                       </label>
-                      <div className="relative">
-                        <select
-                          id="contact"
-                          value={selectedContactId}
-                          onChange={(e) => handleContactChange(e.target.value)}
-                          className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all placeholder:text-slate-400 hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm"
-                        >
-                          <option value="">Select a contact</option>
-                          {CONTACTS.map((contact) => (
-                            <option key={contact.id} value={contact.id}>
-                              {contact.name} {contact.email ? `(${contact.email})` : ''}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 peer-focus:text-blue-500 transition-colors pointer-events-none">
-                          <Icon icon="solar:user-linear" width="18" />
-                        </div>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                          <Icon icon="lucide:chevron-down" width="16" />
-                        </div>
-                      </div>
+                      <Dropdown
+                        value={selectedContactId}
+                        options={[
+                          { value: '', label: 'Select a contact' },
+                          ...CONTACTS.map((contact) => ({
+                            value: contact.id,
+                            label: `${contact.name}${contact.email ? ` (${contact.email})` : ''}`,
+                          })),
+                        ]}
+                        onChange={(val) => handleContactChange(val as string)}
+                        icon="solar:user-linear"
+                        placeholder="Select a contact"
+                        searchable
+                        className="w-full"
+                        buttonClassName="w-full"
+                        menuClassName="w-full"
+                        menuAlign="left"
+                      />
                       {selectedContact && (
                         <div className="mt-3 p-3 bg-white border border-blue-100 rounded-lg space-y-1.5 shadow-sm">
                           <div className="flex items-center gap-2 text-xs text-slate-600">
@@ -713,27 +711,24 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                       <label htmlFor="company" className="text-xs font-semibold uppercase tracking-wide text-slate-600">
                         Company
                       </label>
-                      <div className="relative group">
-                        <select
-                          id="company"
-                          value={selectedCompanyId}
-                          onChange={(e) => setSelectedCompanyId(e.target.value)}
-                          className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all placeholder:text-slate-400 hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm"
-                        >
-                          <option value="">Select a company</option>
-                          {COMPANIES.map((company) => (
-                            <option key={company.id} value={company.id}>
-                              {company.name}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                          <Icon icon="solar:buildings-2-linear" width="18" />
-                        </div>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                          <Icon icon="lucide:chevron-down" width="16" />
-                        </div>
-                      </div>
+                      <Dropdown
+                        value={selectedCompanyId}
+                        options={[
+                          { value: '', label: 'Select a company' },
+                          ...COMPANIES.map((company) => ({
+                            value: company.id,
+                            label: company.name,
+                          })),
+                        ]}
+                        onChange={(val) => setSelectedCompanyId(val as string)}
+                        icon="solar:buildings-2-linear"
+                        placeholder="Select a company"
+                        searchable
+                        className="w-full"
+                        buttonClassName="w-full"
+                        menuClassName="w-full"
+                        menuAlign="left"
+                      />
                       {selectedCompany && (
                         <div className="mt-3 p-3 bg-white border border-blue-100 rounded-lg space-y-1.5 shadow-sm">
                           <div className="flex items-center gap-2 text-xs text-slate-600">
@@ -895,30 +890,31 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                         <div className="relative overflow-visible">
                           <button
                             onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
-                            className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-9 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer text-left"
+                            className="w-full flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 pr-3 h-[42px] text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 cursor-pointer text-left shadow-sm"
                           >
-                            Choose a product or service
-                          </button>
-                          <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                            <Icon icon="solar:box-linear" width="16" />
-                          </div>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                              <Icon icon="solar:box-linear" width="16" className="text-slate-500 flex-shrink-0" />
+                              <span className="text-slate-400 truncate">Choose a product or service</span>
+                            </div>
                             <Icon
-                              icon={isProductDropdownOpen ? 'lucide:chevron-up' : 'lucide:chevron-down'}
-                              width="14"
+                              icon="solar:alt-arrow-down-linear"
+                              width="13"
+                              className={`flex-shrink-0 ml-2 text-slate-400 transition-transform duration-200 ${
+                                isProductDropdownOpen ? 'rotate-180' : ''
+                              }`}
                             />
-                          </div>
+                          </button>
 
                           {isProductDropdownOpen && (
-                            <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-white rounded-xl border-2 border-blue-200 shadow-2xl overflow-hidden">
-                                <div className="p-3 border-b border-slate-100 bg-gradient-to-br from-blue-50/50 to-white">
+                            <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200/80 shadow-xl overflow-hidden">
+                                <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                                   <div className="relative">
                                     <input
                                       type="text"
                                       placeholder="Search by product name..."
                                       value={productSearchQuery}
                                       onChange={(e) => setProductSearchQuery(e.target.value)}
-                                      className="w-full pl-9 pr-4 py-2.5 text-sm border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+                                      className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-slate-300 transition-all"
                                     />
                                     <Icon
                                       icon="solar:magnifer-linear"
@@ -931,9 +927,9 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                                 <div className="flex gap-1 p-3 border-b border-slate-100 bg-slate-50/50">
                                   <button
                                     onClick={() => setProductFilter('all')}
-                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                                    className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                                       productFilter === 'all'
-                                        ? 'bg-blue-600 text-white shadow-md'
+                                        ? 'bg-blue-600 text-white shadow-sm'
                                         : 'text-slate-600 hover:bg-slate-100'
                                     }`}
                                   >
@@ -941,9 +937,9 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                                   </button>
                                   <button
                                     onClick={() => setProductFilter('team')}
-                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                                    className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                                       productFilter === 'team'
-                                        ? 'bg-blue-600 text-white shadow-md'
+                                        ? 'bg-blue-600 text-white shadow-sm'
                                         : 'text-slate-600 hover:bg-slate-100'
                                     }`}
                                   >
@@ -951,9 +947,9 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                                   </button>
                                   <button
                                     onClick={() => setProductFilter('custom')}
-                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                                    className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                                       productFilter === 'custom'
-                                        ? 'bg-blue-600 text-white shadow-md'
+                                        ? 'bg-blue-600 text-white shadow-sm'
                                         : 'text-slate-600 hover:bg-slate-100'
                                     }`}
                                   >
@@ -973,17 +969,17 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                                           <button
                                             key={product.id}
                                             onClick={() => handleAddProduct(product)}
-                                            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all text-left group border border-transparent hover:border-blue-200"
+                                            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all duration-150 text-left group border border-transparent"
                                           >
-                                            <div className="flex-1">
-                                              <p className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-sm font-semibold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
                                                 {product.name}
                                               </p>
                                               {product.description && (
-                                                <p className="text-xs text-slate-500 mt-0.5">{product.description}</p>
+                                                <p className="text-xs text-slate-500 mt-0.5 truncate">{product.description}</p>
                                               )}
                                             </div>
-                                            <span className="text-sm font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                            <span className="text-sm font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors flex-shrink-0 ml-2">
                                               {formatCurrency(product.price)}
                                             </span>
                                           </button>
@@ -1004,17 +1000,17 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                                             <button
                                               key={product.id}
                                               onClick={() => handleAddProduct(product)}
-                                              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all text-left group border border-transparent hover:border-blue-200"
+                                              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all duration-150 text-left group border border-transparent"
                                             >
-                                              <div className="flex-1">
-                                                <p className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                              <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
                                                   {product.name}
                                                 </p>
                                                 {product.description && (
-                                                  <p className="text-xs text-slate-500 mt-0.5">{product.description}</p>
+                                                  <p className="text-xs text-slate-500 mt-0.5 truncate">{product.description}</p>
                                                 )}
                                               </div>
-                                              <span className="text-sm font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                              <span className="text-sm font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors flex-shrink-0 ml-2">
                                                 {formatCurrency(product.price)}
                                               </span>
                                             </button>
@@ -1397,25 +1393,21 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
                       <label htmlFor="expiry" className="text-xs font-semibold uppercase tracking-wide text-slate-600">
                         Quote Expiry Period
                       </label>
-                      <div className="relative">
-                        <select
-                          id="expiry"
-                          value={expiryPeriod}
-                          onChange={(e) => setExpiryPeriod(e.target.value as '30' | '60' | '90' | 'custom')}
-                          className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-semibold text-slate-900 transition-all placeholder:text-slate-400 hover:bg-white hover:shadow-md hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer shadow-sm"
-                        >
-                          <option value="30">30 days</option>
-                          <option value="60">60 days</option>
-                          <option value="90">90 days</option>
-                          <option value="custom">Custom</option>
-                        </select>
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                          <Icon icon="solar:calendar-linear" width="18" />
-                        </div>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                          <Icon icon="lucide:chevron-down" width="16" />
-                        </div>
-                      </div>
+                      <Dropdown
+                        value={expiryPeriod}
+                        options={[
+                          { value: '30', label: '30 days' },
+                          { value: '60', label: '60 days' },
+                          { value: '90', label: '90 days' },
+                          { value: 'custom', label: 'Custom' },
+                        ]}
+                        onChange={(val) => setExpiryPeriod(val as '30' | '60' | '90' | 'custom')}
+                        icon="solar:calendar-linear"
+                        className="w-full"
+                        buttonClassName="w-full"
+                        menuClassName="w-full"
+                        menuAlign="left"
+                      />
 
                       {expiryPeriod === 'custom' && (
                         <div className="flex items-center gap-3 p-3 rounded-lg border border-blue-200 bg-blue-50/50">

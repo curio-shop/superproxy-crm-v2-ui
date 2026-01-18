@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import NotificationCard from './NotificationCard';
 import CurrencyDropdown from './CurrencyDropdown';
+import Dropdown from './Dropdown';
 
 interface HeaderProps {
   activePage: string;
@@ -261,17 +262,13 @@ export default function Header({ activePage, onOpenDrawer, onCreateWorkspace, on
                         className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-900 focus:border-slate-400 focus:ring-0 outline-none transition-colors"
                         placeholder="Amount"
                       />
-                      <select
+                      <Dropdown
                         value={fromCurrency}
-                        onChange={(e) => setFromCurrency(e.target.value)}
-                        className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-700 bg-white focus:border-slate-400 focus:ring-0 outline-none cursor-pointer transition-colors"
-                      >
-                        {currencies.map((currency) => (
-                          <option key={currency} value={currency}>
-                            {currency}
-                          </option>
-                        ))}
-                      </select>
+                        options={currencies}
+                        onChange={(val) => setFromCurrency(val as string)}
+                        buttonClassName="h-[38px] px-3"
+                        className="flex-shrink-0"
+                      />
                     </div>
                   </div>
 
@@ -294,17 +291,13 @@ export default function Header({ activePage, onOpenDrawer, onCreateWorkspace, on
                         readOnly
                         className="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-900 outline-none"
                       />
-                      <select
+                      <Dropdown
                         value={toCurrency}
-                        onChange={(e) => setToCurrency(e.target.value)}
-                        className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-700 bg-white focus:border-slate-400 focus:ring-0 outline-none cursor-pointer transition-colors"
-                      >
-                        {currencies.map((currency) => (
-                          <option key={currency} value={currency}>
-                            {currency}
-                          </option>
-                        ))}
-                      </select>
+                        options={currencies}
+                        onChange={(val) => setToCurrency(val as string)}
+                        buttonClassName="h-[38px] px-3"
+                        className="flex-shrink-0"
+                      />
                     </div>
                   </div>
 

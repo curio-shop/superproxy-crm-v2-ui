@@ -409,22 +409,22 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                     <div className="relative" ref={quoteDropdownRef}>
                       <button
                         onClick={() => setIsQuoteDropdownOpen(!isQuoteDropdownOpen)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm hover:shadow-md hover:border-slate-300 text-left flex items-center justify-between"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 pr-3 h-[42px] text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 transition-all shadow-sm hover:shadow-md hover:border-slate-300 text-left flex items-center justify-between"
                       >
-                        <span className={selectedQuote ? 'text-slate-900' : 'text-slate-400'}>
+                        <span className={selectedQuote ? 'text-slate-700 truncate' : 'text-slate-400'}>
                           {selectedQuote ? selectedQuote.title : 'Choose a quotation...'}
                         </span>
                         <Icon
                           icon="solar:alt-arrow-down-linear"
-                          className={`transition-transform ${
+                          className={`flex-shrink-0 ml-2 text-slate-400 transition-transform duration-200 ${
                             isQuoteDropdownOpen ? 'rotate-180' : ''
                           }`}
-                          width="16"
+                          width="13"
                         />
                       </button>
 
                       {isQuoteDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-900/10 z-50 overflow-hidden max-h-96">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200/80 shadow-xl z-50 overflow-hidden max-h-96">
                           <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                             <div className="relative">
                               <Icon
@@ -611,25 +611,25 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                       <div className="relative" ref={dueDateDropdownRef}>
                         <button
                           onClick={() => setIsDueDateDropdownOpen(!isDueDateDropdownOpen)}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm hover:shadow-md hover:border-slate-300 text-left flex items-center justify-between"
+                          className="w-full bg-white border border-slate-200 rounded-xl px-3 pr-3 h-[42px] text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 transition-all shadow-sm hover:shadow-md hover:border-slate-300 text-left flex items-center justify-between"
                         >
-                          <span>
+                          <span className="text-slate-700 truncate">
                             {invoiceDueInDays === 'custom'
                               ? `Custom (${customDays || '30'} days)`
                               : `${invoiceDueInDays} days`}
                           </span>
                           <Icon
                             icon="solar:alt-arrow-down-linear"
-                            className={`transition-transform ${
+                            className={`flex-shrink-0 ml-2 text-slate-400 transition-transform duration-200 ${
                               isDueDateDropdownOpen ? 'rotate-180' : ''
                             }`}
-                            width="16"
+                            width="13"
                           />
                         </button>
 
                         {isDueDateDropdownOpen && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-xl z-50 overflow-hidden">
-                            <div className="py-1">
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200/80 shadow-xl z-50 overflow-hidden">
+                            <div className="py-1.5">
                               {[15, 30, 45, 60, 90].map((days) => (
                                 <button
                                   key={days}
@@ -637,11 +637,13 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                                     setInvoiceDueInDays(days);
                                     setIsDueDateDropdownOpen(false);
                                   }}
-                                  className={`w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition-all text-left ${
-                                    invoiceDueInDays === days ? 'bg-blue-50' : ''
+                                  className={`w-full flex items-center justify-between px-3 py-2 transition-all duration-150 text-left ${
+                                    invoiceDueInDays === days
+                                      ? 'bg-blue-50/80 text-blue-700'
+                                      : 'hover:bg-slate-50 text-slate-700'
                                   }`}
                                 >
-                                  <span className="text-sm font-medium text-slate-900">
+                                  <span className={`text-sm font-medium ${invoiceDueInDays === days ? 'font-semibold' : ''}`}>
                                     {days} days
                                   </span>
                                   {invoiceDueInDays === days && (
@@ -659,11 +661,13 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
                                   setInvoiceDueInDays('custom');
                                   setIsDueDateDropdownOpen(false);
                                 }}
-                                className={`w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition-all text-left ${
-                                  invoiceDueInDays === 'custom' ? 'bg-blue-50' : ''
+                                className={`w-full flex items-center justify-between px-3 py-2 transition-all duration-150 text-left ${
+                                  invoiceDueInDays === 'custom'
+                                    ? 'bg-blue-50/80 text-blue-700'
+                                    : 'hover:bg-slate-50 text-slate-700'
                                 }`}
                               >
-                                <span className="text-sm font-medium text-slate-900">Custom</span>
+                                <span className={`text-sm font-medium ${invoiceDueInDays === 'custom' ? 'font-semibold' : ''}`}>Custom</span>
                                 {invoiceDueInDays === 'custom' && (
                                   <Icon
                                     icon="solar:check-circle-bold"
