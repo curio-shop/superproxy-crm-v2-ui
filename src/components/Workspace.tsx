@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Leaderboard from './Leaderboard';
+import Dropdown from './Dropdown';
 
 interface WorkspaceProps {
   onRegisterHandlers?: (handlers: {
@@ -1455,16 +1456,19 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Role</label>
-                <select
+                <Dropdown
                   value={newMember.role}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, role: e.target.value as 'owner' | 'admin' | 'member' })
-                  }
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 text-sm cursor-pointer"
-                >
-                  <option value="member">Member</option>
-                  <option value="admin">Admin</option>
-                </select>
+                  options={[
+                    { value: 'member', label: 'Member' },
+                    { value: 'admin', label: 'Admin' },
+                  ]}
+                  onChange={(val) => setNewMember({ ...newMember, role: val as 'owner' | 'admin' | 'member' })}
+                  icon="solar:shield-user-linear"
+                  className="w-full"
+                  buttonClassName="w-full"
+                  menuClassName="w-full"
+                  menuAlign="left"
+                />
                 <p className="text-xs text-slate-500 mt-1.5">Defines what this person can access and manage</p>
               </div>
             </div>

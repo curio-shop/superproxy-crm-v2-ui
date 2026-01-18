@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import ScopeFilter, { ScopeType } from './ScopeFilter';
+import Dropdown from './Dropdown';
 
 export interface Product {
   id: string;
@@ -27,6 +28,8 @@ export default function Products({ isTeamView, homeFilterPreference, onViewProdu
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [scopeFilter, setScopeFilter] = useState<ScopeType>(homeFilterPreference);
   const [hasManuallyChanged, setHasManuallyChanged] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('All Categories');
+  const [statusFilter, setStatusFilter] = useState('Any Status');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -248,29 +251,37 @@ export default function Products({ isTeamView, homeFilterPreference, onViewProdu
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="relative group flex-1 sm:flex-none">
-            <select className="appearance-none block w-full pl-3 pr-8 py-2.5 border border-slate-200 rounded-xl leading-5 bg-white text-slate-600 text-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 shadow-sm transition-all hover:border-slate-300 hover:shadow-md cursor-pointer font-medium">
-              <option>All Categories</option>
-              <option>Electronics</option>
-              <option>Footwear</option>
-              <option>Accessories</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-              <Icon icon="solar:alt-arrow-down-linear" width="12" />
-            </div>
-          </div>
+          <Dropdown
+            value={categoryFilter}
+            options={[
+              { value: 'All Categories', label: 'All Categories' },
+              { value: 'Electronics', label: 'Electronics' },
+              { value: 'Footwear', label: 'Footwear' },
+              { value: 'Accessories', label: 'Accessories' },
+            ]}
+            onChange={(val) => setCategoryFilter(val as string)}
+            icon="solar:tag-linear"
+            className="flex-1 sm:flex-none"
+            buttonClassName="w-full"
+            menuClassName="w-full"
+            menuAlign="left"
+          />
 
-          <div className="relative group flex-1 sm:flex-none">
-            <select className="appearance-none block w-full pl-3 pr-8 py-2.5 border border-slate-200 rounded-xl leading-5 bg-white text-slate-600 text-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 shadow-sm transition-all hover:border-slate-300 hover:shadow-md cursor-pointer font-medium">
-              <option>Any Status</option>
-              <option>In Stock</option>
-              <option>Low Stock</option>
-              <option>Out of Stock</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-              <Icon icon="solar:alt-arrow-down-linear" width="12" />
-            </div>
-          </div>
+          <Dropdown
+            value={statusFilter}
+            options={[
+              { value: 'Any Status', label: 'Any Status' },
+              { value: 'In Stock', label: 'In Stock' },
+              { value: 'Low Stock', label: 'Low Stock' },
+              { value: 'Out of Stock', label: 'Out of Stock' },
+            ]}
+            onChange={(val) => setStatusFilter(val as string)}
+            icon="solar:chart-2-linear"
+            className="flex-1 sm:flex-none"
+            buttonClassName="w-full"
+            menuClassName="w-full"
+            menuAlign="right"
+          />
         </div>
       </div>
 

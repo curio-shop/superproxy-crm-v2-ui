@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import PricingCard from './PricingCard';
+import Dropdown from './Dropdown';
 
 interface AccountProfileProps {
   activeTab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact';
@@ -367,18 +368,24 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
 
                       <div className="col-span-2">
                         <label className="block text-sm font-semibold text-slate-900 mb-2">Timezone</label>
-                        <select
+                        <Dropdown
                           value={profileData.timezone}
-                          onChange={(e) => setProfileData({ ...profileData, timezone: e.target.value })}
-                          className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 text-sm cursor-pointer"
-                        >
-                          <option value="Asia/Bangkok">Bangkok (GMT+7)</option>
-                          <option value="America/New_York">New York (GMT-5)</option>
-                          <option value="Europe/London">London (GMT+0)</option>
-                          <option value="Asia/Tokyo">Tokyo (GMT+9)</option>
-                          <option value="Australia/Sydney">Sydney (GMT+11)</option>
-                          <option value="Europe/Paris">Paris (GMT+1)</option>
-                        </select>
+                          options={[
+                            { value: 'Asia/Bangkok', label: 'Bangkok (GMT+7)' },
+                            { value: 'America/New_York', label: 'New York (GMT-5)' },
+                            { value: 'Europe/London', label: 'London (GMT+0)' },
+                            { value: 'Asia/Tokyo', label: 'Tokyo (GMT+9)' },
+                            { value: 'Australia/Sydney', label: 'Sydney (GMT+11)' },
+                            { value: 'Europe/Paris', label: 'Paris (GMT+1)' },
+                          ]}
+                          onChange={(val) => setProfileData({ ...profileData, timezone: val as string })}
+                          icon="solar:global-linear"
+                          searchable
+                          className="w-full"
+                          buttonClassName="w-full"
+                          menuClassName="w-full"
+                          menuAlign="left"
+                        />
                       </div>
 
                       <div className="col-span-2">
@@ -788,19 +795,24 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
 
                     <div>
                       <label className="block text-sm font-semibold text-slate-900 mb-2">Subject</label>
-                      <select
+                      <Dropdown
                         value={contactForm.subject}
-                        onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                        options={[
+                          { value: 'General Inquiry', label: 'General Inquiry' },
+                          { value: 'Technical Support', label: 'Technical Support' },
+                          { value: 'Billing Question', label: 'Billing Question' },
+                          { value: 'Feature Request', label: 'Feature Request' },
+                          { value: 'Bug Report', label: 'Bug Report' },
+                          { value: 'Other', label: 'Other' },
+                        ]}
+                        onChange={(val) => setContactForm({ ...contactForm, subject: val as string })}
+                        icon="solar:tag-linear"
                         disabled={isSubmittingContact}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <option value="General Inquiry">General Inquiry</option>
-                        <option value="Technical Support">Technical Support</option>
-                        <option value="Billing Question">Billing Question</option>
-                        <option value="Feature Request">Feature Request</option>
-                        <option value="Bug Report">Bug Report</option>
-                        <option value="Other">Other</option>
-                      </select>
+                        className="w-full"
+                        buttonClassName="w-full"
+                        menuClassName="w-full"
+                        menuAlign="left"
+                      />
                     </div>
 
                     <div>

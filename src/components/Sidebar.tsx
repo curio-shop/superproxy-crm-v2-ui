@@ -111,13 +111,15 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'home' ? 'solar:widget-bold' : 'solar:widget-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'home' ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'home' ? 'solar:widget-bold' : 'solar:widget-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'home' ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`whitespace-nowrap overflow-hidden transition-all duration-300 text-sm font-medium ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -141,15 +143,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'contacts' ? 'solar:users-group-two-rounded-bold' : 'solar:users-group-two-rounded-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'contacts'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'contacts' ? 'solar:users-group-two-rounded-bold' : 'solar:users-group-two-rounded-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'contacts'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -173,15 +177,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'companies' ? 'solar:buildings-2-bold' : 'solar:buildings-2-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'companies'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'companies' ? 'solar:buildings-2-bold' : 'solar:buildings-2-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'companies'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -205,15 +211,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'products' ? 'solar:box-bold' : 'solar:box-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'products'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'products' ? 'solar:box-bold' : 'solar:box-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'products'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -237,15 +245,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'quotations' ? 'solar:file-text-bold' : 'solar:file-text-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'quotations'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'quotations' ? 'solar:file-text-bold' : 'solar:file-text-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'quotations'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -269,15 +279,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'invoices' ? 'solar:bill-list-bold' : 'solar:bill-list-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'invoices'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'invoices' ? 'solar:bill-list-bold' : 'solar:bill-list-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'invoices'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
@@ -301,15 +313,17 @@ export default function Sidebar({ activePage, onPageChange, currentWorkspace, on
               : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
           } ${collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3'}`}
         >
-          <Icon
-            icon={activePage === 'presentations' ? 'solar:videocamera-record-bold' : 'solar:videocamera-record-linear'}
-            width="20"
-            className={`shrink-0 transition-colors ${
-              activePage === 'presentations'
-                ? 'text-blue-600'
-                : 'text-slate-400 group-hover:text-slate-600'
-            }`}
-          />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon
+              icon={activePage === 'presentations' ? 'solar:videocamera-record-bold' : 'solar:videocamera-record-linear'}
+              width="20"
+              className={`transition-colors ${
+                activePage === 'presentations'
+                  ? 'text-blue-600'
+                  : 'text-slate-400 group-hover:text-slate-600'
+              }`}
+            />
+          </div>
           <span
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${
               collapsed ? 'w-0 opacity-0' : 'opacity-100'
