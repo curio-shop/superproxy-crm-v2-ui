@@ -413,7 +413,7 @@ export default function Leaderboard() {
                     <div className="space-y-3 flex-1 flex flex-col justify-center w-full">
                       <div>
                         <p className="text-xs font-medium text-slate-600 mb-1">Total Revenue</p>
-                        <p className="text-2xl font-bold text-slate-900">{formatCurrency(entry.total_revenue)}</p>
+                        <p className="text-2xl font-bold text-slate-900 mb-3">{formatCurrency(entry.total_revenue)}</p>
                       </div>
 
                       <div className="flex items-center justify-center gap-4">
