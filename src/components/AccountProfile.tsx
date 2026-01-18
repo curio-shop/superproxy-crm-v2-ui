@@ -618,7 +618,7 @@ export default function AccountProfile() {
                       className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-100 transition-all shadow-lg"
                     >
                       <Icon icon="solar:rocket-2-bold" width="18" />
-                      Upgrade Now
+                      Upgrade to Superporxy Professional Now
                     </button>
                   </div>
                 </div>
