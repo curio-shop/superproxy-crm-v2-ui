@@ -903,21 +903,13 @@ export default function AccountProfile() {
                       <Icon icon="solar:chat-round-call-bold" width="32" className="text-blue-600" />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">We're Here to Help</h2>
-                    <p className="text-slate-600 max-w-md mx-auto mb-6">
+                    <p className="text-slate-600 max-w-md mx-auto mb-4">
                       Have a question or need assistance? Our support team is ready to help you succeed.
                     </p>
-                    <button
-                      onClick={() => setIsChatOpen(true)}
-                      className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-base font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 relative"
-                    >
-                      <Icon icon="solar:chat-round-dots-bold" width="24" />
-                      <span>Start Live Chat</span>
-                      {chatUnreadCount > 0 && (
-                        <span className="absolute -top-2 -right-2 h-7 w-7 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                          {chatUnreadCount}
-                        </span>
-                      )}
-                    </button>
+                    <div className="inline-flex items-center gap-2 px-5 py-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
+                      <Icon icon="solar:chat-round-dots-bold" width="20" />
+                      <span className="font-medium">Use the chat button in the bottom-right corner to start a live chat</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1251,6 +1243,13 @@ export default function AccountProfile() {
           </div>
         </div>
       )}
+
+      <FloatingChatButton
+        unreadCount={chatUnreadCount}
+        onClick={() => setIsChatOpen(true)}
+        isOpen={isChatOpen}
+        isVisible={activeTab === 'contact'}
+      />
 
       {activeTab === 'contact' && (
         <SupportChatDialog
