@@ -574,16 +574,44 @@ export default function AccountProfile() {
                       </span>
                     </div>
 
-                    <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                      Upgrade to unlock unlimited features and premium support. Get access to advanced analytics, priority customer service, and more.
-                    </p>
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-bold text-white">$9</span>
+                        <span className="text-slate-400 text-sm">/month</span>
+                      </div>
+                      <p className="text-slate-300 text-sm leading-relaxed">
+                        Unlock unlimited potential with multiple workspaces, team collaboration, and advanced features. No lock-in period, cancel anytime.
+                      </p>
+                      <ul className="space-y-2 text-sm text-slate-300">
+                        <li className="flex items-start gap-2">
+                          <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Unlimited quotations, invoices, and presentations</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>No watermarks on any documents</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Create, join, and invite to multiple workspaces</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Full access to AI features and smart calling</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Priority support and dedicated account manager</span>
+                        </li>
+                      </ul>
+                    </div>
 
                     <button
                       onClick={() => window.open('https://billing.stripe.com', '_blank')}
                       className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-100 transition-all shadow-lg"
                     >
-                      <Icon icon="solar:card-linear" width="18" />
-                      Upgrade to Superproxy Professional
+                      <Icon icon="solar:rocket-2-bold" width="18" />
+                      Upgrade Now
                     </button>
                   </div>
                 </div>
