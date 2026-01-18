@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function AccountProfile() {
   const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces'>('profile');
   const [showDangerZone, setShowDangerZone] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [profileData, setProfileData] = useState({
     firstName: 'Melwyn',
@@ -73,6 +75,27 @@ export default function AccountProfile() {
   const handleSaveProfile = () => {
     alert('Profile updated successfully!');
   };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsDeleting(false);
+    setShowDeleteModal(false);
+    alert('Account deletion requested. You will receive a confirmation email.');
+  };
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDeleteModal && !isDeleting) {
+        setShowDeleteModal(false);
+      }
+    };
+
+    if (showDeleteModal) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [showDeleteModal, isDeleting]);
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: 'solar:user-linear' },
@@ -670,11 +693,7 @@ export default function AccountProfile() {
                           Once you delete your account, there is no going back. All your data, workspaces, and documents will be permanently erased. This action cannot be undone.
                         </p>
                         <button
-                          onClick={() => {
-                            if (confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
-                              alert('Account deletion requested');
-                            }
-                          }}
+                          onClick={() => setShowDeleteModal(true)}
                           className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold transition-all shadow-sm"
                         >
                           <Icon icon="solar:trash-bin-minimalistic-bold" width="16" />
@@ -689,6 +708,88 @@ export default function AccountProfile() {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-300"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-account-modal-title"
+          aria-describedby="delete-account-modal-description"
+        >
+          <div
+            className="fixed inset-0"
+            onClick={!isDeleting ? () => setShowDeleteModal(false) : undefined}
+          />
+
+          <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-8 flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center mb-5 ring-8 ring-rose-50">
+                <Icon icon="solar:danger-triangle-bold" width="32" className="text-rose-600" />
+              </div>
+
+              <h3
+                id="delete-account-modal-title"
+                className="text-xl font-bold text-slate-900 mb-2"
+              >
+                Delete Account
+              </h3>
+
+              <p
+                id="delete-account-modal-description"
+                className="text-sm text-slate-600 mb-1"
+              >
+                This action is permanent and cannot be undone
+              </p>
+
+              <div className="w-full bg-rose-50 border border-rose-200 rounded-xl p-4 my-5">
+                <ul className="text-left text-sm text-slate-700 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:close-circle-bold" width="18" className="text-rose-500 flex-shrink-0 mt-0.5" />
+                    <span>All your personal data will be permanently deleted</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:close-circle-bold" width="18" className="text-rose-500 flex-shrink-0 mt-0.5" />
+                    <span>You will lose access to all workspaces and documents</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:close-circle-bold" width="18" className="text-rose-500 flex-shrink-0 mt-0.5" />
+                    <span>This action cannot be reversed or undone</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={isDeleting}
+                  className="flex-1 px-5 py-3 rounded-xl font-semibold text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="flex-1 px-5 py-3 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon icon="solar:trash-bin-minimalistic-bold" width="16" />
+                      <span>Yes, Delete My Account</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
