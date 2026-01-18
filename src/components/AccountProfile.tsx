@@ -625,7 +625,7 @@ export default function AccountProfile() {
                               <Icon icon="solar:check-circle-bold" width="18" className="text-emerald-400 relative" />
                             </div>
                           </div>
-                          <span className="text-slate-200 font-medium">Create, join, and invite to multiple workspaces</span>
+                          <span className="text-slate-200 font-medium">Team collaboration with shared access</span>
                         </li>
                         <li className="flex items-start gap-2.5">
                           <div className="flex-shrink-0 mt-0.5">
