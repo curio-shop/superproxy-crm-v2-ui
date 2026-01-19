@@ -384,7 +384,7 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
     }
 
     setJustAddedProductId(product.id);
-    setTimeout(() => setJustAddedProductId(null), 1000);
+    setTimeout(() => setJustAddedProductId(null), 500);  // Faster flash
     setIsProductDropdownOpen(false);
     setProductSearchQuery('');
   };

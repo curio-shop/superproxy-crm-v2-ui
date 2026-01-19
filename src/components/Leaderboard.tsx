@@ -368,7 +368,30 @@ export default function Leaderboard() {
                   key={entry.id}
                   className={`relative bg-gradient-to-br ${styles.gradient} border ${styles.border} rounded-xl p-6 hover:shadow-md transition-all duration-200 hover:scale-102 ${styles.height} flex flex-col overflow-hidden`}
                 >
-                  <div className="absolute top-2 right-3 text-7xl font-black text-slate-900 opacity-10 leading-none pointer-events-none select-none">
+                  {/* Parallel concentric circles - balanced spacing */}
+                  {/* Outer circle */}
+                  <div 
+                    className="absolute -top-10 -right-10 w-40 h-40 rounded-full border-[2.5px] opacity-8 pointer-events-none select-none"
+                    style={{
+                      borderColor: entry.rank === 1 ? '#fbbf24' : entry.rank === 2 ? '#94a3b8' : '#fb923c'
+                    }}
+                  ></div>
+                  
+                  {/* Inner circle - 20px spacing for balance */}
+                  <div 
+                    className="absolute -top-5 -right-5 w-20 h-20 rounded-full border-[2.5px] opacity-10 pointer-events-none select-none"
+                    style={{
+                      borderColor: entry.rank === 1 ? '#fbbf24' : entry.rank === 2 ? '#94a3b8' : '#fb923c'
+                    }}
+                  ></div>
+                  
+                  {/* Rank number - color-coded */}
+                  <div 
+                    className="absolute top-2 right-3 text-7xl font-black opacity-12 leading-none pointer-events-none select-none"
+                    style={{
+                      color: entry.rank === 1 ? '#f59e0b' : entry.rank === 2 ? '#64748b' : '#fb923c'
+                    }}
+                  >
                     {entry.rank}
                   </div>
 

@@ -136,7 +136,7 @@ export default function Companies({ isTeamView, homeFilterPreference, onViewComp
   ];
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col p-6">
+    <div className="flex-1 overflow-hidden flex flex-col p-6" style={{ scrollbarGutter: 'stable' }}>
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between mb-6">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="group w-full sm:w-auto max-w-2xl relative">

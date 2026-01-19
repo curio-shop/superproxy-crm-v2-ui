@@ -462,13 +462,24 @@ export default function ColdCallModal({ isOpen, onClose, contact, onNavigateToHi
               </button>
 
               {showVoiceDropdown && (
-                <div className={`absolute left-1/2 z-[250] w-72 -translate-x-1/2 animate-in fade-in zoom-in-95 duration-200 ${
-                  voiceDropdownDirection === 'up'
-                    ? 'bottom-full mb-2 origin-bottom'
-                    : 'top-full mt-2 origin-top'
-                }`}>
-                  <div className="rounded-xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/10 ring-1 ring-black/5">
-                    <div className="p-1.5 max-h-48 overflow-y-auto rounded-xl">
+                <div 
+                  className={`absolute z-[250] w-72 ${
+                    voiceDropdownDirection === 'up'
+                      ? 'bottom-full mb-2'
+                      : 'top-full mt-2'
+                  }`}
+                  style={{
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                  }}
+                >
+                  <div 
+                    className="rounded-xl border border-slate-200/80 bg-white shadow-xl"
+                    style={{
+                      animation: 'fadeIn 200ms ease-out'
+                    }}
+                  >
+                    <div className="py-1.5 max-h-[160px] overflow-y-auto custom-scrollbar">
                       {voices.map((voice) => {
                         const isSelected = selectedVoice === voice.name;
                         return (
@@ -478,14 +489,14 @@ export default function ColdCallModal({ isOpen, onClose, contact, onNavigateToHi
                               setSelectedVoice(voice.name);
                               setShowVoiceDropdown(false);
                             }}
-                            className={`flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left transition-all mb-0.5 last:mb-0 ${
+                            className={`flex w-full items-center justify-between px-3 py-2 text-left transition-all duration-150 ${
                               isSelected
-                                ? 'bg-blue-50 text-blue-700'
+                                ? 'bg-blue-50/80 text-blue-700'
                                 : 'text-slate-700 hover:bg-slate-50'
                             }`}
                           >
-                            <div className="flex-1 flex items-center gap-2">
-                              <span className={`text-sm font-medium ${isSelected ? 'text-blue-700' : 'text-slate-900'}`}>
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <span className={`text-sm font-medium ${isSelected ? 'font-semibold' : ''}`}>
                                 {voice.name}
                               </span>
                               {voice.isSystem && (
@@ -495,9 +506,7 @@ export default function ColdCallModal({ isOpen, onClose, contact, onNavigateToHi
                               )}
                             </div>
                             {isSelected && (
-                              <svg className="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                                <path d="M20 6 9 17l-5-5"></path>
-                              </svg>
+                              <Icon icon="solar:check-circle-bold" width="16" className="text-blue-600 flex-shrink-0" />
                             )}
                           </button>
                         );

@@ -43,7 +43,7 @@ export default function ScopeFilter({
     onChange(newScope);
     setIsOpen(false);
     setShowConfirmation(true);
-    setTimeout(() => setShowConfirmation(false), 1800);
+    setTimeout(() => setShowConfirmation(false), 1000);  // Faster feedback
   };
 
   const allScopeOptions = [

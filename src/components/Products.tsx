@@ -158,7 +158,7 @@ export default function Products({ isTeamView, homeFilterPreference, onViewProdu
   };
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col p-6">
+    <div className="flex-1 overflow-hidden flex flex-col p-6" style={{ scrollbarGutter: 'stable' }}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white/50 border border-white/60 rounded-[20px] p-5 flex flex-col justify-between h-32 shadow-sm relative overflow-hidden group hover:shadow-md transition-all backdrop-blur-md">
           <div className="flex items-center justify-between z-10">

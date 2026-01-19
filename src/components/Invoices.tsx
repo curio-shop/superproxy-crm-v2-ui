@@ -165,7 +165,7 @@ export default function Invoices({ isTeamView, homeFilterPreference, onPaymentRe
   };
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col p-6">
+    <div className="flex-1 overflow-hidden flex flex-col p-6" style={{ scrollbarGutter: 'stable' }}>
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white/60 backdrop-blur-md border border-white/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">

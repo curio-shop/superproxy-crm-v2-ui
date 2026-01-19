@@ -89,10 +89,10 @@ export default function Dropdown({
     };
   }, [isOpen]);
 
-  // Focus search input when dropdown opens
+  // Focus search input when dropdown opens - instant
   useEffect(() => {
     if (isOpen && searchable && searchInputRef.current) {
-      setTimeout(() => searchInputRef.current?.focus(), 50);
+      searchInputRef.current.focus();
     }
   }, [isOpen, searchable]);
 

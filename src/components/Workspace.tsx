@@ -451,12 +451,9 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
   const handleSwitchWorkspace = (workspaceId: string) => {
     const workspace = workspaces.find(w => w.id === workspaceId);
     if (workspace) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setCurrentWorkspace(workspace);
-        setShowWorkspaceSwitcher(false);
-        setIsLoading(false);
-      }, 300);
+      setCurrentWorkspace(workspace);
+      setShowWorkspaceSwitcher(false);
+      onWorkspaceChange?.(workspace);
     }
   };
 
@@ -1082,7 +1079,7 @@ export default function Workspace({ onRegisterHandlers, onWorkspaceChange }: Wor
             </div>
           )}
 
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div id="workspace-activity" className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden scroll-mt-6">
             <div className="p-6 border-b border-slate-100">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Recent Activity

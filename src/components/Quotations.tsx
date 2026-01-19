@@ -132,7 +132,7 @@ export default function Quotations({ isTeamView, homeFilterPreference, onViewQuo
   };
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col p-6">
+    <div className="flex-1 overflow-hidden flex flex-col p-6" style={{ scrollbarGutter: 'stable' }}>
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="group relative w-full sm:w-auto max-w-2xl">

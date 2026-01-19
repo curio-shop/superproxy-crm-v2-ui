@@ -398,7 +398,7 @@ function AppContent() {
         <div className="flex gap-3 h-screen pt-3 pr-3 pb-3 pl-3 gap-x-3 gap-y-3">
           <Sidebar activePage={activePage} onPageChange={setActivePage} currentWorkspace={currentWorkspace} onCreateNew={handleCreateNew} />
 
-        <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden relative z-30">
+        <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden relative z-30" style={{ scrollbarGutter: 'stable' }}>
           {activePage === 'account' ? (
             <SimpleHeader
               title="Account Settings"
@@ -449,7 +449,7 @@ function AppContent() {
           )}
 
           {activePage === 'home' ? (
-            <div className="flex-1 overflow-y-auto md:p-8 custom-scrollbar pt-6 pr-6 pb-6 pl-6 space-y-8">
+            <div className="flex-1 overflow-y-auto md:p-8 custom-scrollbar pt-6 pr-6 pb-6 pl-6 space-y-8" style={{ scrollbarGutter: 'stable' }}>
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-12 xl:col-span-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -513,9 +513,10 @@ function AppContent() {
                 <TeamActivity
                   onViewFullActivity={() => {
                     setActivePage('workspace');
-                    setTimeout(() => {
-                      document.getElementById('workspace-activity')?.scrollIntoView({ behavior: 'smooth' });
-                    }, 100);
+                    // Use requestAnimationFrame for instant, smooth scroll after render
+                    requestAnimationFrame(() => {
+                      document.getElementById('workspace-activity')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
                   }}
                 />
               </div>
