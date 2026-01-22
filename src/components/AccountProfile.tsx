@@ -5,14 +5,26 @@ import PricingCard from './PricingCard';
 import Dropdown from './Dropdown';
 
 interface AccountProfileProps {
-  activeTab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact';
-  onTabChange: (tab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact') => void;
+  activeTab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'voice' | 'contact';
+  onTabChange: (tab: 'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'voice' | 'contact') => void;
   onChatOpen: () => void;
   chatUnreadCount: number;
   onDeleteAccountClick: () => void;
+  onRecordingComplete: (recordingTime: number) => void;
+  onDeleteCustomVoice: (voiceId: string, callback: () => void) => void;
+  onPreviewVoice: (voice: { name: string; accent: string; gender: string; age: string }) => void;
 }
 
-export default function AccountProfile({ activeTab, onTabChange, onChatOpen, chatUnreadCount, onDeleteAccountClick }: AccountProfileProps) {
+export default function AccountProfile({ 
+  activeTab, 
+  onTabChange, 
+  onChatOpen, 
+  chatUnreadCount, 
+  onDeleteAccountClick, 
+  onRecordingComplete,
+  onDeleteCustomVoice,
+  onPreviewVoice
+}: AccountProfileProps) {
   const [showDangerZone, setShowDangerZone] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -70,6 +82,67 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
+
+  const [voiceSettings, setVoiceSettings] = useState({
+    selectedVoice: 'sarah-sales',
+    customVoiceMode: 'record' as 'record' | 'upload',
+    recordingLanguage: 'en',
+    isRecording: false,
+    recordingTime: 0,
+    samplePhraseIndex: 0,
+    selectedCustomVoice: null as string | null,
+  });
+
+  // Mock custom voices data
+  const [customVoices, setCustomVoices] = useState([
+    {
+      id: 'custom-1',
+      name: 'Sarah (Custom)',
+      description: 'My personal voice for sales calls',
+      accent: 'American',
+      gender: 'Female',
+      age: 'Young',
+      createdAt: 'Jan 15, 2024',
+    },
+    {
+      id: 'custom-2',
+      name: 'John (Custom)',
+      description: 'Professional voice for client meetings',
+      accent: 'British',
+      gender: 'Male',
+      age: 'Middle Aged',
+      createdAt: 'Jan 10, 2024',
+    },
+  ]);
+
+  const [voiceToDelete, setVoiceToDelete] = useState<string | null>(null);
+  const [showDeleteVoiceModal, setShowDeleteVoiceModal] = useState(false);
+
+  const [showRecordingConfirmModal, setShowRecordingConfirmModal] = useState(false);
+  const [showVoiceConfigModal, setShowVoiceConfigModal] = useState(false);
+  const [voiceConfig, setVoiceConfig] = useState({
+    name: '',
+    description: '',
+    accent: '',
+    gender: '',
+    age: '',
+  });
+
+  // Recording timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (voiceSettings.isRecording) {
+      interval = setInterval(() => {
+        setVoiceSettings(prev => ({
+          ...prev,
+          recordingTime: prev.recordingTime + 1
+        }));
+      }, 1000);
+    } else {
+      setVoiceSettings(prev => ({ ...prev, recordingTime: 0 }));
+    }
+    return () => clearInterval(interval);
+  }, [voiceSettings.isRecording]);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,6 +240,7 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
     { id: 'security', label: 'Security', icon: 'solar:shield-keyhole-linear' },
     { id: 'billing', label: 'Subscription', icon: 'solar:card-linear' },
     { id: 'workspaces', label: 'Workspaces', icon: 'solar:buildings-2-linear' },
+    { id: 'voice', label: 'AI Voice', icon: 'solar:microphone-3-linear' },
     { id: 'contact', label: 'Contact Us', icon: 'solar:chat-round-call-linear' },
   ] as const;
 
@@ -747,6 +821,337 @@ export default function AccountProfile({ activeTab, onTabChange, onChatOpen, cha
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'voice' && (
+              <div className="space-y-6">
+                {/* Voice Settings */}
+                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-slate-100">
+                    <h2 className="text-xl font-bold text-slate-900">Superproxy Voice Settings</h2>
+                    <p className="text-sm text-slate-500 mt-1">Configure your Superproxy's voice for calls and interactions</p>
+                  </div>
+
+                  <div className="p-6 space-y-8">
+                    {/* Agent Voices Section */}
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-900 mb-3">Superproxy Voice</label>
+                      <p className="text-[13px] text-slate-500 mb-4 leading-relaxed">
+                        Select the voice your Superproxy will use during calls and interactions.
+                      </p>
+                      <div className="max-w-md">
+                        <Dropdown
+                          value={voiceSettings.selectedVoice}
+                          options={[
+                            { value: 'sarah-sales', label: 'Sarah - Sales Pro', icon: 'solar:user-speak-linear' },
+                            { value: 'michael-support', label: 'Michael - Support Specialist', icon: 'solar:user-speak-linear' },
+                            { value: 'emma-us', label: 'Emma - US English', icon: 'solar:user-speak-linear' },
+                            { value: 'yuki-japanese', label: 'Yuki - Japanese', icon: 'solar:user-speak-linear' },
+                            { value: 'pierre-french', label: 'Pierre - French', icon: 'solar:user-speak-linear' },
+                          ]}
+                          onChange={(val) => setVoiceSettings({ ...voiceSettings, selectedVoice: val as string })}
+                          placeholder="Select Proxy voice"
+                          icon="solar:microphone-linear"
+                          className="w-full"
+                          buttonClassName="w-full"
+                          menuClassName="w-full"
+                          menuAlign="left"
+                        />
+                      </div>
+                    </div>
+
+                    {/* My Custom Voices Section */}
+                    {customVoices.length > 0 && (
+                      <div className="border-t border-slate-100 pt-8">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900">My Custom Voices</h3>
+                            <p className="text-[13px] text-slate-500 mt-1">
+                              Manage your personalized voice profiles
+                            </p>
+                          </div>
+                          <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                            {customVoices.length} {customVoices.length === 1 ? 'Voice' : 'Voices'}
+                          </span>
+                        </div>
+                        
+                        {/* Voice Cards Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                          {customVoices.map((voice) => (
+                            <div
+                              key={voice.id}
+                              className="bg-gradient-to-br from-purple-50/50 to-violet-50/30 border border-purple-100 rounded-xl p-4 hover:shadow-md hover:border-purple-200 transition-all group"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-start gap-3 flex-1 min-w-0">
+                                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                    <Icon icon="solar:microphone-3-bold" width="18" className="text-purple-600" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-bold text-slate-900 mb-1 truncate">{voice.name}</h4>
+                                    <p className="text-xs text-slate-500 mb-1">
+                                      {voice.accent} • {voice.gender} • {voice.age}
+                                    </p>
+                                    {voice.description && (
+                                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                                        {voice.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    onDeleteCustomVoice(voice.id, () => {
+                                      setCustomVoices(customVoices.filter(v => v.id !== voice.id));
+                                    });
+                                  }}
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all flex-shrink-0 ml-2"
+                                  title="Delete voice"
+                                >
+                                  <Icon icon="solar:trash-bin-trash-linear" width="18" />
+                                </button>
+                              </div>
+                              
+                              {/* Preview Button */}
+                              <button 
+                                onClick={() => onPreviewVoice({ name: voice.name, accent: voice.accent, gender: voice.gender, age: voice.age })}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white/80 hover:bg-white border border-purple-100 hover:border-purple-200 text-slate-700 hover:text-purple-700 font-semibold text-xs transition-all"
+                              >
+                                <Icon icon="solar:play-bold" width="14" />
+                                Preview Voice
+                              </button>
+                              
+                              <div className="flex items-center justify-between mt-3 pt-3 border-t border-purple-100">
+                                <span className="text-[11px] text-slate-400">Created {voice.createdAt}</span>
+                                <button 
+                                  onClick={() => setVoiceSettings({ ...voiceSettings, selectedCustomVoice: voice.id })}
+                                  className={`flex items-center gap-1.5 text-[11px] font-semibold transition-colors ${
+                                    voiceSettings.selectedCustomVoice === voice.id
+                                      ? 'text-emerald-600'
+                                      : 'text-purple-600 hover:text-purple-700'
+                                  }`}
+                                >
+                                  {voiceSettings.selectedCustomVoice === voice.id ? (
+                                    <>
+                                      <Icon icon="solar:check-circle-bold" width="14" />
+                                      Selected
+                                    </>
+                                  ) : (
+                                    'Use this voice'
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Add Custom Voice Section */}
+                    <div className="border-t border-slate-100 pt-8">
+                      <h3 className="text-base font-bold text-slate-900 mb-2">Custom Voice</h3>
+                      <p className="text-[13px] text-slate-500 mb-6 leading-relaxed">
+                        Personalize your Superproxy with your own voice. Record live or upload an audio file.
+                      </p>
+
+                      <div className="max-w-md">
+                        <div className="grid grid-cols-2 gap-3 mb-8">
+                          <button
+                            onClick={() => setVoiceSettings({ ...voiceSettings, customVoiceMode: 'record' })}
+                            className={`flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all border-2 ${
+                              voiceSettings.customVoiceMode === 'record'
+                                ? 'bg-purple-600 text-white border-purple-600 shadow-lg shadow-purple-600/25'
+                                : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <Icon icon="solar:microphone-3-bold" width="18" />
+                            Record Voice
+                          </button>
+                          <button
+                            onClick={() => setVoiceSettings({ ...voiceSettings, customVoiceMode: 'upload' })}
+                            className={`flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all border-2 ${
+                              voiceSettings.customVoiceMode === 'upload'
+                                ? 'bg-purple-600 text-white border-purple-600 shadow-lg shadow-purple-600/25'
+                                : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <Icon icon="solar:upload-linear" width="18" />
+                            Upload Voice
+                          </button>
+                        </div>
+                      </div>
+
+                      {voiceSettings.customVoiceMode === 'record' && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                          {/* Recording Language */}
+                          <div>
+                            <label className="block text-sm font-semibold text-slate-900 mb-3">Recording Language</label>
+                            <div className="max-w-md">
+                              <Dropdown
+                                value={voiceSettings.recordingLanguage}
+                                options={[
+                                  { value: 'en', label: 'English' },
+                                  { value: 'es', label: 'Spanish' },
+                                  { value: 'fr', label: 'French' },
+                                  { value: 'de', label: 'German' },
+                                  { value: 'ja', label: 'Japanese' },
+                                  { value: 'zh', label: 'Chinese' },
+                                ]}
+                                onChange={(val) => setVoiceSettings({ ...voiceSettings, recordingLanguage: val as string })}
+                                icon="solar:global-linear"
+                                className="w-full"
+                                buttonClassName="w-full"
+                                menuClassName="w-full"
+                                menuAlign="left"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Sample Phrase */}
+                          <div>
+                            <div className="flex items-center justify-between mb-3">
+                              <label className="block text-sm font-semibold text-slate-900">Sample Phrase</label>
+                              <span className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Read Aloud</span>
+                            </div>
+                            <p className="text-[13px] text-slate-500 mb-4 leading-relaxed">
+                              Read the phrase below while recording. Use the arrows to browse different examples.
+                            </p>
+                            
+                            <div className="relative bg-slate-50 border border-slate-200 rounded-xl p-6">
+                              <button 
+                                onClick={() => setVoiceSettings({ ...voiceSettings, samplePhraseIndex: Math.max(0, voiceSettings.samplePhraseIndex - 1) })}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95"
+                              >
+                                <Icon icon="solar:alt-arrow-left-linear" width="16" className="text-slate-600" />
+                              </button>
+                              
+                              <div className="px-12">
+                                <p className="text-[15px] leading-relaxed text-slate-700 text-center">
+                                  "Hello, my name is [Name]. Thanks for taking the time to speak with me today. I'd like to walk you through some details, answer your questions, and make sure you have everything you need. Please feel free to interrupt me at any time if something isn't clear. My goal is to keep this conversation straightforward, helpful, and easy to follow."
+                                </p>
+                              </div>
+                              
+                              <button 
+                                onClick={() => setVoiceSettings({ ...voiceSettings, samplePhraseIndex: voiceSettings.samplePhraseIndex + 1 })}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95"
+                              >
+                                <Icon icon="solar:alt-arrow-right-linear" width="16" className="text-slate-600" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Recording Section */}
+                          <div>
+                            <div className="flex items-center justify-between mb-3">
+                              <label className="block text-sm font-semibold text-slate-900">Record Your Voice</label>
+                              <span className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Min 30 Seconds</span>
+                            </div>
+                            
+                            {/* Waveform Visualization */}
+                            <div className="bg-gradient-to-br from-purple-50/50 to-violet-50/30 border border-purple-100 rounded-xl p-8 mb-4">
+                              <div className="flex items-center justify-center gap-0.5 h-16">
+                                {[...Array(80)].map((_, i) => (
+                                  <div
+                                    key={i}
+                                    className="w-1 bg-purple-400 rounded-full transition-all"
+                                    style={{
+                                      height: `${Math.random() * 60 + 10}%`,
+                                      opacity: voiceSettings.isRecording ? 0.6 + Math.random() * 0.4 : 0.2
+                                    }}
+                                  ></div>
+                                ))}
+                              </div>
+                              
+                              {voiceSettings.isRecording && (
+                                <div className="flex items-center justify-center gap-2 mt-4">
+                                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                  <span className="text-sm font-semibold text-slate-600">
+                                    Recording... {voiceSettings.recordingTime}s
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Record Button */}
+                            <div className="flex justify-center">
+                              <button
+                                onClick={() => {
+                                  if (voiceSettings.isRecording) {
+                                    // Stop recording and trigger callback to show confirmation modal
+                                    const recordingTime = voiceSettings.recordingTime;
+                                    setVoiceSettings({ ...voiceSettings, isRecording: false, recordingTime: 0 });
+                                    onRecordingComplete(recordingTime);
+                                  } else {
+                                    // Start recording
+                                    setVoiceSettings({ ...voiceSettings, isRecording: true });
+                                  }
+                                }}
+                                className={`flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold transition-all ${
+                                  voiceSettings.isRecording
+                                    ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
+                                    : 'bg-purple-600 text-white border-2 border-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/25'
+                                }`}
+                              >
+                                <Icon 
+                                  icon={voiceSettings.isRecording ? 'solar:stop-circle-bold' : 'solar:microphone-3-bold'} 
+                                  width="20" 
+                                />
+                                {voiceSettings.isRecording ? 'Stop Recording' : 'Start Recording'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {voiceSettings.customVoiceMode === 'upload' && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                          {/* Upload Section */}
+                          <div className="max-w-md">
+                            <label className="block text-sm font-semibold text-slate-900 mb-3">Upload Voice File</label>
+                            <p className="text-[13px] text-slate-500 mb-4 leading-relaxed">
+                              Upload an audio file to clone your voice. Recommended: 30-60 seconds of clear speech.
+                            </p>
+                            
+                            <div className="border-2 border-dashed border-purple-200 rounded-xl p-8 text-center hover:border-purple-300 hover:bg-purple-50/30 transition-all cursor-pointer group">
+                              <div className="flex flex-col items-center gap-3">
+                                <div className="w-16 h-16 rounded-full bg-purple-50 group-hover:bg-purple-100 flex items-center justify-center transition-all">
+                                  <Icon icon="solar:upload-linear" width="32" className="text-purple-400 group-hover:text-purple-600 transition-colors" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">
+                                    Click to upload or drag and drop
+                                  </p>
+                                  <p className="text-xs text-slate-400 mt-1">
+                                    MP3, WAV, M4A up to 10MB
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Help Card */}
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-2xl p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                      <Icon icon="solar:lightbulb-bolt-linear" width="20" className="text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 mb-2">Voice Cloning Tips</h3>
+                      <ul className="text-[13px] text-slate-600 space-y-1.5 leading-relaxed">
+                        <li>• Record in a quiet environment for best results</li>
+                        <li>• Speak clearly and naturally, as you would in a real conversation</li>
+                        <li>• Longer recordings (45-60 seconds) produce better voice quality</li>
+                        <li>• Your voice will be processed securely and used only for your Superproxy</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 

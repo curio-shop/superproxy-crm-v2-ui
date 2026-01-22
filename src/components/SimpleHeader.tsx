@@ -13,9 +13,10 @@ interface SimpleHeaderProps {
     icon: string;
     onClick: () => void;
   };
+  onNavigateToNotifications?: () => void;
 }
 
-export default function SimpleHeader({ title, subtitle, showCreateButton, onOpenDrawer, onBack, customButton }: SimpleHeaderProps) {
+export default function SimpleHeader({ title, subtitle, showCreateButton, onOpenDrawer, onBack, customButton, onNavigateToNotifications }: SimpleHeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
@@ -76,6 +77,10 @@ export default function SimpleHeader({ title, subtitle, showCreateButton, onOpen
           <NotificationCard
             isOpen={showNotifications}
             onClose={() => setShowNotifications(false)}
+            onViewAll={() => {
+              setShowNotifications(false);
+              onNavigateToNotifications?.();
+            }}
           />
         </div>
       </div>

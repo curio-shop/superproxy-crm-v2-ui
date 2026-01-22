@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Icon } from '@iconify/react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import SimpleHeader from './components/SimpleHeader';
@@ -28,6 +29,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import NewEmail from './components/NewEmail';
 import EmailHistoryDrawer from './components/EmailHistoryDrawer';
 import Celebration from './components/Celebration';
+import Dropdown from './components/Dropdown';
 import TreasureBurst from './components/TreasureBurst';
 import PaperFly from './components/PaperFly';
 import ColdCallModal from './components/ColdCallModal';
@@ -40,6 +42,7 @@ import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import DeleteAccountModal from './components/DeleteAccountModal';
 import FloatingChatButton from './components/FloatingChatButton';
 import SupportChatDialog from './components/SupportChatDialog';
+import Notifications from './components/Notifications';
 import { CallManagerProvider, Contact, Invoice, Quotation, useCallManager } from './contexts/CallManagerContext';
 import { ToastProvider, useToast } from './components/ToastContainer';
 import { supabase } from './lib/supabase';
@@ -90,11 +93,31 @@ function AppContent() {
     id: 'mock-user-id',
     name: 'Melwyn Arrubio'
   });
-  const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'contact'>('profile');
+  const [activeAccountTab, setActiveAccountTab] = useState<'profile' | 'preferences' | 'security' | 'billing' | 'workspaces' | 'voice' | 'contact'>('profile');
 
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [isAccountDeleting, setIsAccountDeleting] = useState(false);
   const [deleteAccountConfirmText, setDeleteAccountConfirmText] = useState('');
+
+  // Voice recording modals
+  const [showRecordingConfirmModal, setShowRecordingConfirmModal] = useState(false);
+  const [showVoiceConfigModal, setShowVoiceConfigModal] = useState(false);
+  const [showVoiceDeleteConfirmModal, setShowVoiceDeleteConfirmModal] = useState(false);
+  const [showVoiceSuccessModal, setShowVoiceSuccessModal] = useState(false);
+  const [showDeleteCustomVoiceModal, setShowDeleteCustomVoiceModal] = useState(false);
+  const [showPreviewVoiceModal, setShowPreviewVoiceModal] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [voiceRecordingTime, setVoiceRecordingTime] = useState(0);
+  const [voiceToDelete, setVoiceToDelete] = useState<string | null>(null);
+  const [voiceToPreview, setVoiceToPreview] = useState<{ name: string; accent: string; gender: string; age: string } | null>(null);
+  const [voiceConfig, setVoiceConfig] = useState({
+    name: '',
+    description: '',
+    accent: '',
+    gender: '',
+    age: '',
+  });
+  const [deleteVoiceCallback, setDeleteVoiceCallback] = useState<(() => void) | null>(null);
 
   const [isCallDetailsDrawerOpen, setIsCallDetailsDrawerOpen] = useState(false);
   const [isEmailHistoryDrawerOpen, setIsEmailHistoryDrawerOpen] = useState(false);
@@ -403,6 +426,7 @@ function AppContent() {
             <SimpleHeader
               title="Account Settings"
               subtitle="Manage your profile, security, and preferences."
+              onNavigateToNotifications={() => setActivePage('notifications')}
             />
           ) : activePage === 'invoices' ? (
             <SimpleHeader
@@ -410,12 +434,14 @@ function AppContent() {
               subtitle="Track payments, manage billing, and monitor invoice status."
               showCreateButton={true}
               onOpenDrawer={() => setIsCreatingInvoice(true)}
+              onNavigateToNotifications={() => setActivePage('notifications')}
             />
           ) : activePage === 'call-history' ? (
             <SimpleHeader
               title="Call History"
               subtitle="Review past calls, transcripts, and insights."
               onBack={() => setActivePage('contacts')}
+              onNavigateToNotifications={() => setActivePage('notifications')}
             />
           ) : activePage === 'presentations' ? (
             <SimpleHeader
@@ -426,6 +452,13 @@ function AppContent() {
                 icon: 'solar:videocamera-record-bold',
                 onClick: () => setShowRecordModal(true)
               }}
+              onNavigateToNotifications={() => setActivePage('notifications')}
+            />
+          ) : activePage === 'notifications' ? (
+            <SimpleHeader
+              title="Notifications"
+              subtitle="Stay updated with your team's activities and important alerts."
+              onNavigateToNotifications={() => setActivePage('notifications')}
             />
           ) : activePage === 'new-email' ? null : activePage === 'ai-chat' ? null : (
             <Header
@@ -445,6 +478,7 @@ function AppContent() {
               onJoinWorkspace={workspaceHandlers.onJoinWorkspace}
               isTeamView={isTeamView}
               onToggleView={setIsTeamView}
+              onNavigateToNotifications={() => setActivePage('notifications')}
             />
           )}
 
@@ -659,6 +693,8 @@ function AppContent() {
                 handleOpenDeleteModal('presentation', presentation.id, presentation.title);
               }}
             />
+          ) : activePage === 'notifications' ? (
+            <Notifications />
           ) : activePage === 'workspace' ? (
             <Workspace onRegisterHandlers={setWorkspaceHandlers} onWorkspaceChange={setCurrentWorkspace} />
           ) : activePage === 'account' ? (
@@ -668,6 +704,19 @@ function AppContent() {
               onChatOpen={() => setIsSupportChatOpen(true)}
               chatUnreadCount={chatUnreadCount}
               onDeleteAccountClick={handleOpenDeleteAccountModal}
+              onRecordingComplete={(recordingTime) => {
+                setVoiceRecordingTime(recordingTime);
+                setShowRecordingConfirmModal(true);
+              }}
+              onDeleteCustomVoice={(voiceId, callback) => {
+                setVoiceToDelete(voiceId);
+                setDeleteVoiceCallback(() => callback);
+                setShowDeleteCustomVoiceModal(true);
+              }}
+              onPreviewVoice={(voice) => {
+                setVoiceToPreview(voice);
+                setShowPreviewVoiceModal(true);
+              }}
             />
           ) : activePage === 'call-history' ? (
             <CallHistory onBack={() => setActivePage('contacts')} onViewCall={handleViewCall} />
@@ -802,6 +851,429 @@ function AppContent() {
         onDeleteConfirmTextChange={setDeleteAccountConfirmText}
         isDeleting={isAccountDeleting}
       />
+
+      {/* Voice Recording Confirmation Modal */}
+      {showRecordingConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-50 border-2 border-purple-100 mx-auto mb-4">
+                <Icon icon="solar:check-circle-bold" width="32" className="text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">Recording Complete!</h3>
+              <p className="text-sm text-slate-600 text-center mb-6 leading-relaxed">
+                Your voice has been recorded successfully. Would you like to save and configure this voice?
+              </p>
+              
+              {/* Audio Preview */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <button className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-900 flex items-center justify-center transition-all">
+                    <Icon icon="solar:play-bold" width="16" className="text-white ml-0.5" />
+                  </button>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1 h-8">
+                      {[...Array(40)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 bg-slate-300 rounded-full"
+                          style={{ height: `${Math.random() * 80 + 20}%` }}
+                        ></div>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold text-slate-500">
+                    {voiceRecordingTime}s
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowRecordingConfirmModal(false);
+                    setVoiceRecordingTime(0);
+                  }}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={() => {
+                    setShowRecordingConfirmModal(false);
+                    setShowVoiceConfigModal(true);
+                  }}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/25 transition-all"
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Voice Configuration Modal */}
+      {showVoiceConfigModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8 animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Customize Your Superproxy's Voice</h3>
+                <p className="text-sm text-slate-500 mt-1">Give your custom voice a unique identity</p>
+              </div>
+              <button
+                onClick={() => setShowVoiceDeleteConfirmModal(true)}
+                className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-all flex-shrink-0 ml-4"
+              >
+                <Icon icon="solar:close-circle-linear" width="24" className="text-slate-400 hover:text-slate-600" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 max-h-[calc(100vh-300px)] overflow-y-auto custom-scrollbar">
+              {/* Audio Preview Section */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Record Voice</label>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <button className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-900 flex items-center justify-center transition-all">
+                      <Icon icon="solar:play-bold" width="16" className="text-white ml-0.5" />
+                    </button>
+                    <div className="flex-1">
+                      <div className="relative h-2 bg-slate-300 rounded-full overflow-hidden">
+                        <div className="absolute left-0 top-0 h-full bg-slate-700 rounded-full" style={{ width: '5%' }}></div>
+                      </div>
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-slate-500">0:00</span>
+                        <span className="text-xs text-slate-500">0:{String(voiceRecordingTime).padStart(2, '0')}</span>
+                      </div>
+                    </div>
+                    <button className="w-8 h-8 rounded-lg hover:bg-slate-200 flex items-center justify-center transition-all">
+                      <Icon icon="solar:volume-loud-linear" width="18" className="text-slate-600" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const speeds = [1, 1.25, 1.5, 2];
+                        const currentIndex = speeds.indexOf(playbackSpeed);
+                        const nextIndex = (currentIndex + 1) % speeds.length;
+                        setPlaybackSpeed(speeds[nextIndex]);
+                      }}
+                      className="min-w-[60px] px-3.5 py-2 bg-white hover:bg-slate-100 border border-slate-200/60 hover:border-slate-300 rounded-full text-xs font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm hover:shadow active:scale-95"
+                    >
+                      {playbackSpeed}x
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500">Preview of your recorded voice</p>
+                </div>
+              </div>
+
+              {/* Name Field */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Name</label>
+                <input
+                  type="text"
+                  value={voiceConfig.name}
+                  onChange={(e) => setVoiceConfig({ ...voiceConfig, name: e.target.value })}
+                  placeholder="Enter a name for your custom voice"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+                />
+                {voiceConfig.name && (
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    Your Superproxy will introduce as <span className="font-semibold text-purple-600">{voiceConfig.name}</span>, <span className="font-semibold text-slate-700">Melwyn</span>'s Superproxy from <span className="font-semibold text-slate-700">Appquant</span>
+                  </p>
+                )}
+              </div>
+
+              {/* Description Field */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Description</label>
+                <textarea
+                  value={voiceConfig.description}
+                  onChange={(e) => setVoiceConfig({ ...voiceConfig, description: e.target.value })}
+                  placeholder="Enter an optional description for your custom voice"
+                  rows={4}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all resize-none"
+                ></textarea>
+              </div>
+
+              {/* Voice Labels */}
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 mb-4">Voice Labels</h4>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {/* Accent */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Accent</label>
+                    <Dropdown
+                      value={voiceConfig.accent}
+                      options={[
+                        { value: 'american', label: 'American' },
+                        { value: 'british', label: 'British' },
+                        { value: 'australian', label: 'Australian' },
+                        { value: 'canadian', label: 'Canadian' },
+                        { value: 'indian', label: 'Indian' },
+                        { value: 'other', label: 'Other' },
+                      ]}
+                      onChange={(val) => setVoiceConfig({ ...voiceConfig, accent: val as string })}
+                      placeholder="Select accent"
+                      className="w-full"
+                      buttonClassName="w-full"
+                      menuClassName="w-full"
+                      menuAlign="left"
+                    />
+                  </div>
+
+                  {/* Gender */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Gender</label>
+                    <Dropdown
+                      value={voiceConfig.gender}
+                      options={[
+                        { value: 'male', label: 'Male' },
+                        { value: 'female', label: 'Female' },
+                        { value: 'non-binary', label: 'Non-binary' },
+                      ]}
+                      onChange={(val) => setVoiceConfig({ ...voiceConfig, gender: val as string })}
+                      placeholder="Select gender"
+                      className="w-full"
+                      buttonClassName="w-full"
+                      menuClassName="w-full"
+                      menuAlign="left"
+                    />
+                  </div>
+                </div>
+
+                {/* Age */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Age</label>
+                  <Dropdown
+                    value={voiceConfig.age}
+                    options={[
+                      { value: 'young', label: 'Young (18-30)' },
+                      { value: 'middle', label: 'Middle Aged (31-50)' },
+                      { value: 'mature', label: 'Mature (51+)' },
+                    ]}
+                    onChange={(val) => setVoiceConfig({ ...voiceConfig, age: val as string })}
+                    placeholder="Select age"
+                    className="w-full"
+                    buttonClassName="w-full"
+                    menuClassName="w-full"
+                    menuAlign="left"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 flex justify-between">
+              <button
+                onClick={() => {
+                  setVoiceConfig({ name: '', description: '', accent: '', gender: '', age: '' });
+                }}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-all"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => {
+                  // Save voice configuration
+                  setShowVoiceConfigModal(false);
+                  setShowVoiceSuccessModal(true);
+                  setVoiceConfig({ name: '', description: '', accent: '', gender: '', age: '' });
+                  setVoiceRecordingTime(0);
+                }}
+                className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/25 transition-all"
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Voice Delete Confirmation Modal */}
+      {showVoiceDeleteConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-50 border-2 border-red-100 mx-auto mb-4">
+                <Icon icon="solar:trash-bin-trash-bold" width="32" className="text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">Discard Voice Recording?</h3>
+              <p className="text-sm text-slate-600 text-center mb-6 leading-relaxed">
+                Are you sure you want to close? Your recording and all configurations will be lost.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowVoiceDeleteConfirmModal(false)}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowVoiceDeleteConfirmModal(false);
+                    setShowVoiceConfigModal(false);
+                    setVoiceConfig({ name: '', description: '', accent: '', gender: '', age: '' });
+                    setVoiceRecordingTime(0);
+                  }}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/25 transition-all"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Voice Success Modal */}
+      {showVoiceSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-50 border-2 border-purple-100 mx-auto mb-4">
+                <Icon icon="solar:check-circle-bold" width="32" className="text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">Voice Uploaded Successfully!</h3>
+              <p className="text-sm text-slate-600 text-center mb-6 leading-relaxed">
+                Your custom voice has been saved and is now ready to use. You can select it from your voice list.
+              </p>
+              
+              <button
+                onClick={() => setShowVoiceSuccessModal(false)}
+                className="w-full px-4 py-3 rounded-xl text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/25 transition-all"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Custom Voice Modal */}
+      {showDeleteCustomVoiceModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-50 border-2 border-red-100 mx-auto mb-4">
+                <Icon icon="solar:trash-bin-trash-bold" width="32" className="text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">Delete Voice Profile?</h3>
+              <p className="text-sm text-slate-600 text-center mb-6 leading-relaxed">
+                Are you sure you want to delete this custom voice? This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteCustomVoiceModal(false);
+                    setVoiceToDelete(null);
+                  }}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (deleteVoiceCallback) {
+                      deleteVoiceCallback();
+                      setDeleteVoiceCallback(null);
+                    }
+                    setShowDeleteCustomVoiceModal(false);
+                    setVoiceToDelete(null);
+                  }}
+                  className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/25 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Voice Modal */}
+      {showPreviewVoiceModal && voiceToPreview && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Preview Voice</h3>
+                <p className="text-sm text-slate-500 mt-1">{voiceToPreview.name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowPreviewVoiceModal(false);
+                  setVoiceToPreview(null);
+                }}
+                className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-all"
+              >
+                <Icon icon="solar:close-circle-linear" width="24" className="text-slate-400 hover:text-slate-600" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Voice Details */}
+              <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-purple-50/50 to-violet-50/30 border border-purple-100 rounded-xl">
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <Icon icon="solar:microphone-3-bold" width="24" className="text-purple-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">{voiceToPreview.name}</h4>
+                  <p className="text-xs text-slate-500">
+                    {voiceToPreview.accent} • {voiceToPreview.gender} • {voiceToPreview.age}
+                  </p>
+                </div>
+              </div>
+
+              {/* Audio Player */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <button className="w-14 h-14 rounded-full bg-slate-800 hover:bg-slate-900 flex items-center justify-center transition-all shadow-lg shadow-slate-800/25">
+                    <Icon icon="solar:play-bold" width="24" className="text-white ml-0.5" />
+                  </button>
+                  <div className="flex-1">
+                    <div className="relative h-2 bg-slate-300 rounded-full overflow-hidden mb-2">
+                      <div className="absolute left-0 top-0 h-full bg-purple-600 rounded-full" style={{ width: '0%' }}></div>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-slate-500">0:00</span>
+                      <span className="text-xs text-slate-500">0:15</span>
+                    </div>
+                  </div>
+                  <button className="w-10 h-10 rounded-lg hover:bg-slate-200 flex items-center justify-center transition-all">
+                    <Icon icon="solar:volume-loud-linear" width="20" className="text-slate-600" />
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 text-center">Sample preview of your custom voice</p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowPreviewVoiceModal(false);
+                  setVoiceToPreview(null);
+                }}
+                className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setShowPreviewVoiceModal(false);
+                  setVoiceToPreview(null);
+                  // TODO: Set as active voice
+                }}
+                className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/25 transition-all"
+              >
+                Use This Voice
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

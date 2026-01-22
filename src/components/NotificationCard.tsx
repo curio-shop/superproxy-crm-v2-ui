@@ -99,9 +99,10 @@ const notificationStyles = {
 interface NotificationCardProps {
   isOpen: boolean;
   onClose: () => void;
+  onViewAll?: () => void;
 }
 
-export default function NotificationCard({ isOpen, onClose }: NotificationCardProps) {
+export default function NotificationCard({ isOpen, onClose, onViewAll }: NotificationCardProps) {
   if (!isOpen) return null;
 
   const unreadCount = mockNotifications.filter(n => n.isUnread).length;
@@ -263,7 +264,13 @@ export default function NotificationCard({ isOpen, onClose }: NotificationCardPr
 
         {/* Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-100">
-          <button className="hover:text-indigo-600 hover:border-indigo-200 hover:shadow-md transition-all flex gap-2 group text-xs font-semibold text-slate-600 bg-white w-full border-slate-200 border rounded-xl pt-2.5 pb-2.5 shadow-sm items-center justify-center">
+          <button 
+            onClick={() => {
+              onClose();
+              onViewAll?.();
+            }}
+            className="hover:text-indigo-600 hover:border-indigo-200 hover:shadow-md transition-all flex gap-2 group text-xs font-semibold text-slate-600 bg-white w-full border-slate-200 border rounded-xl pt-2.5 pb-2.5 shadow-sm items-center justify-center"
+          >
             View all notifications
           </button>
         </div>

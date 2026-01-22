@@ -11,9 +11,10 @@ interface HeaderProps {
   onJoinWorkspace?: () => void;
   isTeamView?: boolean;
   onToggleView?: (isTeam: boolean) => void;
+  onNavigateToNotifications?: () => void;
 }
 
-export default function Header({ activePage, onOpenDrawer, onCreateWorkspace, onJoinWorkspace, isTeamView = false, onToggleView }: HeaderProps) {
+export default function Header({ activePage, onOpenDrawer, onCreateWorkspace, onJoinWorkspace, isTeamView = false, onToggleView, onNavigateToNotifications }: HeaderProps) {
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('EUR');
   const [amount, setAmount] = useState('100');
@@ -329,6 +330,10 @@ export default function Header({ activePage, onOpenDrawer, onCreateWorkspace, on
           <NotificationCard
             isOpen={showNotifications}
             onClose={() => setShowNotifications(false)}
+            onViewAll={() => {
+              setShowNotifications(false);
+              onNavigateToNotifications?.();
+            }}
           />
         </div>
       </div>
