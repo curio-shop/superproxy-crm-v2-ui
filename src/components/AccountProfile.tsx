@@ -124,12 +124,12 @@ export default function AccountProfile({
     { id: 'mehmet-executive', name: 'Mehmet', role: 'Executive', language: 'Turkish', gender: 'Male', age: '40s', traits: ['Commanding', 'Clear'], languageCode: 'turkish' },
     { id: 'ayse-professional', name: 'Ayşe', role: 'Professional', language: 'Turkish', gender: 'Female', age: '35s', traits: ['Confident', 'Articulate'], languageCode: 'turkish' },
     
-    // POLISH - 2 voices
+    // POLISH - 1 voice
     { id: 'piotr-direct', name: 'Piotr', role: 'Direct', language: 'Polish', gender: 'Male', age: '38s', traits: ['Clear', 'Professional'], languageCode: 'polish' },
-    { id: 'zofia-friendly', name: 'Zofia', role: 'Friendly', language: 'Polish', gender: 'Female', age: '32s', traits: ['Warm', 'Approachable'], languageCode: 'polish' },
     
-    // FILIPINO - 1 voice
+    // FILIPINO - 2 voices
     { id: 'angelo-friendly', name: 'Angelo', role: 'Friendly', language: 'Filipino', gender: 'Male', age: '30s', traits: ['Warm', 'Clear'], languageCode: 'filipino' },
+    { id: 'maria-professional', name: 'Maria', role: 'Professional', language: 'Filipino', gender: 'Female', age: '32s', traits: ['Confident', 'Articulate'], languageCode: 'filipino' },
     
     // MALAY - 1 voice
     { id: 'amir-professional', name: 'Amir', role: 'Professional', language: 'Malay', gender: 'Male', age: '35s', traits: ['Polished', 'Clear'], languageCode: 'malay' },
