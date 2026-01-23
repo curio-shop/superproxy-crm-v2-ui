@@ -110,7 +110,6 @@ const MOCK_WORKSPACE: Workspace = {
 };
 
 export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: CreateInvoiceProps) {
-  console.log('🟢 CreateInvoice component mounted', { preSelectedQuote });
   const [invoiceTitle, setInvoiceTitle] = useState('Untitled Invoice');
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -243,7 +242,6 @@ export default function CreateInvoice({ onBack, onPublish, preSelectedQuote }: C
   };
 
   const handlePublish = () => {
-    console.log('Publishing invoice...');
     if (onPublish) {
       onPublish();
     }

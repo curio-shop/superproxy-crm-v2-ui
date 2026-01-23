@@ -6,7 +6,6 @@ interface QuoteViewProps {
 }
 
 export default function QuoteView({ onBackToQuotes }: QuoteViewProps) {
-  console.log('🟢 QuoteView component mounted');
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -84,17 +83,14 @@ export default function QuoteView({ onBackToQuotes }: QuoteViewProps) {
   };
 
   const handleDownloadPDF = () => {
-    console.log('Download PDF clicked');
     setShowActionMenu(false);
   };
 
   const handleCreatePresentation = () => {
-    console.log('Create Presentation clicked');
     setShowActionMenu(false);
   };
 
   const handleSendEmail = () => {
-    console.log('Send Email clicked');
     setShowActionMenu(false);
   };
 
@@ -142,7 +138,6 @@ export default function QuoteView({ onBackToQuotes }: QuoteViewProps) {
     }
 
     // All validation passed
-    console.log('Feedback submitted:', feedbackData);
     setShowFeedbackModal(false);
     setFeedbackData({ name: '', email: '', feedback: '' });
     setValidationErrors({ name: '', email: '', feedback: '' });

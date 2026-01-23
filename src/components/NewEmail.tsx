@@ -59,8 +59,6 @@ const mockPresentations: PresentationItem[] = [
 ];
 
 export default function NewEmail({ onBack, contactName = 'Pete Salvador', contactEmail = 'pete@example.com', onOpenEmailHistory, preSelectedQuote, preSelectedInvoice }: NewEmailProps) {
-  console.log('[NewEmail] Rendered with contactName:', contactName, 'contactEmail:', contactEmail);
-
   const { showToast } = useToast();
   const [sourceType, setSourceType] = useState<'quote' | 'invoice' | 'empty'>('empty');
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
@@ -266,7 +264,6 @@ export default function NewEmail({ onBack, contactName = 'Pete Salvador', contac
           {/* Email History Button */}
           <button
             onClick={() => {
-              console.log('[NewEmail] History button clicked for:', contactName, 'email:', contactEmail);
               onOpenEmailHistory?.();
             }}
             className="group flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-sm hover:shadow-md"

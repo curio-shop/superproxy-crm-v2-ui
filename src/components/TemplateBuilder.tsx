@@ -151,7 +151,6 @@ export default function TemplateBuilder({ onClose, templateType }: TemplateBuild
 
   const handleSaveTemplate = () => {
     // Here you would typically save the settings to localStorage or backend
-    console.log('Saving template settings:', settings);
     // Close the template builder and return to previous page
     if (onClose) {
       onClose();

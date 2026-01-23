@@ -317,13 +317,9 @@ export default function EmailHistoryDrawer({ isOpen, onClose, onComposeEmail, co
   const [emailHistory, setEmailHistory] = useState<EmailHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Debug logging for ALL props
-  console.log('[EmailHistoryDrawer] Props:', { isOpen, contactEmail, contactName });
-
   // Reset state when drawer closes
   useEffect(() => {
     if (!isOpen) {
-      console.log('[EmailHistoryDrawer] Drawer closed, resetting state');
       setSelectedEmailId(null);
       setEmailHistory([]);
       setIsLoading(false);
@@ -332,32 +328,16 @@ export default function EmailHistoryDrawer({ isOpen, onClose, onComposeEmail, co
 
   // Fetch email history when drawer opens
   useEffect(() => {
-    console.log('[EmailHistoryDrawer] Effect triggered - isOpen:', isOpen, 'contactEmail:', contactEmail);
-
     if (isOpen && contactEmail) {
-      console.log('[EmailHistoryDrawer] Opening drawer for contact:', contactName, 'email:', contactEmail);
       fetchEmailHistory();
-    } else if (isOpen && !contactEmail) {
-      console.warn('[EmailHistoryDrawer] Drawer opened but contactEmail is missing!', {
-        isOpen,
-        contactEmail,
-        contactName
-      });
     }
   }, [isOpen, contactEmail, contactName]);
 
-  // Track emailHistory state changes
-  useEffect(() => {
-    console.log('[EmailHistoryDrawer] emailHistory state changed, now has', emailHistory.length, 'items');
-  }, [emailHistory]);
-
   const fetchEmailHistory = async () => {
     if (!contactEmail) {
-      console.log('[EmailHistoryDrawer] No contact email provided');
       return;
     }
 
-    console.log('[EmailHistoryDrawer] Fetching email history for:', contactEmail);
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -367,8 +347,6 @@ export default function EmailHistoryDrawer({ isOpen, onClose, onComposeEmail, co
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
-      console.log('[EmailHistoryDrawer] Query returned', data?.length || 0, 'emails:', data);
 
       const formattedEmails: EmailHistoryItem[] = (data || []).map((email) => ({
         id: email.id,
@@ -389,12 +367,8 @@ export default function EmailHistoryDrawer({ isOpen, onClose, onComposeEmail, co
         deliveredAt: email.delivered_at ? new Date(email.delivered_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : undefined,
       }));
 
-      console.log('[EmailHistoryDrawer] Formatted', formattedEmails.length, 'emails');
-      console.log('[EmailHistoryDrawer] Setting emailHistory state with', formattedEmails.length, 'items');
       setEmailHistory(formattedEmails);
-      console.log('[EmailHistoryDrawer] emailHistory state updated');
     } catch (error) {
-      console.error('[EmailHistoryDrawer] Error fetching email history:', error);
       setEmailHistory([]);
     } finally {
       setIsLoading(false);

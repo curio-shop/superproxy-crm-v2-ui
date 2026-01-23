@@ -262,7 +262,6 @@ const MOCK_USER = {
 };
 
 export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
-  console.log('🟢 CreateQuote component mounted');
   const [quoteName, setQuoteName] = useState('Untitled Quote');
   const [currency, setCurrency] = useState('PHP');
   const [currentStep, setCurrentStep] = useState(1);
@@ -347,7 +346,6 @@ export default function CreateQuote({ onBack, onPublish }: CreateQuoteProps) {
   };
 
   const handlePublish = () => {
-    console.log('Publishing quote...');
     if (onPublish) {
       onPublish();
     }

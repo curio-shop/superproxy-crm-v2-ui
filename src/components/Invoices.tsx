@@ -395,7 +395,6 @@ export default function Invoices({ isTeamView, homeFilterPreference, onPaymentRe
                           <div className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-xl shadow-lg border border-slate-200/60 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 ring-1 ring-black/5">
                             <button
                               onClick={() => {
-                                console.log('View invoice:', invoice.id);
                                 setOpenDropdown(null);
                               }}
                               className="w-full px-3 py-2 text-left text-sm font-bold text-slate-800 hover:bg-emerald-50/80 hover:text-emerald-700 flex items-center gap-2.5 transition-all duration-200 group"
@@ -407,7 +406,6 @@ export default function Invoices({ isTeamView, homeFilterPreference, onPaymentRe
                             </button>
                             <button
                               onClick={() => {
-                                console.log('Edit invoice:', invoice.id);
                                 setOpenDropdown(null);
                               }}
                               className="w-full px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50/80 hover:text-slate-900 flex items-center gap-2.5 transition-all duration-200 group"
@@ -474,7 +472,6 @@ export default function Invoices({ isTeamView, homeFilterPreference, onPaymentRe
                             </button>
                             <button
                               onClick={() => {
-                                console.log('Duplicate invoice:', invoice.id);
                                 setOpenDropdown(null);
                               }}
                               className="w-full px-3 py-1.5 text-left text-sm font-medium text-slate-700 hover:bg-slate-50/80 hover:text-slate-900 flex items-center gap-2.5 transition-all duration-200 group"

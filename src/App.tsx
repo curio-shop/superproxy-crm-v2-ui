@@ -294,15 +294,12 @@ function AppContent() {
           break;
 
         case 'quotation':
-          console.log('Delete quotation:', id);
           break;
 
         case 'invoice':
-          console.log('Delete invoice:', id);
           break;
 
         case 'presentation':
-          console.log('Delete presentation:', id);
           break;
       }
 
@@ -318,7 +315,6 @@ function AppContent() {
 
       window.location.reload();
     } catch (error) {
-      console.error('Error deleting entity:', error);
       showToast('Failed to delete. Please try again.', 'error');
     } finally {
       setIsDeletingEntity(false);
@@ -352,12 +348,10 @@ function AppContent() {
 
   // Render special full-screen views
   if (isViewingQuote) {
-    console.log('📄 App: Rendering QuoteView');
     return (
       <div className="h-screen w-screen">
         <ErrorBoundary>
           <QuoteView onBackToQuotes={() => {
-            console.log('📄 QuoteView: Back button clicked');
             setIsViewingQuote(false);
             setActivePage('quotations');
           }} />
@@ -367,17 +361,14 @@ function AppContent() {
   }
 
   if (isCreatingQuote) {
-    console.log('📝 App: Rendering CreateQuote');
     return (
       <div className="h-screen w-screen">
         <ErrorBoundary>
           <CreateQuote
             onBack={() => {
-              console.log('📝 CreateQuote: Back button clicked');
               setIsCreatingQuote(false);
             }}
             onPublish={() => {
-              console.log('📝 CreateQuote: Publish button clicked');
               setIsCreatingQuote(false);
               setIsViewingQuote(true);
             }}
@@ -388,18 +379,15 @@ function AppContent() {
   }
 
   if (isCreatingInvoice) {
-    console.log('💰 App: Rendering CreateInvoice', { preSelectedQuote: preSelectedQuoteForInvoice });
     return (
       <div className="h-screen w-screen">
         <ErrorBoundary>
           <CreateInvoice
             onBack={() => {
-              console.log('💰 CreateInvoice: Back button clicked');
               setIsCreatingInvoice(false);
               setPreSelectedQuoteForInvoice(null);
             }}
             onPublish={() => {
-              console.log('💰 CreateInvoice: Publish button clicked');
               setIsCreatingInvoice(false);
               setPreSelectedQuoteForInvoice(null);
               setActivePage('invoices');

@@ -437,7 +437,6 @@ export default function Products({ isTeamView, homeFilterPreference, onViewProdu
                             </button>
                             <button
                               onClick={() => {
-                                console.log('Edit product:', product.id);
                                 setOpenDropdown(null);
                               }}
                               className="w-full px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50/80 hover:text-slate-900 flex items-center gap-2.5 transition-all duration-200 group"

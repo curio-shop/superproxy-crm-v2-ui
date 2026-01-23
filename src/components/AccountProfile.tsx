@@ -28,11 +28,6 @@ export default function AccountProfile({
   const [showDangerZone, setShowDangerZone] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Debug logging for activeTab prop changes
-  useEffect(() => {
-    console.log('[AccountProfile] activeTab prop changed:', activeTab);
-  }, [activeTab]);
-
   const [profileData, setProfileData] = useState({
     firstName: 'Melwyn',
     lastName: 'Arrubio',
@@ -221,7 +216,6 @@ export default function AccountProfile({
         priority: 'normal',
       });
     } catch (error) {
-      console.error('Error submitting contact form:', error);
       alert('Failed to submit contact form. Please try again.');
     } finally {
       setIsSubmittingContact(false);
@@ -318,7 +312,6 @@ export default function AccountProfile({
                 <button
                   key={tab.id}
                   onClick={() => {
-                    console.log('[AccountProfile] Tab clicked:', tab.id);
                     onTabChange(tab.id);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${

@@ -74,14 +74,11 @@ export default function Contacts({ isTeamView, homeFilterPreference, onColdCallC
         company_name: contact.company
       });
     } else if (action === 'Send Email') {
-      console.log('[Contacts] Email action clicked for:', contact.name, 'email:', contact.email);
       onSendEmail?.(contact);
     } else if (action === 'View Contact') {
       onViewContact?.(contact);
     } else if (action === 'Delete Contact') {
       onDeleteContact?.(contact);
-    } else {
-      console.log(`${action} - ${contact.name}`);
     }
     setOpenMenuId(null);
   };
