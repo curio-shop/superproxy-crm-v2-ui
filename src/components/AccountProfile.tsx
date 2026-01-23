@@ -113,9 +113,8 @@ export default function AccountProfile({
     { id: 'minh-direct', name: 'Minh', role: 'Direct', language: 'Vietnamese', gender: 'Male', age: '35s', traits: ['Clear', 'Professional'], languageCode: 'vietnamese' },
     { id: 'linh-friendly', name: 'Linh', role: 'Friendly', language: 'Vietnamese', gender: 'Female', age: '30s', traits: ['Warm', 'Articulate'], languageCode: 'vietnamese' },
     
-    // GERMAN - 2 voices
+    // GERMAN - 1 voice
     { id: 'klaus-executive', name: 'Klaus', role: 'Executive', language: 'German', gender: 'Male', age: '42s', traits: ['Authoritative', 'Clear'], languageCode: 'german' },
-    { id: 'anna-professional', name: 'Anna', role: 'Professional', language: 'German', gender: 'Female', age: '38s', traits: ['Precise', 'Confident'], languageCode: 'german' },
     
     // THAI - 2 voices
     { id: 'somchai-friendly', name: 'Somchai', role: 'Friendly', language: 'Thai', gender: 'Male', age: '32s', traits: ['Warm', 'Clear'], languageCode: 'thai' },
