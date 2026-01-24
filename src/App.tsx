@@ -111,6 +111,7 @@ function AppContent() {
   const [shimmerBurstPosition, setShimmerBurstPosition] = useState({ x: 0, y: 0 });
   const [paperFlyTrigger, setPaperFlyTrigger] = useState(0);
   const [paperFlyPosition, setPaperFlyPosition] = useState({ x: 0, y: 0 });
+  const [showEmailPaperPlane, setShowEmailPaperPlane] = useState(false);
   const [isTeamView, setIsTeamView] = useState(false);
   const homeFilterPreference = isTeamView ? 'team' : 'personal';
 
@@ -127,6 +128,13 @@ function AppContent() {
   const handleQuotationsClick = useCallback((x: number, y: number) => {
     setPaperFlyPosition({ x, y });
     setPaperFlyTrigger(prev => prev + 1);
+  }, []);
+
+  const handleEmailSent = useCallback(() => {
+    setShowEmailPaperPlane(true);
+    setTimeout(() => {
+      setShowEmailPaperPlane(false);
+    }, 2500); // Duration of animation
   }, []);
 
   const [currentWorkspace, setCurrentWorkspace] = useState<WorkspaceType | null>(null);
@@ -561,6 +569,7 @@ function AppContent() {
               onOpenEmailHistory={() => {
                 setIsEmailHistoryDrawerOpen(true);
               }}
+              onEmailSent={handleEmailSent}
             />
           ) : activePage === 'companies' ? (
             <Companies
@@ -806,6 +815,56 @@ function AppContent() {
         onDeleteConfirmTextChange={setDeleteAccountConfirmText}
         isDeleting={isAccountDeleting}
       />
+
+      {/* Email Sent Animation with Full-Screen Blur */}
+      {showEmailPaperPlane && (
+        <>
+          {/* Backdrop Blur Overlay */}
+          <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[9998] animate-in fade-in duration-300" />
+          
+          {/* Paper Plane Animation */}
+          <div className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center">
+            <div className="animate-paper-plane-fly">
+              <div className="relative">
+                <div className="absolute inset-0 bg-blue-500/30 blur-xl animate-pulse rounded-full" />
+                <Icon
+                  icon="solar:letter-bold"
+                  width="56"
+                  className="relative text-blue-500 drop-shadow-2xl"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Sparkles */}
+          <div className="fixed inset-0 pointer-events-none z-[9999]">
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-sparkle-float"
+                style={{
+                  left: '50%',
+                  top: '50%',
+                  animationDelay: `${i * 0.1}s`,
+                  '--angle': `${(360 / 12) * i}deg`,
+                } as React.CSSProperties}
+              >
+                <div className="w-1 h-1 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50" />
+              </div>
+            ))}
+          </div>
+          
+          {/* Success Ripples */}
+          <div className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center">
+            <div className="absolute animate-success-ripple">
+              <div className="w-64 h-64 rounded-full border-2 border-emerald-400/30" />
+            </div>
+            <div className="absolute animate-success-ripple" style={{ animationDelay: '0.2s' } as React.CSSProperties}>
+              <div className="w-64 h-64 rounded-full border-2 border-blue-400/30" />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

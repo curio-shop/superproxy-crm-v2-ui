@@ -12,6 +12,7 @@ interface NewEmailProps {
   onOpenEmailHistory?: () => void;
   preSelectedQuote?: Quotation | null;
   preSelectedInvoice?: Invoice | null;
+  onEmailSent?: () => void;
 }
 
 interface QuoteInvoiceItem {
@@ -58,7 +59,7 @@ const mockPresentations: PresentationItem[] = [
   { id: '6', title: 'Berkshire Stadium Project', date: 'Jan 8', time: '10:30 AM', duration: '2:15' },
 ];
 
-export default function NewEmail({ onBack, contactName = 'Pete Salvador', contactEmail = 'pete@example.com', onOpenEmailHistory, preSelectedQuote, preSelectedInvoice }: NewEmailProps) {
+export default function NewEmail({ onBack, contactName = 'Pete Salvador', contactEmail = 'pete@example.com', onOpenEmailHistory, preSelectedQuote, preSelectedInvoice, onEmailSent }: NewEmailProps) {
   const { showToast } = useToast();
   const [sourceType, setSourceType] = useState<'quote' | 'invoice' | 'empty'>('empty');
   const [showSourceDropdown, setShowSourceDropdown] = useState(false);
@@ -73,7 +74,6 @@ export default function NewEmail({ onBack, contactName = 'Pete Salvador', contac
 `);
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
-  const [showPaperPlaneAnimation, setShowPaperPlaneAnimation] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
 
   // Handle pre-selected quote or invoice
@@ -209,8 +209,8 @@ export default function NewEmail({ onBack, contactName = 'Pete Salvador', contac
 
     setTimeout(() => {
       setSendSuccess(true);
-      setShowPaperPlaneAnimation(true);
       setShowSuccessOverlay(true);
+      onEmailSent?.(); // Trigger app-level animation
       showToast('Email sent successfully!', 'success');
 
       setTimeout(() => {
@@ -714,47 +714,6 @@ export default function NewEmail({ onBack, contactName = 'Pete Salvador', contac
 
       {showSuccessOverlay && (
         <div className="fixed inset-0 bg-gradient-to-br from-emerald-500/10 via-blue-500/5 to-slate-900/10 backdrop-blur-sm z-[45] animate-in fade-in duration-300" />
-      )}
-
-      {showPaperPlaneAnimation && (
-        <>
-          <div className="fixed inset-0 pointer-events-none z-[60] flex items-center justify-center">
-            <div className="animate-paper-plane-fly">
-              <div className="relative">
-                <div className="absolute inset-0 bg-blue-500/30 blur-xl animate-pulse rounded-full" />
-                <Icon
-                  icon="solar:letter-bold"
-                  width="56"
-                  className="relative text-blue-500 drop-shadow-2xl"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="fixed inset-0 pointer-events-none z-[60]">
-            {[...Array(12)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute animate-sparkle-float"
-                style={{
-                  left: '50%',
-                  top: '50%',
-                  animationDelay: `${i * 0.1}s`,
-                  '--angle': `${(360 / 12) * i}deg`,
-                } as React.CSSProperties}
-              >
-                <div className="w-1 h-1 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50" />
-              </div>
-            ))}
-          </div>
-          <div className="fixed inset-0 pointer-events-none z-[60] flex items-center justify-center">
-            <div className="absolute animate-success-ripple">
-              <div className="w-64 h-64 rounded-full border-2 border-emerald-400/30" />
-            </div>
-            <div className="absolute animate-success-ripple" style={{ animationDelay: '0.2s' } as React.CSSProperties}>
-              <div className="w-64 h-64 rounded-full border-2 border-blue-400/30" />
-            </div>
-          </div>
-        </>
       )}
     </div>
   );
