@@ -72,7 +72,7 @@ export default function AccountProfile({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
 
-  const [selectedVoice, setSelectedVoice] = useState('sarah-professional');
+  const [selectedVoice, setSelectedVoice] = useState('lauren-confident');
   const [languageFilter, setLanguageFilter] = useState('all');
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -80,11 +80,11 @@ export default function AccountProfile({
   // Comprehensive voice library (30 voices across 15 languages)
   const voiceLibrary = [
     // ENGLISH (GLOBAL) - 5 voices
-    { id: 'sarah-professional', name: 'Sarah', role: 'Professional', language: 'English (US)', gender: 'Female', age: '30s', traits: ['Warm', 'Confident', 'Clear'], languageCode: 'english' },
-    { id: 'marcus-executive', name: 'Marcus', role: 'Executive', language: 'English (US)', gender: 'Male', age: '40s', traits: ['Authoritative', 'Trustworthy'], languageCode: 'english' },
-    { id: 'emma-balanced', name: 'Emma', role: 'Balanced', language: 'English (US)', gender: 'Female', age: '35s', traits: ['Professional', 'Approachable'], languageCode: 'english' },
-    { id: 'david-direct', name: 'David', role: 'Direct', language: 'English (UK)', gender: 'Male', age: '38s', traits: ['Clear', 'Articulate'], languageCode: 'english' },
-    { id: 'rachel-empathetic', name: 'Rachel', role: 'Empathetic', language: 'English (UK)', gender: 'Female', age: '35s', traits: ['Understanding', 'Firm'], languageCode: 'english' },
+    { id: 'lauren-confident', name: 'Lauren', role: 'Confident', language: 'English (US)', gender: 'Female', age: '30s', traits: ['Friendly', 'Professional', 'Clear'], languageCode: 'english' },
+    { id: 'marcus-vibrant', name: 'Marcus', role: 'Vibrant', language: 'English (US)', gender: 'Male', age: '30s', traits: ['Stylish', 'Urban'], languageCode: 'english' },
+    { id: 'emma-balanced', name: 'Emma', role: 'Balanced', language: 'English (US)', gender: 'Female', age: '30s', traits: ['Professional', 'Approachable'], languageCode: 'english' },
+    { id: 'david-polite', name: 'David', role: 'Polite', language: 'English (UK)', gender: 'Male', age: '30s', traits: ['Calm', 'Respectful'], languageCode: 'english' },
+    { id: 'rachel-gentle', name: 'Rachel', role: 'Gentle', language: 'English (UK)', gender: 'Female', age: '20s', traits: ['Understanding', 'Warm'], languageCode: 'english' },
     
     // SPANISH (LATIN AMERICA) - 3 voices
     { id: 'carlos-dynamic', name: 'Carlos', role: 'Dynamic', language: 'Spanish (LatAm)', gender: 'Male', age: '32s', traits: ['Energetic', 'Engaging'], languageCode: 'spanish' },
