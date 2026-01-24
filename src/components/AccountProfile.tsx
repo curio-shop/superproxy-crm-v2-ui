@@ -131,7 +131,7 @@ export default function AccountProfile({
     
     // FILIPINO - 2 voices
     { id: 'angelo-friendly', name: 'Angelo', role: 'Friendly', language: 'Filipino', gender: 'Male', age: '30s', traits: ['Warm', 'Clear'], languageCode: 'filipino' },
-    { id: 'maria-professional', name: 'Maria', role: 'Professional', language: 'Filipino', gender: 'Female', age: '32s', traits: ['Confident', 'Articulate'], languageCode: 'filipino' },
+    { id: 'maria-professional-filipino', name: 'Maria', role: 'Professional', language: 'Filipino', gender: 'Female', age: '32s', traits: ['Confident', 'Articulate'], languageCode: 'filipino' },
     
     // MALAY - 1 voice
     { id: 'amir-professional', name: 'Amir', role: 'Professional', language: 'Malay', gender: 'Male', age: '35s', traits: ['Polished', 'Clear'], languageCode: 'malay' },
@@ -181,6 +181,9 @@ export default function AccountProfile({
     if (audioRef.current) {
       clearTimeout(audioRef.current as unknown as number);
     }
+    
+    // Auto-select this voice when previewing for intuitive UX
+    setSelectedVoice(voiceId);
     
     // Simulate playback - set playing state
     setPlayingVoiceId(voiceId);
