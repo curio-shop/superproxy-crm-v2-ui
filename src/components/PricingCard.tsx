@@ -84,7 +84,7 @@ export default function PricingCard({ onUpgradeClick }: PricingCardProps) {
                   className="transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-0.5"
                 />
                 <span className="font-semibold text-sm tracking-wide">
-                  Upgrade to Professional
+                  Upgrade to SUPERPROXY Pro
                 </span>
               </button>
               <p className="text-center text-[11px] mt-3 text-slate-400">
