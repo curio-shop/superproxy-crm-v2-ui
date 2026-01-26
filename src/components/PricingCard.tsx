@@ -42,7 +42,7 @@ export default function PricingCard({ onUpgradeClick }: PricingCardProps) {
 
           <div className="mt-5 flex items-baseline gap-1.5">
             <span className="text-4xl font-semibold tracking-tighter text-slate-900">
-              $9
+              $20
             </span>
             <span className="text-sm text-slate-500 font-medium">/month</span>
           </div>
